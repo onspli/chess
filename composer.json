@@ -17,13 +17,18 @@
         }
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.5"
+        "phpunit/phpunit": "^9.5",
+        "php-coveralls/php-coveralls": "^2.4"
     },
     "scripts": {
         "test": [
-            "@putenv XDEBUG_MODE=coverage",
-            "phpunit --testdox --coverage-text --whitelist src tests"
-            ]
+          "@putenv XDEBUG_MODE=coverage",
+          "phpunit --testdox --coverage-text --coverage-clover tmp/clover.xml --whitelist src tests"
+        ],
+        "coverall": [
+          "@putenv COVERALLS_REPO_TOKEN=${{ secrets.GITHUB_TOKEN }}",
+          "php-coveralls --coverage_clover=tmp/clover.xml -v"
+        ]
     },
     "archive": {
         "exclude": ["tests"]
