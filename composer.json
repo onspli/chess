@@ -20,7 +20,10 @@
         "phpunit/phpunit": "^9.5"
     },
     "scripts": {
-        "test": "phpunit --testdox --coverage-text --whitelist src tests"
+        "test": [
+            "@putenv XDEBUG_MODE=coverage",
+            "phpunit --testdox --coverage-text --whitelist src tests"
+            ]
     },
     "archive": {
         "exclude": ["tests"]
