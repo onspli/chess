@@ -17,4 +17,11 @@ final class BoardTest extends TestCase
     $this->assertEquals('P', $board->square('e4'));
   }
 
+  public function testNothrow() : void
+  {
+    $board = new Board;
+    $this->assertNull($board->set_square_nothrow('xx', 'p'));
+    $this->assertEquals('', $board->square_nothrow('xx'));
+  }
+
 }
