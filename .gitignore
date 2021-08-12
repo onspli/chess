@@ -2,3 +2,4 @@ vendor
 composer.lock
 www
 tmp
+build

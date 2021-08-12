@@ -22,11 +22,10 @@
     },
     "scripts": {
         "test": [
-          "@putenv XDEBUG_MODE=coverage",
-          "phpunit --testdox --coverage-text --coverage-clover tmp/clover.xml --whitelist src tests"
+          "phpunit --testdox --coverage-text --coverage-clover build/logs/clover.xml --whitelist src tests"
         ],
         "coverall": [
-          "php-coveralls --coverage_clover=tmp/clover.xml -o tmp -v"
+          "php-coveralls -v"
         ]
     },
     "archive": {
