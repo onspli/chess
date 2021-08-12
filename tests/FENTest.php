@@ -166,6 +166,15 @@ final class FENTest extends TestCase
     $this->assertEquals('Kk', $fen->castling());
   }
 
+  public function testFiftyMove() : void
+  {
+    $fen = new FEN;
+    $fen->set_halfmove(100);
+    $this->assertTrue($fen->is_fifty_move());
+    $fen->set_halfmove(99);
+    $this->assertFalse($fen->is_fifty_move());
+  }
+
   public function testBoard() : void
   {
     $fen = new FEN;

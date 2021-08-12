@@ -44,6 +44,24 @@ class Board
     catch(\Exception $e) {};
   }
 
+  /**
+  * Returns array of squares containing piece.
+  */
+  public function find(string $piece) : array
+  {
+    $arr = [];
+    for ($rank = 0; $rank < 8; $rank ++) {
+      for ($file = 0; $file < 8; $file ++) {
+        $square = new Square($file, $rank);
+        $p = $this->square($square);
+        if ($p == $piece) {
+          $arr[] = $square;
+        }
+      }
+    }
+    return $arr;
+  }
+
   private static function validate_piece(string $piece) : void
   {
     if (!in_array($piece, ['', 'P', 'N', 'B', 'R', 'Q', 'K', 'p', 'n', 'b', 'r', 'q', 'k'])) throw new ParseExpcetion("Invalid piece '$piece'.");

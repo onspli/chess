@@ -248,6 +248,7 @@ class FEN
 
     /**
     * Returns true if king of active color is in mate.
+    * @codeCoverageIgnore
     */
     public function is_mate() : bool
     {
@@ -256,6 +257,7 @@ class FEN
 
     /**
     * Returns true if king of active color is in stalemate.
+    * @codeCoverageIgnore
     */
     public function is_stalemate() : bool
     {
@@ -267,7 +269,7 @@ class FEN
     */
     public function is_fifty_move() : bool
     {
-      return $this->halfmoves() >= 100;
+      return $this->halfmove() >= 100;
     }
 
     /**

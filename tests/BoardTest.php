@@ -24,4 +24,24 @@ final class BoardTest extends TestCase
     $this->assertEquals('', $board->square_nothrow('xx'));
   }
 
+  public function testFind() : void
+  {
+    $board = new Board;
+    $board->set_square('e5', 'N');
+    $board->set_square('a2', 'P');
+    $board->set_square('e4', 'P');
+
+    $res = $board->find('P');
+    $this->assertEquals([new Square('a2'), new Square('e4')], $res);
+
+    $res = $board->find('N');
+    $this->assertEquals([new Square('e5')], $res);
+
+    $res = $board->find('Q');
+    $this->assertEquals([], $res);
+
+    $res = $board->find('');
+    $this->assertEquals(61, sizeof($res));
+  }
+
 }
