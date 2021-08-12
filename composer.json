@@ -26,7 +26,7 @@
           "phpunit --testdox --coverage-text --coverage-clover tmp/clover.xml --whitelist src tests"
         ],
         "coverall": [
-          "php-coveralls --coverage_clover=tmp/clover.xml -v"
+          "php-coveralls --coverage_clover=tmp/clover.xml -o tmp -v"
         ]
     },
     "archive": {
