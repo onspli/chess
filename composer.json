@@ -26,7 +26,6 @@
           "phpunit --testdox --coverage-text --coverage-clover tmp/clover.xml --whitelist src tests"
         ],
         "coverall": [
-          "@putenv COVERALLS_REPO_TOKEN=${{ secrets.GITHUB_TOKEN }}",
           "php-coveralls --coverage_clover=tmp/clover.xml -v"
         ]
     },
