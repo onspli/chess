@@ -5,7 +5,7 @@ namespace Onspli\Chess;
 /**
 * @codeCoverageIgnore
 */
-class ExceptionNotImplemented extends \Exception
+class NotImplementedException extends \RuntimeException
 {
   protected $message = 'Not Implemented';
 }

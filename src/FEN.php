@@ -4,16 +4,10 @@ namespace Onspli\Chess;
 
 class FEN
 {
-
-    /**
-    * 8x8 array representing chess board
-    * [rank1, rank2, ..., rank8]
-    */
-    private $board = [];
-
+    private $board;
     private $active = 'w';
     private $castling = 'KQkq';
-    private $en_passant = '-';
+    private $en_passant;
     private $halfmove = 0;
     private $fullmove = 1;
 
@@ -27,7 +21,7 @@ class FEN
         $fen = trim($fen);
         $fen = preg_replace('/\s+/', ' ', $fen);
         $parts = explode(' ', $fen);
-        if (sizeof($parts) != 6) throw new ExceptionParse("FEN has " . sizeof($parts) . " fields. It must have 6 fields.");
+        if (sizeof($parts) != 6) throw new ParseException("FEN has " . sizeof($parts) . " fields. It must have 6 fields.");
 
         $this->set_board($parts[0]);
         $this->set_active($parts[1]);
@@ -39,6 +33,7 @@ class FEN
       else
       {
         $this->set_board('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR');
+        $this->set_en_passant('-');
       }
     }
 
@@ -59,7 +54,7 @@ class FEN
       $preview = '';
       for ($rank = 8; $rank >= 1; $rank --) {
         for ($file = 1; $file <= 8; $file ++) {
-          $piece = $this->piece(self::square($file, $rank));
+          $piece = $this->piece(new Square($file, $rank));
           if (!$piece) $piece = '.';
           $preview .= $piece;
         }
@@ -82,10 +77,10 @@ class FEN
     public function board() : string
     {
       $pieces = '';
-      for ($rank = 8; $rank >= 1; $rank --) {
+      for ($rank = 7; $rank >= 0; $rank --) {
         $space = 0;
-        for ($file = 1; $file <= 8; $file ++) {
-          $piece = $this->piece(self::square($file, $rank));
+        for ($file = 0; $file < 8; $file ++) {
+          $piece = $this->piece(new Square($file, $rank));
           if (!$piece) {
             $space++;
           } else {
@@ -95,7 +90,7 @@ class FEN
           }
         }
         if ($space > 0) $pieces .= $space;
-        if ($rank > 1) $pieces .= '/';
+        if ($rank > 0) $pieces .= '/';
       }
       return $pieces;
     }
@@ -105,15 +100,14 @@ class FEN
       $pieces = trim($pieces);
       $pieces = preg_replace('/\s+/', '', $pieces);
       $ranks = explode('/', $pieces);
-      if (sizeof($ranks) != 8) throw new ExceptionParse("Wrong number of ranks " . sizeof($ranks) . ".");
+      if (sizeof($ranks) != 8) throw new ParseException("Wrong number of ranks " . sizeof($ranks) . ".");
 
-      $empty_rank = array_fill(0, 8, '');
-      $board = array_fill(0, 8, $empty_rank);
+      $board = new Board;
 
-      $rank = 8;
+      $rank = 7;
       foreach ($ranks as $rank_pieces)
       {
-        $file = 1;
+        $file = 0;
         foreach (str_split($rank_pieces) as $piece)
         {
           if (is_numeric($piece))
@@ -122,26 +116,24 @@ class FEN
           }
           else
           {
-            if (!in_array($piece, ['P', 'N', 'B', 'R', 'Q', 'K', 'p', 'n', 'b', 'r', 'q', 'k'])) throw new \Expcetion("Invalid piece '$piece'.");
-            $board[$file - 1][$rank - 1] = $piece;
+            $board->set_square(new Square($file, $rank), $piece);
             $file += 1;
           }
-          if ($file > 9) throw new ExceptionParse("Too many pieces on rank.");
+          if ($file > 8) throw new ParseException("Too many pieces on rank.");
         }
         $rank -= 1;
       }
       $this->board = $board;
     }
 
-    public function piece(string $square) : string
+    public function piece($square) : string
     {
-      return $this->board[self::file($square) - 1][self::rank($square) - 1];
+      return $this->board->square($square);
     }
 
-    public function set_piece(string $square, string $piece) : void
+    public function set_piece($square, string $piece) : void
     {
-      if (!in_array($piece, ['', 'P', 'N', 'B', 'R', 'Q', 'K', 'p', 'n', 'b', 'r', 'q', 'k'])) throw new \Expcetion("Invalid piece '$piece'.");
-      $this->board[self::file($square) - 1][self::rank($square) - 1] = $piece;
+      $this->board->set_square($square, $piece);
     }
 
     /**
@@ -154,7 +146,7 @@ class FEN
 
     public function set_active(string $color) : void
     {
-      if ($color != 'w' && $color != 'b') throw new ExceptionParse("Active color must be either 'w' or 'b', it is '$color'.");
+      if ($color != 'w' && $color != 'b') throw new ParseException("Active color must be either 'w' or 'b', it is '$color'.");
       $this->active = $color;
     }
 
@@ -173,20 +165,20 @@ class FEN
     public function set_castling(string $castling) : void
     {
       if (!in_array($castling, ['-', 'KQkq', 'KQk', 'KQq', 'KQ', 'Kkq', 'Kk', 'Kq', 'K', 'Qkq', 'Qk', 'Qq', 'Q', 'kq', 'k', 'q']))
-        throw new ExceptionParse("Invalid castling string '$castling'.");
+        throw new ParseException("Invalid castling string '$castling'.");
       $this->castling = $castling;
     }
 
     public function castling_availability(string $type) : bool
     {
-      if (!in_array($type, ['K', 'Q', 'k', 'q'])) throw new ExceptionParse("Invalid castling type '$type'.");
+      if (!in_array($type, ['K', 'Q', 'k', 'q'])) throw new ParseException("Invalid castling type '$type'.");
       $castling = str_split($this->castling);
       return in_array($type, $castling);
     }
 
     public function set_castling_availability(string $type, bool $avalability) : void
     {
-      if (!in_array($type, ['K', 'Q', 'k', 'q'])) throw new ExceptionParse("Invalid castling type '$type'.");
+      if (!in_array($type, ['K', 'Q', 'k', 'q'])) throw new ParseException("Invalid castling type '$type'.");
       if ($this->castling_availability($type) === $avalability) return;
 
       // convert str to array of available types
@@ -212,16 +204,14 @@ class FEN
     */
     public function en_passant() : string
     {
-      return $this->en_passant;
+      return $this->en_passant->alg();
     }
 
     public function set_en_passant(string $square) : void
     {
-      if ($square != '-')
-      {
-        self::validate_square($square);
-        $rank = self::rank($square);
-        if ($rank != 3 && $rank != 6) throw new ExceptionParse("Invalid En passant square '$square'.");
+      $square = new Square($square);
+      if ($square->is_null() == false && $square->rank() != 2 && $square->rank() != 5) {
+        throw new ParseException("Invalid En passant square '".$square->alg()."'.");
       }
       $this->en_passant = $square;
     }
@@ -237,7 +227,7 @@ class FEN
 
     public function set_halfmove($halfmove) : void
     {
-      if (intval($halfmove) != $halfmove || $halfmove < 0) throw new ExceptionParse("Halfmove clock '$halfmove' must be non-negative integer.");
+      if (intval($halfmove) != $halfmove || $halfmove < 0) throw new ParseException("Halfmove clock '$halfmove' must be non-negative integer.");
       $this->halfmove = $halfmove;
     }
 
@@ -252,8 +242,32 @@ class FEN
 
     public function set_fullmove($fullmove) : void
     {
-      if (intval($fullmove) != $fullmove || $fullmove <= 0) throw new ExceptionParse("Fullmove number '$fullmove' must be positive integer.");
+      if (intval($fullmove) != $fullmove || $fullmove <= 0) throw new ParseException("Fullmove number '$fullmove' must be positive integer.");
       $this->fullmove = $fullmove;
+    }
+
+    /**
+    * Returns true if king of active color is in mate.
+    */
+    public function is_mate() : bool
+    {
+      return $this->is_check() && sizeof($this->possible_moves()) == 0;
+    }
+
+    /**
+    * Returns true if king of active color is in stalemate.
+    */
+    public function is_stalemate() : bool
+    {
+      return !$this->is_check() && sizeof($this->possible_moves()) == 0;
+    }
+
+    /**
+    * Returns true if fifty move rule draw can be claimed by active color.
+    */
+    public function is_fifty_move() : bool
+    {
+      return $this->halfmoves() >= 100;
     }
 
     /**
@@ -262,34 +276,7 @@ class FEN
     */
     public function is_check() : bool
     {
-      throw new ExceptionNotImplemented;
-    }
-
-    /**
-    * Returns true if king of active color is in mate.
-    * @codeCoverageIgnore
-    */
-    public function is_mate() : bool
-    {
-      throw new ExceptionNotImplemented;
-    }
-
-    /**
-    * Returns true if king of active color is in stalemate.
-    * @codeCoverageIgnore
-    */
-    public function is_stalemate() : bool
-    {
-      throw new ExceptionNotImplemented;
-    }
-
-    /**
-    * Returns true if fifty move rule draw can be claimed by active color.
-    * @codeCoverageIgnore
-    */
-    public function is_fifty_move() : bool
-    {
-      throw new ExceptionNotImplemented;
+      throw new NotImplementedException;
     }
 
     /**
@@ -298,7 +285,7 @@ class FEN
     */
     public function possible_moves() : array
     {
-      throw new ExceptionNotImplemented;
+      throw new NotImplementedException;
     }
 
     /**
@@ -307,35 +294,7 @@ class FEN
     */
     public function move(string $move) : void
     {
-      throw new ExceptionNotImplemented;
-    }
-
-    protected static function validate_square(string $square) : void
-    {
-      if (strlen($square) != 2) throw new ExceptionParse("Invalid square '$square'.");
-      $file = $square[0];
-      if (ord($file) < ord('a') || ord($file) > ord('h')) throw new ExceptionParse("Invalid square '$square'. File '$file' is not valid.");
-      $rank = intval($square[1]);
-      if ($rank < 1 || $rank > 8) throw new ExceptionParse("Invalid square '$square'. Rank '$rank' is not valid.");
-    }
-
-    protected static function rank(string $square) : int
-    {
-      self::validate_square($square);
-      return intval($square[1]);
-    }
-
-    protected static function file(string $square) : int
-    {
-      self::validate_square($square);
-      return intval(ord($square[0]) - ord('a') + 1);
-    }
-
-    protected static function square($file, $rank) : string
-    {
-      if (intval($file) != $file || $file < 1 || $file > 8) throw new ExceptionParse("File number '$file' must be integer between 1 and 8.");
-      if (intval($rank) != $rank || $rank < 1 || $rank > 8) throw new ExceptionParse("Rank number '$rank' must be integer between 1 and 8.");
-      return chr(ord('a') + $file - 1) . $rank;
+      throw new NotImplementedException;
     }
 
 }

@@ -5,7 +5,7 @@ namespace Onspli\Chess;
 /**
 * @codeCoverageIgnore
 */
-class ExceptionParse extends \Exception
+class ParseException extends \RuntimeException
 {
   protected $message = 'Parse Error';
 }
