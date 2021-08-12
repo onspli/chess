@@ -228,83 +228,83 @@ final class FENTest extends TestCase
   public function testCastlingAvailibility() : void
   {
     $fen = new Chess\FEN;
-    $this->assertEquals(true, $fen->get_castling_availability('K'));
-    $this->assertEquals(true, $fen->get_castling_availability('Q'));
-    $this->assertEquals(true, $fen->get_castling_availability('k'));
-    $this->assertEquals(true, $fen->get_castling_availability('q'));
+    $this->assertEquals(true, $fen->castling_availability('K'));
+    $this->assertEquals(true, $fen->castling_availability('Q'));
+    $this->assertEquals(true, $fen->castling_availability('k'));
+    $this->assertEquals(true, $fen->castling_availability('q'));
     $this->assertEquals('KQkq', $fen->castling());
 
     $fen->set_castling_availability('k', false);
-    $this->assertEquals(true, $fen->get_castling_availability('K'));
-    $this->assertEquals(true, $fen->get_castling_availability('Q'));
-    $this->assertEquals(false, $fen->get_castling_availability('k'));
-    $this->assertEquals(true, $fen->get_castling_availability('q'));
+    $this->assertEquals(true, $fen->castling_availability('K'));
+    $this->assertEquals(true, $fen->castling_availability('Q'));
+    $this->assertEquals(false, $fen->castling_availability('k'));
+    $this->assertEquals(true, $fen->castling_availability('q'));
     $this->assertEquals('KQq', $fen->castling());
 
     $fen->set_castling_availability('Q', false);
-    $this->assertEquals(true, $fen->get_castling_availability('K'));
-    $this->assertEquals(false, $fen->get_castling_availability('Q'));
-    $this->assertEquals(false, $fen->get_castling_availability('k'));
-    $this->assertEquals(true, $fen->get_castling_availability('q'));
+    $this->assertEquals(true, $fen->castling_availability('K'));
+    $this->assertEquals(false, $fen->castling_availability('Q'));
+    $this->assertEquals(false, $fen->castling_availability('k'));
+    $this->assertEquals(true, $fen->castling_availability('q'));
     $this->assertEquals('Kq', $fen->castling());
 
 
     $fen->set_castling_availability('k', true);
-    $this->assertEquals(true, $fen->get_castling_availability('K'));
-    $this->assertEquals(false, $fen->get_castling_availability('Q'));
-    $this->assertEquals(true, $fen->get_castling_availability('k'));
-    $this->assertEquals(true, $fen->get_castling_availability('q'));
+    $this->assertEquals(true, $fen->castling_availability('K'));
+    $this->assertEquals(false, $fen->castling_availability('Q'));
+    $this->assertEquals(true, $fen->castling_availability('k'));
+    $this->assertEquals(true, $fen->castling_availability('q'));
     $this->assertEquals('Kkq', $fen->castling());
 
     $fen->set_castling_availability('K', false);
     $fen->set_castling_availability('Q', false);
     $fen->set_castling_availability('k', false);
     $fen->set_castling_availability('q', false);
-    $this->assertEquals(false, $fen->get_castling_availability('K'));
-    $this->assertEquals(false, $fen->get_castling_availability('Q'));
-    $this->assertEquals(false, $fen->get_castling_availability('k'));
-    $this->assertEquals(false, $fen->get_castling_availability('q'));
+    $this->assertEquals(false, $fen->castling_availability('K'));
+    $this->assertEquals(false, $fen->castling_availability('Q'));
+    $this->assertEquals(false, $fen->castling_availability('k'));
+    $this->assertEquals(false, $fen->castling_availability('q'));
     $this->assertEquals('-', $fen->castling());
 
     $fen->set_castling_availability('k', true);
     $fen->set_castling_availability('K', true);
-    $this->assertEquals(true, $fen->get_castling_availability('K'));
-    $this->assertEquals(false, $fen->get_castling_availability('Q'));
-    $this->assertEquals(true, $fen->get_castling_availability('k'));
-    $this->assertEquals(false, $fen->get_castling_availability('q'));
+    $this->assertEquals(true, $fen->castling_availability('K'));
+    $this->assertEquals(false, $fen->castling_availability('Q'));
+    $this->assertEquals(true, $fen->castling_availability('k'));
+    $this->assertEquals(false, $fen->castling_availability('q'));
     $this->assertEquals('Kk', $fen->castling());
   }
 
-  public function testPieces() : void
+  public function testBoard() : void
   {
     $fen = new Chess\FEN;
-    $fen->set_pieces('rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R');
-    $this->assertEquals('rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R', $fen->pieces());
+    $fen->set_board('rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R');
+    $this->assertEquals('rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R', $fen->board());
 
-    $fen->set_pieces(' rnbqkbnr  /pp 1ppppp/8/2p5/4P3/5N2/PPPP1PPP/ RNBQKB1R ');
-    $this->assertEquals('rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R', $fen->pieces());
+    $fen->set_board(' rnbqkbnr  /pp 1ppppp/8/2p5/4P3/5N2/PPPP1PPP/ RNBQKB1R ');
+    $this->assertEquals('rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R', $fen->board());
 
-    $this->assertEquals('p', $fen->get_piece('b7'));
-    $this->assertEquals('', $fen->get_piece('b5'));
-    $this->assertEquals('p', $fen->get_piece('c5'));
-    $this->assertEquals('', $fen->get_piece('d5'));
-    $this->assertEquals('P', $fen->get_piece('e4'));
-    $this->assertEquals('R', $fen->get_piece('a1'));
+    $this->assertEquals('p', $fen->piece('b7'));
+    $this->assertEquals('', $fen->piece('b5'));
+    $this->assertEquals('p', $fen->piece('c5'));
+    $this->assertEquals('', $fen->piece('d5'));
+    $this->assertEquals('P', $fen->piece('e4'));
+    $this->assertEquals('R', $fen->piece('a1'));
 
     $fen->set_piece('c5', '');
-    $this->assertEquals('', $fen->get_piece('c5'));
-    $this->assertEquals('rnbqkbnr/pp1ppppp/8/8/4P3/5N2/PPPP1PPP/RNBQKB1R', $fen->pieces());
+    $this->assertEquals('', $fen->piece('c5'));
+    $this->assertEquals('rnbqkbnr/pp1ppppp/8/8/4P3/5N2/PPPP1PPP/RNBQKB1R', $fen->board());
 
     $fen->set_piece('c5', 'R');
-    $this->assertEquals('R', $fen->get_piece('c5'));
-    $this->assertEquals('rnbqkbnr/pp1ppppp/8/2R5/4P3/5N2/PPPP1PPP/RNBQKB1R', $fen->pieces());
+    $this->assertEquals('R', $fen->piece('c5'));
+    $this->assertEquals('rnbqkbnr/pp1ppppp/8/2R5/4P3/5N2/PPPP1PPP/RNBQKB1R', $fen->board());
   }
 
   public function testInitializationAndExport() : void
   {
     $fen = new Chess\FEN;
     $this->assertEquals('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', $fen->export());
-    $this->assertEquals('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR', $fen->pieces());
+    $this->assertEquals('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR', $fen->board());
     $this->assertEquals('w', $fen->active());
     $this->assertEquals('KQkq', $fen->castling());
     $this->assertEquals('-', $fen->en_passant());
@@ -313,7 +313,7 @@ final class FENTest extends TestCase
 
     $fen = new Chess\FEN('rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR b KQq c6 1 2');
     $this->assertEquals('rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR b KQq c6 1 2', $fen->export());
-    $this->assertEquals('rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR', $fen->pieces());
+    $this->assertEquals('rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR', $fen->board());
     $this->assertEquals('b', $fen->active());
     $this->assertEquals('KQq', $fen->castling());
     $this->assertEquals('c6', $fen->en_passant());

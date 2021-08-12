@@ -29,7 +29,7 @@ class FEN
         $parts = explode(' ', $fen);
         if (sizeof($parts) != 6) throw new ExceptionParse("FEN has " . sizeof($parts) . " fields. It must have 6 fields.");
 
-        $this->set_pieces($parts[0]);
+        $this->set_board($parts[0]);
         $this->set_active($parts[1]);
         $this->set_castling($parts[2]);
         $this->set_en_passant($parts[3]);
@@ -38,7 +38,7 @@ class FEN
       }
       else
       {
-        $this->set_pieces('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR');
+        $this->set_board('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR');
       }
     }
 
@@ -47,7 +47,7 @@ class FEN
     */
     public function export() : string
     {
-      return implode(' ', [$this->pieces(), $this->active(), $this->castling(), $this->en_passant(), $this->halfmove(), $this->fullmove()]);
+      return implode(' ', [$this->board(), $this->active(), $this->castling(), $this->en_passant(), $this->halfmove(), $this->fullmove()]);
     }
 
     /**
@@ -59,7 +59,7 @@ class FEN
       $preview = '';
       for ($rank = 8; $rank >= 1; $rank --) {
         for ($file = 1; $file <= 8; $file ++) {
-          $piece = $this->get_piece(self::square($file, $rank));
+          $piece = $this->piece(self::square($file, $rank));
           if (!$piece) $piece = '.';
           $preview .= $piece;
         }
@@ -79,13 +79,13 @@ class FEN
     * black pieces use lowercase ("pnbrqk"). Empty squares are noted using
     * digits 1 through 8 (the number of empty squares), and "/" separates ranks.
     */
-    public function pieces() : string
+    public function board() : string
     {
       $pieces = '';
       for ($rank = 8; $rank >= 1; $rank --) {
         $space = 0;
         for ($file = 1; $file <= 8; $file ++) {
-          $piece = $this->get_piece(self::square($file, $rank));
+          $piece = $this->piece(self::square($file, $rank));
           if (!$piece) {
             $space++;
           } else {
@@ -100,7 +100,7 @@ class FEN
       return $pieces;
     }
 
-    public function set_pieces(string $pieces) : void
+    public function set_board(string $pieces) : void
     {
       $pieces = trim($pieces);
       $pieces = preg_replace('/\s+/', '', $pieces);
@@ -133,7 +133,7 @@ class FEN
       $this->board = $board;
     }
 
-    public function get_piece(string $square) : string
+    public function piece(string $square) : string
     {
       return $this->board[self::file($square) - 1][self::rank($square) - 1];
     }
@@ -177,7 +177,7 @@ class FEN
       $this->castling = $castling;
     }
 
-    public function get_castling_availability(string $type) : bool
+    public function castling_availability(string $type) : bool
     {
       if (!in_array($type, ['K', 'Q', 'k', 'q'])) throw new ExceptionParse("Invalid castling type '$type'.");
       $castling = str_split($this->castling);
@@ -187,7 +187,7 @@ class FEN
     public function set_castling_availability(string $type, bool $avalability) : void
     {
       if (!in_array($type, ['K', 'Q', 'k', 'q'])) throw new ExceptionParse("Invalid castling type '$type'.");
-      if ($this->get_castling_availability($type) === $avalability) return;
+      if ($this->castling_availability($type) === $avalability) return;
 
       // convert str to array of available types
       if ($this->castling == '-') $castling = [];
