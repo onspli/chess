@@ -116,6 +116,20 @@ final class FENTest extends TestCase
     $fen->set_castling('KQxq');
   }
 
+  public function testSetCastlingAvailibilityInvalid1() : void
+  {
+    $fen = new FEN;
+    $this->expectException(ParseException::class);
+    $fen->castling_availability('x');
+  }
+
+  public function testSetCastlingAvailibilityInvalid2() : void
+  {
+    $fen = new FEN;
+    $this->expectException(ParseException::class);
+    $fen->set_castling_availability('x', true);
+  }
+
   public function testCastlingAvailibility() : void
   {
     $fen = new FEN;
@@ -183,6 +197,7 @@ final class FENTest extends TestCase
 
     $fen->set_board(' rnbqkbnr  /pp 1ppppp/8/2p5/4P3/5N2/PPPP1PPP/ RNBQKB1R ');
     $this->assertEquals('rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R', $fen->board());
+    $this->assertEquals('rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R', $fen->board(true)->export());
 
     $this->assertEquals('p', $fen->square('b7'));
     $this->assertEquals('', $fen->square('b5'));
@@ -219,7 +234,75 @@ final class FENTest extends TestCase
     $this->assertEquals('c6', $fen->en_passant());
     $this->assertEquals(1, $fen->halfmove());
     $this->assertEquals(2, $fen->fullmove());
-
   }
+
+  public function testInvalidFen1() : void
+  {
+    $this->expectException(ParseException::class);
+    $fen = new Fen('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1 invalid');
+  }
+
+  public function testCheckDetection() : void
+  {
+    $fen = new FEN;
+    $this->assertFalse($fen->is_check());
+
+    $fen->set_active('b');
+    $this->assertFalse($fen->is_check());
+
+    $fen = new FEN;
+    $fen->set_board('8/8/8/8/8/8/3P4/4K3');
+    $this->assertFalse($fen->is_check());
+    $fen->set_board('8/8/8/8/8/8/3p4/4K3');
+    $this->assertTrue($fen->is_check());
+
+    $fen->set_board('8/8/8/8/8/8/2N5/4K3');
+    $this->assertFalse($fen->is_check());
+    $fen->set_board('8/8/8/8/8/8/2n5/4K3');
+    $this->assertTrue($fen->is_check());
+
+    $fen->set_board('4R3/8/8/8/8/8/8/4K3');
+    $this->assertFalse($fen->is_check());
+    $fen->set_board('4r3/8/8/8/8/8/8/4K3');
+    $this->assertTrue($fen->is_check());
+
+    $fen->set_board('8/8/8/B7/8/8/8/4K3');
+    $this->assertFalse($fen->is_check());
+    $fen->set_board('8/8/8/b7/8/8/8/4K3');
+    $this->assertTrue($fen->is_check());
+
+    $fen->set_board('8/8/8/8/7Q/8/8/4K3');
+    $this->assertFalse($fen->is_check());
+    $fen->set_board('8/8/8/8/7q/8/8/4K3');
+    $this->assertTrue($fen->is_check());
+
+    $fen->set_board('8/8/8/8/7q/8/5n2/4K3');
+    $this->assertFalse($fen->is_check());
+  }
+
+  public function testCheckTwoKings1() : void
+  {
+    $this->expectException(ChessException::class);
+    $fen = new FEN;
+    $fen->set_board('8/8/8/8/8/8/8/KK4kk');
+    $fen->is_check();
+  }
+
+  public function testCheckTwoKings2() : void
+  {
+    $this->expectException(ChessException::class);
+    $fen = new FEN;
+    $fen->set_board('8/8/8/8/8/8/8/KK4kk');
+    $fen->is_check();
+  }
+
+  public function testCheckAdjacentKings() : void
+  {
+    $this->expectException(ChessException::class);
+    $fen = new FEN;
+    $fen->set_board('8/8/8/8/8/8/8/Kk6');
+    $fen->is_check();
+  }
+
 
 }

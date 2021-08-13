@@ -78,7 +78,7 @@ class FEN
     * black pieces use lowercase ("pnbrqk"). Empty squares are noted using
     * digits 1 through 8 (the number of empty squares), and "/" separates ranks.
     */
-    public function board(bool $as_object = false) : string
+    public function board(bool $as_object = false)
     {
       if ($as_object) {
         return $this->board;
@@ -261,11 +261,67 @@ class FEN
 
     /**
     * Returns true if king of active color is in check.
-    * @codeCoverageIgnore
     */
     public function is_check() : bool
     {
-      throw new NotImplementedException;
+      if ($this->active() == 'w') {
+        $king_squares = $this->board->find('K', true);
+      } else {
+        $king_squares = $this->board->find('k', true);
+      }
+      if (sizeof($king_squares) != 1) {
+        throw new ChessException("There are " . sizeof($king_squares) . " kings on the board.");
+      }
+      $king_square = $king_squares[0];
+      $check_check_from = function ($piece) use ($king_square){
+        $attacker_squares = $this->board->attacked_squares($king_square, $this->my_piece($piece));
+        $attackers = $this->board->pieces_on_squares($attacker_squares);
+        return in_array($this->opponents_piece($piece), $attackers);
+      };
+
+      if ($check_check_from('K')) {
+        throw new ChessException("Kings are on adjacent squares.");
+      }
+
+      if ($check_check_from('P')) {
+        return true;
+      }
+
+      if ($check_check_from('N')) {
+        return true;
+      }
+
+      if ($check_check_from('B')) {
+        return true;
+      }
+
+      if ($check_check_from('R')) {
+        return true;
+      }
+
+      if ($check_check_from('Q')) {
+        return true;
+      }
+      return false;
+
+    }
+
+    private function my_piece($piece) : string
+    {
+      if ($this->active() == 'w') {
+        return strtoupper($piece);
+      } else {
+        return strtolower($piece);
+      }
+    }
+
+    private function opponents_piece($piece) : string
+    {
+      if ($this->active() == 'b') {
+        return strtoupper($piece);
+      } else {
+        return strtolower($piece);
+      }
     }
 
     /**

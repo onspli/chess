@@ -39,16 +39,130 @@ final class BoardTest extends TestCase
     $board->set_square('e4', 'P');
 
     $res = $board->find('P');
-    $this->assertEquals([new Square('a2'), new Square('e4')], $res);
+    $this->assertEqualsCanonicalizing(['a2', 'e4'], $res);
 
     $res = $board->find('N');
-    $this->assertEquals([new Square('e5')], $res);
+    $this->assertEqualsCanonicalizing(['e5'], $res);
 
     $res = $board->find('Q');
     $this->assertEquals([], $res);
 
     $res = $board->find('');
     $this->assertEquals(61, sizeof($res));
+  }
+
+  public function testAttackedSquaresByPawns() : void
+  {
+    $board = new Board;
+    $res = $board->attacked_squares('e4', 'P');
+    $this->assertEqualsCanonicalizing(['f5', 'd5'], $res);
+    $res = $board->attacked_squares('e5', 'p');
+    $this->assertEqualsCanonicalizing(['d4', 'f4'], $res);
+
+    $res = $board->attacked_squares('a2', 'P');
+    $this->assertEqualsCanonicalizing(['b3'], $res);
+
+    $res = $board->attacked_squares('h2', 'P');
+    $this->assertEqualsCanonicalizing(['g3'], $res);
+
+    $res = $board->attacked_squares('a2', 'p');
+    $this->assertEqualsCanonicalizing(['b1'], $res);
+
+    $res = $board->attacked_squares('h2', 'p');
+    $this->assertEqualsCanonicalizing(['g1'], $res);
+  }
+
+  public function testAttackedSquaresByKings() : void
+  {
+    $board = new Board;
+    $ref = ['a1', 'b1', 'c1', 'c2', 'c3', 'b3', 'a3', 'a2'];
+    $res = $board->attacked_squares('b2', 'k');
+    $this->assertEqualsCanonicalizing($ref, $res);
+
+    $res = $board->attacked_squares('b2', 'K');
+    $this->assertEqualsCanonicalizing($ref, $res);
+
+    $ref = ['a2', 'b1', 'b2'];
+    $res = $board->attacked_squares('a1', 'k');
+    $this->assertEqualsCanonicalizing($ref, $res);
+  }
+
+  public function testAttackedSquaresByKnights() : void
+  {
+    $board = new Board;
+    $ref = ['d2', 'c3', 'c5', 'd6', 'f6', 'g5', 'g3', 'f2'];
+    $res = $board->attacked_squares('e4', 'n');
+    $this->assertEqualsCanonicalizing($ref, $res);
+
+    $res = $board->attacked_squares('e4', 'N');
+    $this->assertEqualsCanonicalizing($ref, $res);
+  }
+
+  public function testAttackedSquaresByBishops() : void
+  {
+    $board = new Board;
+    $ref = ['f5', 'g6', 'h7', 'd3', 'c2', 'f3', 'g2', 'd5', 'c6', 'b7'];
+    $res = $board->attacked_squares('e4', 'b');
+    $this->assertEqualsCanonicalizing($ref, $res);
+
+    $res = $board->attacked_squares('e4', 'B');
+    $this->assertEqualsCanonicalizing($ref, $res);
+  }
+
+  public function testAttackedSquaresByRooks() : void
+  {
+    $board = new Board;
+    $ref = ['e5', 'e6', 'e7', 'e3', 'e2', 'f4', 'g4', 'h4', 'd4', 'c4', 'b4', 'a4'];
+    $res = $board->attacked_squares('e4', 'r');
+    $this->assertEqualsCanonicalizing($ref, $res);
+
+    $res = $board->attacked_squares('e4', 'R');
+    $this->assertEqualsCanonicalizing($ref, $res);
+  }
+
+  public function testAttackedSquaresByQueens() : void
+  {
+    $board = new Board;
+    $ref = ['f5', 'g6', 'h7', 'd3', 'c2', 'f3', 'g2', 'd5', 'c6', 'b7', 'e5', 'e6', 'e7', 'e3', 'e2', 'f4', 'g4', 'h4', 'd4', 'c4', 'b4', 'a4'];
+    $res = $board->attacked_squares('e4', 'q');
+    $this->assertEqualsCanonicalizing($ref, $res);
+
+    $res = $board->attacked_squares('e4', 'Q');
+    $this->assertEqualsCanonicalizing($ref, $res);
+  }
+
+  public function testParseException1() : void
+  {
+    $this->expectException(ParseException::class);
+    new Board('9/8/8/8/8/8/8/8');
+  }
+
+  public function testParseException2() : void
+  {
+    $this->expectException(ParseException::class);
+    new Board('8/8/8/8/8/8/8/8/8');
+  }
+
+  public function testValidatePiece() : void
+  {
+    $this->expectException(ParseException::class);
+    $board = new Board();
+    $board->set_square('e4', 'x');
+  }
+
+  public function testValidateSquare() : void
+  {
+    $this->expectException(\OutOfBoundsException::class);
+    $board = new Board();
+    $board->set_square('-', 'p');
+  }
+
+  public function testPiecesOnSquares() : void
+  {
+    $board = new Board;
+    $ref = ['R', 'N', 'N', 'r', 'r', 'K', 'P', 'P'];
+    $res = $board->pieces_on_squares(['a1', 'e4', 'b1', 'g1', 'a8', 'h8', 'e1', 'b2', 'c2']);
+    $this->assertEqualsCanonicalizing($ref, $res);
   }
 
 }

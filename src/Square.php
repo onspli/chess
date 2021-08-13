@@ -18,15 +18,15 @@ class Square
   private $file;
   private $alg = '-';
 
-  function __construct($file, $rank = null)
+  function __construct($file_or_alg, $rank = null)
   {
     if ($rank === null)
     {
-      $alg = $file;
+      $alg = $file_or_alg;
       if ($alg == '-')
       {
-        $file = 0;
-        $rank = 0;
+        $file = -1;
+        $rank = -1;
       }
       else
       {
@@ -35,17 +35,21 @@ class Square
         }
         $file = ord($alg[0]) - ord('a');
         $rank = intval($alg[1]) - 1;
+        if (!self::is_in_range($file, $rank)) {
+          throw new ParseException;
+        }
       }
-    }
-    else
-    {
-      $alg = chr(ord('a') + $file) . ($rank + 1);
+    } else {
+      $file = $file_or_alg;
     }
 
-    self::validate_range($file, $rank);
     $this->file = $file;
     $this->rank = $rank;
-    $this->alg = $alg;
+    if (self::is_in_range($file, $rank)) {
+      $this->alg = chr(ord('a') + $file) . ($rank + 1);
+    } else {
+      $this->alg = '-';
+    }
   }
 
   public function rank() : int
@@ -74,14 +78,71 @@ class Square
     return $this->alg == '-';
   }
 
-  private static function validate_range($file, $rank) : void
+  public function n()
+  {
+    return $this->rel(0, 1);
+  }
+
+  public function w()
+  {
+    return $this->rel(-1, 0);
+  }
+
+  public function s()
+  {
+    return $this->rel(0, -1);
+  }
+
+  public function e()
+  {
+    return $this->rel(1, 0);
+  }
+
+  public function nw()
+  {
+    return $this->rel(-1, 1);
+  }
+
+  public function ne()
+  {
+    return $this->rel(1, 1);
+  }
+
+  public function sw()
+  {
+    return $this->rel(-1, -1);
+  }
+
+  public function se()
+  {
+    return $this->rel(1, -1);
+  }
+
+  public function rel($east, $north)
+  {
+    return new Square($this->file() + $east, $this->rank() + $north);
+  }
+
+  public function add_to(array &$array, bool $as_object = false) : void
+  {
+    if ($this->is_null() == false) {
+      if ($as_object) {
+        $array[] = $this;
+      } else {
+        $array[] = $this->alg();
+      }
+    }
+  }
+
+  private static function is_in_range($file, $rank) : bool
   {
     if (intval($file) != $file || intval($rank) != $rank) {
-      throw new \OutOfBoundsException;
+      return false;
     }
     if ($file < 0 || $file >= 8 || $rank < 0 || $rank >= 8) {
-      throw new \OutOfBoundsException;
+      return false;
     }
+    return true;
   }
 
 }
