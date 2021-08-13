@@ -152,19 +152,25 @@ class FEN
       if (!in_array($type, ['K', 'Q', 'k', 'q'])) {
         throw new ParseException("Invalid castling type '$type'.");
       }
-      if ($this->castling_availability($type) === $avalability) return;
+      if ($this->castling_availability($type) === $avalability) {
+        return;
+      }
 
       // convert str to array of available types
       if ($this->castling == '-') {
         $castling = [];
       }
-      else $castling = str_split($this->castling);
+      else {
+        $castling = str_split($this->castling);
+      }
 
       // add or remove castling availability for type
       if ($avalability === false) {
         $castling = array_diff($castling, [$type]);
       }
-      else $castling = array_merge($castling, [$type]);
+      else {
+        $castling = array_merge($castling, [$type]);
+      }
 
       // sort and convert array back to string
       sort($castling);
