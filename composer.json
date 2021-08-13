@@ -22,7 +22,7 @@
     },
     "scripts": {
         "test": [
-          "phpunit --testdox --coverage-html build/logs/coverage --coverage-clover build/logs/clover.xml --whitelist src tests"
+          "phpunit --testdox --coverage-text --coverage-html build/logs/coverage --coverage-clover build/logs/clover.xml --whitelist src tests"
         ],
         "coverall": [
           "php-coveralls -v"

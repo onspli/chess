@@ -9,12 +9,18 @@ use Onspli\Chess;
 final class BoardTest extends TestCase
 {
 
-  public function testInitialization() : void
+  public function testInitializationAndExport() : void
   {
     $board = new Board;
     $this->assertEquals('', $board->square('e4'));
     $board->set_square('e4', 'P');
     $this->assertEquals('P', $board->square('e4'));
+
+    $board = new Board;
+    $this->assertEquals('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR', $board->export());
+
+    $board = new Board('rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR');
+    $this->assertEquals('rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR', $board->export());
   }
 
   public function testNothrow() : void
@@ -24,9 +30,10 @@ final class BoardTest extends TestCase
     $this->assertEquals('', $board->square_nothrow('xx'));
   }
 
+
   public function testFind() : void
   {
-    $board = new Board;
+    $board = new Board('8/8/8/8/8/8/8/8');
     $board->set_square('e5', 'N');
     $board->set_square('a2', 'P');
     $board->set_square('e4', 'P');

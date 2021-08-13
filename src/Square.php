@@ -30,7 +30,9 @@ class Square
       }
       else
       {
-        if (strlen($alg) != 2) throw new ParseException;
+        if (strlen($alg) != 2) {
+          throw new ParseException;
+        }
         $file = ord($alg[0]) - ord('a');
         $rank = intval($alg[1]) - 1;
       }
@@ -48,13 +50,17 @@ class Square
 
   public function rank() : int
   {
-    if ($this->is_null()) throw new \OutOfBoundsException;
+    if ($this->is_null()) {
+      throw new \OutOfBoundsException;
+    }
     return $this->rank;
   }
 
   public function file() : int
   {
-    if ($this->is_null()) throw new \OutOfBoundsException;
+    if ($this->is_null()) {
+      throw new \OutOfBoundsException;
+    }
     return $this->file;
   }
 
@@ -70,8 +76,12 @@ class Square
 
   private static function validate_range($file, $rank) : void
   {
-    if (intval($file) != $file || intval($rank) != $rank) throw new \OutOfBoundsException;
-    if ($file < 0 || $file >= 8 || $rank < 0 || $rank >= 8) throw new \OutOfBoundsException;
+    if (intval($file) != $file || intval($rank) != $rank) {
+      throw new \OutOfBoundsException;
+    }
+    if ($file < 0 || $file >= 8 || $rank < 0 || $rank >= 8) {
+      throw new \OutOfBoundsException;
+    }
   }
 
 }

@@ -184,19 +184,19 @@ final class FENTest extends TestCase
     $fen->set_board(' rnbqkbnr  /pp 1ppppp/8/2p5/4P3/5N2/PPPP1PPP/ RNBQKB1R ');
     $this->assertEquals('rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R', $fen->board());
 
-    $this->assertEquals('p', $fen->piece('b7'));
-    $this->assertEquals('', $fen->piece('b5'));
-    $this->assertEquals('p', $fen->piece('c5'));
-    $this->assertEquals('', $fen->piece('d5'));
-    $this->assertEquals('P', $fen->piece('e4'));
-    $this->assertEquals('R', $fen->piece('a1'));
+    $this->assertEquals('p', $fen->square('b7'));
+    $this->assertEquals('', $fen->square('b5'));
+    $this->assertEquals('p', $fen->square('c5'));
+    $this->assertEquals('', $fen->square('d5'));
+    $this->assertEquals('P', $fen->square('e4'));
+    $this->assertEquals('R', $fen->square('a1'));
 
-    $fen->set_piece('c5', '');
-    $this->assertEquals('', $fen->piece('c5'));
+    $fen->set_square('c5', '');
+    $this->assertEquals('', $fen->square('c5'));
     $this->assertEquals('rnbqkbnr/pp1ppppp/8/8/4P3/5N2/PPPP1PPP/RNBQKB1R', $fen->board());
 
-    $fen->set_piece('c5', 'R');
-    $this->assertEquals('R', $fen->piece('c5'));
+    $fen->set_square('c5', 'R');
+    $this->assertEquals('R', $fen->square('c5'));
     $this->assertEquals('rnbqkbnr/pp1ppppp/8/2R5/4P3/5N2/PPPP1PPP/RNBQKB1R', $fen->board());
   }
 

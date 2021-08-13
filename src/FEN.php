@@ -21,7 +21,9 @@ class FEN
         $fen = trim($fen);
         $fen = preg_replace('/\s+/', ' ', $fen);
         $parts = explode(' ', $fen);
-        if (sizeof($parts) != 6) throw new ParseException("FEN has " . sizeof($parts) . " fields. It must have 6 fields.");
+        if (sizeof($parts) != 6) {
+          throw new ParseException("FEN has " . sizeof($parts) . " fields. It must have 6 fields.");
+        }
 
         $this->set_board($parts[0]);
         $this->set_active($parts[1]);
@@ -54,8 +56,10 @@ class FEN
       $preview = '';
       for ($rank = 8; $rank >= 1; $rank --) {
         for ($file = 1; $file <= 8; $file ++) {
-          $piece = $this->piece(new Square($file, $rank));
-          if (!$piece) $piece = '.';
+          $piece = $this->square(new Square($file, $rank));
+          if (!$piece) {
+            $piece = '.';
+          }
           $preview .= $piece;
         }
         $preview .= "\n";
@@ -74,64 +78,26 @@ class FEN
     * black pieces use lowercase ("pnbrqk"). Empty squares are noted using
     * digits 1 through 8 (the number of empty squares), and "/" separates ranks.
     */
-    public function board() : string
+    public function board(bool $as_object = false) : string
     {
-      $pieces = '';
-      for ($rank = 7; $rank >= 0; $rank --) {
-        $space = 0;
-        for ($file = 0; $file < 8; $file ++) {
-          $piece = $this->piece(new Square($file, $rank));
-          if (!$piece) {
-            $space++;
-          } else {
-            if ($space > 0) $pieces .= $space;
-            $pieces .= $piece;
-            $space = 0;
-          }
-        }
-        if ($space > 0) $pieces .= $space;
-        if ($rank > 0) $pieces .= '/';
+      if ($as_object) {
+        return $this->board;
       }
-      return $pieces;
+      return $this->board->export();
     }
 
-    public function set_board(string $pieces) : void
+    public function set_board($pieces) : void
     {
-      $pieces = trim($pieces);
-      $pieces = preg_replace('/\s+/', '', $pieces);
-      $ranks = explode('/', $pieces);
-      if (sizeof($ranks) != 8) throw new ParseException("Wrong number of ranks " . sizeof($ranks) . ".");
-
-      $board = new Board;
-
-      $rank = 7;
-      foreach ($ranks as $rank_pieces)
-      {
-        $file = 0;
-        foreach (str_split($rank_pieces) as $piece)
-        {
-          if (is_numeric($piece))
-          {
-            $file += intval($piece);
-          }
-          else
-          {
-            $board->set_square(new Square($file, $rank), $piece);
-            $file += 1;
-          }
-          if ($file > 8) throw new ParseException("Too many pieces on rank.");
-        }
-        $rank -= 1;
-      }
+      $board = new Board($pieces);
       $this->board = $board;
     }
 
-    public function piece($square) : string
+    public function square($square) : string
     {
       return $this->board->square($square);
     }
 
-    public function set_piece($square, string $piece) : void
+    public function set_square($square, string $piece) : void
     {
       $this->board->set_square($square, $piece);
     }
@@ -146,7 +112,9 @@ class FEN
 
     public function set_active(string $color) : void
     {
-      if ($color != 'w' && $color != 'b') throw new ParseException("Active color must be either 'w' or 'b', it is '$color'.");
+      if ($color != 'w' && $color != 'b') {
+        throw new ParseException("Active color must be either 'w' or 'b', it is '$color'.");
+      }
       $this->active = $color;
     }
 
@@ -164,29 +132,38 @@ class FEN
 
     public function set_castling(string $castling) : void
     {
-      if (!in_array($castling, ['-', 'KQkq', 'KQk', 'KQq', 'KQ', 'Kkq', 'Kk', 'Kq', 'K', 'Qkq', 'Qk', 'Qq', 'Q', 'kq', 'k', 'q']))
+      if (!in_array($castling, ['-', 'KQkq', 'KQk', 'KQq', 'KQ', 'Kkq', 'Kk', 'Kq', 'K', 'Qkq', 'Qk', 'Qq', 'Q', 'kq', 'k', 'q'])) {
         throw new ParseException("Invalid castling string '$castling'.");
+      }
       $this->castling = $castling;
     }
 
     public function castling_availability(string $type) : bool
     {
-      if (!in_array($type, ['K', 'Q', 'k', 'q'])) throw new ParseException("Invalid castling type '$type'.");
+      if (!in_array($type, ['K', 'Q', 'k', 'q'])) {
+        throw new ParseException("Invalid castling type '$type'.");
+      }
       $castling = str_split($this->castling);
       return in_array($type, $castling);
     }
 
     public function set_castling_availability(string $type, bool $avalability) : void
     {
-      if (!in_array($type, ['K', 'Q', 'k', 'q'])) throw new ParseException("Invalid castling type '$type'.");
+      if (!in_array($type, ['K', 'Q', 'k', 'q'])) {
+        throw new ParseException("Invalid castling type '$type'.");
+      }
       if ($this->castling_availability($type) === $avalability) return;
 
       // convert str to array of available types
-      if ($this->castling == '-') $castling = [];
+      if ($this->castling == '-') {
+        $castling = [];
+      }
       else $castling = str_split($this->castling);
 
       // add or remove castling availability for type
-      if ($avalability === false) $castling = array_diff($castling, [$type]);
+      if ($avalability === false) {
+        $castling = array_diff($castling, [$type]);
+      }
       else $castling = array_merge($castling, [$type]);
 
       // sort and convert array back to string
@@ -227,7 +204,9 @@ class FEN
 
     public function set_halfmove($halfmove) : void
     {
-      if (intval($halfmove) != $halfmove || $halfmove < 0) throw new ParseException("Halfmove clock '$halfmove' must be non-negative integer.");
+      if (intval($halfmove) != $halfmove || $halfmove < 0) {
+        throw new ParseException("Halfmove clock '$halfmove' must be non-negative integer.");
+      }
       $this->halfmove = $halfmove;
     }
 
@@ -242,7 +221,9 @@ class FEN
 
     public function set_fullmove($fullmove) : void
     {
-      if (intval($fullmove) != $fullmove || $fullmove <= 0) throw new ParseException("Fullmove number '$fullmove' must be positive integer.");
+      if (intval($fullmove) != $fullmove || $fullmove <= 0) {
+        throw new ParseException("Fullmove number '$fullmove' must be positive integer.");
+      }
       $this->fullmove = $fullmove;
     }
 
