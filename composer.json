@@ -22,10 +22,14 @@
     },
     "scripts": {
         "test": [
-          "phpunit --testdox --coverage-text --coverage-html build/logs/coverage --coverage-clover build/logs/clover.xml --whitelist src tests"
+          "phpunit --testdox --coverage-text --coverage-html build/logs/coverage --coverage-clover build/logs/clover.xml --whitelist src tests",
+          "php build/generate_readme.php"
         ],
         "coverall": [
           "php-coveralls -v"
+        ],
+        "docs": [
+          "php build/generate_readme.php"
         ]
     },
     "archive": {

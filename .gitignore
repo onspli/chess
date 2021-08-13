@@ -2,4 +2,4 @@ vendor
 composer.lock
 www
 tmp
-build
+build/logs

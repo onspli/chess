@@ -54,8 +54,8 @@ class FEN
     public function preview() : string
     {
       $preview = '';
-      for ($rank = 8; $rank >= 1; $rank --) {
-        for ($file = 1; $file <= 8; $file ++) {
+      for ($rank = 7; $rank >= 0; $rank --) {
+        for ($file = 0; $file <= 7; $file ++) {
           $piece = $this->square(new Square($file, $rank));
           if (!$piece) {
             $piece = '.';
