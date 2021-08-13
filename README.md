@@ -38,7 +38,6 @@ pppppppp
 ........
 PPPPPPPP
 RNBQKBNR
-
 */
 ```
 
@@ -69,7 +68,6 @@ pp.ppppp
 ........
 PPPP.PPP
 RNBQKBNR
-
 */
 ```
 
@@ -97,6 +95,73 @@ pp.ppppp
 ........
 PPPP.PPP
 RNBQKBNR
-
 */
+```
+
+Perform moves:
+``` php
+$fen = new Onspli\Chess\FEN;
+echo($fen->preview());
+/*
+rnbqkbnr
+pppppppp
+........
+........
+........
+........
+PPPPPPPP
+RNBQKBNR
+*/
+$fen->move('e4');
+$fen->move('e5');
+$fen->move('Nf3');
+$fen->move('Nc6');
+echo($fen->preview());
+/*
+r.bqkbnr
+pppp.ppp
+..n.....
+....p...
+....P...
+.....N..
+PPPP.PPP
+RNBQKB.R
+*/
+echo($fen->export());
+// r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3
+```
+
+Test check:
+``` php
+$fen = new Onspli\Chess\FEN;
+$fen->set_active('w');
+$fen->set_board('1q5k/8/8/8/8/8/8/K7');
+echo($fen->preview());
+/*
+.q.....k
+........
+........
+........
+........
+........
+........
+K.......
+*/
+echo($fen->is_check() ? 'true' : 'false');
+// false
+$fen->move('Ka2');
+$fen->move('Qa8');
+echo($fen->preview());
+/*
+q......k
+........
+........
+........
+........
+........
+K.......
+........
+*/
+echo($fen->is_check() ? 'true' : 'false');
+// true
 ```

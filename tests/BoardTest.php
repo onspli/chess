@@ -1,7 +1,6 @@
 <?php
 namespace Onspli\Chess;
 use PHPUnit\Framework\TestCase;
-use Onspli\Chess;
 
 /**
  * @covers Onspli\Chess\Board
@@ -163,6 +162,87 @@ final class BoardTest extends TestCase
     $ref = ['R', 'N', 'N', 'r', 'r', 'K', 'P', 'P'];
     $res = $board->pieces_on_squares(['a1', 'e4', 'b1', 'g1', 'a8', 'h8', 'e1', 'b2', 'c2']);
     $this->assertEqualsCanonicalizing($ref, $res);
+  }
+
+  public function testCopy() : void
+  {
+    $board1 = new Board('rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR');
+    $board2 = $board1->copy();
+
+    $this->assertEquals($board1->export(), $board2->export());
+    $board2->set_square('a1', '');
+    $this->assertNotEquals($board1->export(), $board2->export());
+  }
+
+  public function testInvalidColor() : void
+  {
+    $board = new Board();
+    $this->expectException(ParseException::class);
+    $board->is_check('x');
+  }
+
+  public function testCheckDetection() : void
+  {
+    $board = new Board;
+    $this->assertFalse($board->is_check('w'));
+    $this->assertFalse($board->is_check('b'));
+
+    $board = new Board('8/8/8/8/8/8/3P4/4K3');
+    $this->assertFalse($board->is_check('w'));
+    $board = new Board('8/8/8/8/8/8/3p4/4K3');
+    $this->assertTrue($board->is_check('w'));
+
+    $board = new Board('8/8/8/8/8/8/2N5/4K3');
+    $this->assertFalse($board->is_check('w'));
+    $board = new Board('8/8/8/8/8/8/2n5/4K3');
+    $this->assertTrue($board->is_check('w'));
+
+    $board = new Board('4R3/8/8/8/8/8/8/4K3');
+    $this->assertFalse($board->is_check('w'));
+    $board = new Board('4r3/8/8/8/8/8/8/4K3');
+    $this->assertTrue($board->is_check('w'));
+
+    $board = new Board('8/8/8/B7/8/8/8/4K3');
+    $this->assertFalse($board->is_check('w'));
+    $board = new Board('8/8/8/b7/8/8/8/4K3');
+    $this->assertTrue($board->is_check('w'));
+
+    $board = new Board('8/8/8/8/7Q/8/8/4K3');
+    $this->assertFalse($board->is_check('w'));
+    $board = new Board('8/8/8/8/7q/8/8/4K3');
+    $this->assertTrue($board->is_check('w'));
+
+    $board = new Board('8/8/8/8/7q/8/5n2/4K3');
+    $this->assertFalse($board->is_check('w'));
+  }
+
+  public function testCheckTwoKings1() : void
+  {
+    $this->expectException(ChessException::class);
+    $board = new Board('8/8/8/8/8/8/8/KK4kk');
+    $board->is_check('w');
+  }
+
+  public function testCheckTwoKings2() : void
+  {
+    $this->expectException(ChessException::class);
+    $board = new Board('8/8/8/8/8/8/8/KK4kk');
+    $board->is_check('w');
+  }
+
+  public function testCheckAdjacentKings() : void
+  {
+    $this->expectException(ChessException::class);
+    $board = new Board('8/8/8/8/8/8/8/Kk6');
+    $board->is_check('w');
+  }
+
+  public function testPreviewDoesNotThrow() : void
+  {
+    $board = new Board;
+    $board->preview();
+    $this->assertNull(null);
+
   }
 
 }

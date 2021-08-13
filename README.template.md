@@ -51,3 +51,28 @@ $fen->set_fullmove(2);
 echo($fen->export());
 echo($fen->preview());
 ```
+
+Perform moves:
+``` php
+$fen = new Onspli\Chess\FEN;
+echo($fen->preview());
+$fen->move('e4');
+$fen->move('e5');
+$fen->move('Nf3');
+$fen->move('Nc6');
+echo($fen->preview());
+echo($fen->export());
+```
+
+Test check:
+``` php
+$fen = new Onspli\Chess\FEN;
+$fen->set_active('w');
+$fen->set_board('1q5k/8/8/8/8/8/8/K7');
+echo($fen->preview());
+echo($fen->is_check() ? 'true' : 'false');
+$fen->move('Ka2');
+$fen->move('Qa8');
+echo($fen->preview());
+echo($fen->is_check() ? 'true' : 'false');
+```

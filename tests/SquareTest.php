@@ -13,6 +13,9 @@ final class SquareTest extends TestCase
     $s = new Square('-');
     $this->assertTrue($s->is_null());
 
+    $s = new Square;
+    $this->assertTrue($s->is_null());
+
     $s = new Square('e4');
     $this->assertFalse($s->is_null());
     $this->assertEquals('e4', $s->alg());

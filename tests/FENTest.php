@@ -62,6 +62,7 @@ final class FENTest extends TestCase
     $this->assertEquals('-', $fen->en_passant());
     $fen->set_en_passant('e3');
     $this->assertEquals('e3', $fen->en_passant());
+    $this->assertEquals('e3', $fen->en_passant(true)->alg());
     $fen->set_en_passant('-');
     $this->assertEquals('-', $fen->en_passant());
   }
@@ -234,6 +235,9 @@ final class FENTest extends TestCase
     $this->assertEquals('c6', $fen->en_passant());
     $this->assertEquals(1, $fen->halfmove());
     $this->assertEquals(2, $fen->fullmove());
+
+    // just assert it doesnt throw exceptions
+    $fen->preview();
   }
 
   public function testInvalidFen1() : void
@@ -246,63 +250,110 @@ final class FENTest extends TestCase
   {
     $fen = new FEN;
     $this->assertFalse($fen->is_check());
-
     $fen->set_active('b');
     $this->assertFalse($fen->is_check());
 
-    $fen = new FEN;
-    $fen->set_board('8/8/8/8/8/8/3P4/4K3');
-    $this->assertFalse($fen->is_check());
-    $fen->set_board('8/8/8/8/8/8/3p4/4K3');
+    $fen->set_board('7k/6P1/8/8/8/8/3P4/4K3');
     $this->assertTrue($fen->is_check());
-
-    $fen->set_board('8/8/8/8/8/8/2N5/4K3');
-    $this->assertFalse($fen->is_check());
-    $fen->set_board('8/8/8/8/8/8/2n5/4K3');
-    $this->assertTrue($fen->is_check());
-
-    $fen->set_board('4R3/8/8/8/8/8/8/4K3');
-    $this->assertFalse($fen->is_check());
-    $fen->set_board('4r3/8/8/8/8/8/8/4K3');
-    $this->assertTrue($fen->is_check());
-
-    $fen->set_board('8/8/8/B7/8/8/8/4K3');
-    $this->assertFalse($fen->is_check());
-    $fen->set_board('8/8/8/b7/8/8/8/4K3');
-    $this->assertTrue($fen->is_check());
-
-    $fen->set_board('8/8/8/8/7Q/8/8/4K3');
-    $this->assertFalse($fen->is_check());
-    $fen->set_board('8/8/8/8/7q/8/8/4K3');
-    $this->assertTrue($fen->is_check());
-
-    $fen->set_board('8/8/8/8/7q/8/5n2/4K3');
+    $fen->set_active('w');
     $this->assertFalse($fen->is_check());
   }
 
-  public function testCheckTwoKings1() : void
+  public function testMove() : void
   {
-    $this->expectException(ChessException::class);
     $fen = new FEN;
-    $fen->set_board('8/8/8/8/8/8/8/KK4kk');
-    $fen->is_check();
+    $fen->move('e4');
+    $this->assertEquals('rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1', $fen->export());
+    $fen->move('e5');
+    $this->assertEquals('rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq e6 0 2', $fen->export());
+    $fen->move('a3');
+    $this->assertEquals('rnbqkbnr/pppp1ppp/8/4p3/4P3/P7/1PPP1PPP/RNBQKBNR b KQkq - 0 2', $fen->export());
+    $fen->move('Nc6');
+    $this->assertEquals('r1bqkbnr/pppp1ppp/2n5/4p3/4P3/P7/1PPP1PPP/RNBQKBNR w KQkq - 1 3', $fen->export());
+
   }
 
-  public function testCheckTwoKings2() : void
+  public function testMoveToCheck() : void
   {
-    $this->expectException(ChessException::class);
     $fen = new FEN;
-    $fen->set_board('8/8/8/8/8/8/8/KK4kk');
-    $fen->is_check();
+    $fen->set_active('w');
+    $fen->set_board('1q5k/8/8/8/8/8/8/K7');
+    $this->expectException(ChessException::class);
+    $fen->move('Kb1');
   }
 
-  public function testCheckAdjacentKings() : void
+  public function testMoveTargetNotReachableByPiece() : void
   {
-    $this->expectException(ChessException::class);
     $fen = new FEN;
-    $fen->set_board('8/8/8/8/8/8/8/Kk6');
-    $fen->is_check();
+    $fen->set_active('w');
+    $fen->set_board('1q5k/8/8/8/8/8/8/K7');
+    $this->expectException(ChessException::class);
+    $fen->move('Ka3');
   }
 
+  public function testPromotion() : void
+  {
+    $fen = new FEN;
+    $fen->set_active('w');
+    $fen->set_board('1q5k/P7/8/8/8/8/8/K7');
+    $fen->move('a8=Q');
+    $this->assertEquals('Qq5k/8/8/8/8/8/8/K7', $fen->board());
+  }
+
+  public function testAmbiguousMoveException() : void {
+    $fen = new FEN;
+    $fen->set_active('w');
+    $fen->set_board('1q5k/8/8/8/8/8/N3N3/K7');
+    $this->expectException(ChessException::class);
+    $fen->move('Nc3');
+  }
+
+  public function testAmbiguousMoveByFile() : void {
+    $fen = new FEN;
+    $fen->set_active('w');
+    $fen->set_board('1q5k/8/8/8/8/8/N3N3/K7');
+    $fen->move('Nac3');
+    $this->assertEquals('1q5k/8/8/8/8/2N5/4N3/K7', $fen->board());
+  }
+
+  public function testAmbiguousMoveByRank() : void {
+    $fen = new FEN;
+    $fen->set_active('w');
+    $fen->set_board('1q5k/8/8/8/4N3/8/4N3/K7');
+    $fen->move('N4c3');
+    $this->assertEquals('1q5k/8/8/8/8/2N5/4N3/K7', $fen->board());
+  }
+
+  public function testCaptureOnEmptySquareException() : void
+  {
+    $fen = new FEN;
+    $fen->set_active('w');
+    $fen->set_board('1q5k/8/8/8/8/8/8/K7');
+    $this->expectException(ChessException::class);
+    $fen->move('Kxa2');
+  }
+
+  public function testCaptureEnPassant() : void
+  {
+    $fen = new FEN('rnbqkbnr/ppp1pppp/8/8/3pP3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1');
+    $fen->move('dxe3');
+    $this->assertEquals('rnbqkbnr/ppp1pppp/8/8/8/4p3/PPPP1PPP/RNBQKBNR', $fen->board());
+
+    $fen = new FEN('rnbqkbnr/pppp1ppp/8/3Pp3/8/8/PPP1PPPP/RNBQKBNR w KQkq e6 0 1');
+    $fen->move('dxe6');
+    $this->assertEquals('rnbqkbnr/pppp1ppp/4P3/8/8/8/PPP1PPPP/RNBQKBNR', $fen->board());
+  }
+
+  public function testTargetSquareOccupied() : void {
+    $fen = new FEN;
+    $this->expectException(ChessException::class);
+    $fen->move('Ra2');
+  }
+
+  public function testCannotCaptureOwnPiece() : void {
+    $fen = new FEN;
+    $this->expectException(ChessException::class);
+    $fen->move('Rxa2');
+  }
 
 }

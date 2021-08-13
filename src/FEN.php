@@ -49,22 +49,10 @@ class FEN
 
     /**
     * Preview of the board in ASCII graphics.
-    * @codeCoverageIgnore
     */
     public function preview() : string
     {
-      $preview = '';
-      for ($rank = 7; $rank >= 0; $rank --) {
-        for ($file = 0; $file <= 7; $file ++) {
-          $piece = $this->square(new Square($file, $rank));
-          if (!$piece) {
-            $piece = '.';
-          }
-          $preview .= $piece;
-        }
-        $preview .= "\n";
-      }
-      return $preview;
+      return $this->board->preview();
     }
 
     /**
@@ -86,9 +74,11 @@ class FEN
       return $this->board->export();
     }
 
-    public function set_board($pieces) : void
+    public function set_board($board) : void
     {
-      $board = new Board($pieces);
+      if (is_string($board)) {
+        $board = new Board($board);
+      }
       $this->board = $board;
     }
 
@@ -185,14 +175,19 @@ class FEN
     * this is the position "behind" the pawn. This is recorded regardless of
     * whether there is a pawn in position to make an en passant capture.
     */
-    public function en_passant() : string
+    public function en_passant(bool $as_object = false)
     {
+      if ($as_object) {
+        return $this->en_passant;
+      }
       return $this->en_passant->alg();
     }
 
-    public function set_en_passant(string $square) : void
+    public function set_en_passant($square) : void
     {
-      $square = new Square($square);
+      if (is_string($square)) {
+        $square = new Square($square);
+      }
       if ($square->is_null() == false && $square->rank() != 2 && $square->rank() != 5) {
         throw new ParseException("Invalid En passant square '".$square->alg()."'.");
       }
@@ -264,64 +259,22 @@ class FEN
     */
     public function is_check() : bool
     {
-      if ($this->active() == 'w') {
-        $king_squares = $this->board->find('K', true);
-      } else {
-        $king_squares = $this->board->find('k', true);
-      }
-      if (sizeof($king_squares) != 1) {
-        throw new ChessException("There are " . sizeof($king_squares) . " kings on the board.");
-      }
-      $king_square = $king_squares[0];
-      $check_check_from = function ($piece) use ($king_square){
-        $attacker_squares = $this->board->attacked_squares($king_square, $this->my_piece($piece));
-        $attackers = $this->board->pieces_on_squares($attacker_squares);
-        return in_array($this->opponents_piece($piece), $attackers);
-      };
-
-      if ($check_check_from('K')) {
-        throw new ChessException("Kings are on adjacent squares.");
-      }
-
-      if ($check_check_from('P')) {
-        return true;
-      }
-
-      if ($check_check_from('N')) {
-        return true;
-      }
-
-      if ($check_check_from('B')) {
-        return true;
-      }
-
-      if ($check_check_from('R')) {
-        return true;
-      }
-
-      if ($check_check_from('Q')) {
-        return true;
-      }
-      return false;
-
+      return $this->board->is_check($this->active());
     }
 
-    private function my_piece($piece) : string
+    private function active_piece(string $piece) : string
     {
-      if ($this->active() == 'w') {
-        return strtoupper($piece);
-      } else {
-        return strtolower($piece);
-      }
+      return Board::active_piece($piece, $this->active());
     }
 
-    private function opponents_piece($piece) : string
+    private function opponents_piece(string $piece) : string
     {
-      if ($this->active() == 'b') {
-        return strtoupper($piece);
-      } else {
-        return strtolower($piece);
-      }
+      return Board::opponents_piece($piece, $this->active());
+    }
+
+    private function is_active_piece(string $piece) : bool
+    {
+      return $this->active_piece($piece) == $piece;
     }
 
     /**
@@ -335,11 +288,116 @@ class FEN
 
     /**
     * Perform a move.
-    * @codeCoverageIgnore
     */
     public function move(string $move) : void
     {
-      throw new NotImplementedException;
+      $move = new Move($move);
+      if ($move->castling()) {
+        throw new NotImplementedException;
+      }
+
+      $target = $move->target(true);
+      $target_piece = $this->square($target);
+
+      if ($move->capture() && $target_piece == '' && !($target->alg() == $this->en_passant() && $move->piece() == 'P')) {
+        throw new ChessException("Cannot capture on empty square.");
+      }
+
+      if (!$move->capture() && $target_piece) {
+        throw new ChessException("Target square is occupied.");
+      }
+
+      if ($target_piece && $this->is_active_piece($target_piece)) {
+        throw new ChessException("Cannot capture player's own piece.");
+      }
+
+      // Do we need this check? It is already checked by move parser.
+      if ($move->piece() == 'P' && ($target->rank() == 0 || $target->rank() == 7) && !$move->promotion()) {
+        throw new ParseException("Promotion not specified.");
+      }
+
+      $move_piece = $this->active_piece($move->piece());
+
+      if ($move_piece == 'P' && !$move->capture()) {
+        $origin_candidates = [$target->rel(0, -1)];
+        if ($target->rank() == 3 && $this->square($target->rel(0, -1)) == '') {
+          $origin_candidates[] = $target->rel(0, -2);
+        }
+      } else if($move_piece == 'p' && !$move->capture()) {
+        $origin_candidates = [$target->rel(0, 1)];
+        if ($target->rank() == 4 && $this->square($target->rel(0, 1)) == '') {
+          $origin_candidates[] = $target->rel(0, 2);
+        }
+      } else {
+        $origin_candidates = $this->board->attacked_squares($target, $this->opponents_piece($move_piece), true);
+      }
+
+      $origin_candidates2 = [];
+      foreach ($origin_candidates as $origin_candidate) {
+        if ($this->square($origin_candidate) == $move_piece) {
+          if ($move->origin_file(true) !== null && $origin_candidate->file() != $move->origin_file(true)) {
+            continue;
+          }
+          if ($move->origin_rank(true) !== null && $origin_candidate->rank() != $move->origin_rank(true)) {
+            continue;
+          }
+          $origin_candidates2[] = $origin_candidate;
+        }
+      }
+
+      if (sizeof($origin_candidates2) == 0) {
+        throw new ChessException("Invalid move.");
+      }
+
+      if (sizeof($origin_candidates2) > 1) {
+        throw new ChessException("Ambiguous move.");
+      }
+
+      $origin = $origin_candidates2[0];
+      $new_board = $this->board->copy();
+
+      $new_board->set_square($origin, '');
+      if ($move->promotion()) {
+        $new_board->set_square($target, $move->promotion());
+      } else {
+        $new_board->set_square($target, $move_piece);
+        if ($target->alg() == $this->en_passant()) {
+          if ($this->active() == 'w') {
+            $new_board->set_square($target->rel(0, -1), '');
+          } else {
+            $new_board->set_square($target->rel(0, 1), '');
+          }
+        }
+      }
+
+      if ($new_board->is_check($this->active())) {
+        throw new ChessException('King is in check.');
+      }
+
+      $this->set_board($new_board);
+
+      if ($move->piece() == 'P' || $move->capture()) {
+        $this->set_halfmove(0);
+      } else {
+        $this->set_halfmove($this->halfmove() + 1);
+      }
+
+      if ($move_piece == 'P' && $origin->rank() == 1 && $target->rank() == 3) {
+        $this->set_en_passant($target->rel(0, -1));
+      } else if ($move_piece == 'p' && $origin->rank() == 6 && $target->rank() == 4) {
+        $this->set_en_passant($target->rel(0, 1));
+      } else {
+        $this->set_en_passant('-');
+      }
+
+      if ($this->active() == 'b') {
+        $this->set_fullmove($this->fullmove() + 1);
+        $this->set_active('w');
+      } else {
+        $this->set_active('b');
+      }
+
+
     }
 
 }

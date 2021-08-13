@@ -206,6 +206,85 @@ class Board
     return $arr;
   }
 
+  public function copy()
+  {
+    return new self($this->export());
+  }
+
+  public static function active_piece(string $piece, string $active) : string
+  {
+    self::validate_active($active);
+    self::validate_piece($piece);
+    if ($active == 'w') {
+      return strtoupper($piece);
+    } else {
+      return strtolower($piece);
+    }
+  }
+
+  public static function opponents_piece(string $piece, string $active) : string
+  {
+    self::validate_active($active);
+    self::validate_piece($piece);
+    if ($active == 'b') {
+      return strtoupper($piece);
+    } else {
+      return strtolower($piece);
+    }
+  }
+
+  /**
+  * Returns true if king of active color is in check.
+  */
+  public function is_check(string $active) : bool
+  {
+    self::validate_active($active);
+    $king_squares = $this->find(self::active_piece('K', $active), true);
+    if (sizeof($king_squares) != 1) {
+      throw new ChessException("There are " . sizeof($king_squares) . " kings on the board.");
+    }
+    $king_square = $king_squares[0];
+
+    $check_check_from = function ($piece) use ($king_square, $active) {
+      $attacker_squares = $this->attacked_squares($king_square, self::active_piece($piece, $active));
+      $attackers = $this->pieces_on_squares($attacker_squares);
+      return in_array(self::opponents_piece($piece, $active), $attackers);
+    };
+
+    if ($check_check_from('K')) {
+      throw new ChessException("Kings are on adjacent squares.");
+    }
+
+    if ($check_check_from('P')) {
+      return true;
+    }
+
+    if ($check_check_from('N')) {
+      return true;
+    }
+
+    if ($check_check_from('B')) {
+      return true;
+    }
+
+    if ($check_check_from('R')) {
+      return true;
+    }
+
+    if ($check_check_from('Q')) {
+      return true;
+    }
+    return false;
+
+  }
+
+  private static function validate_active(string $active) : void
+  {
+    if (!in_array($active, ['w', 'b'])) {
+      throw new ParseException;
+    }
+  }
+
   private static function validate_piece(string $piece) : void
   {
     if (!in_array($piece, ['', 'P', 'N', 'B', 'R', 'Q', 'K', 'p', 'n', 'b', 'r', 'q', 'k'])) {
@@ -221,6 +300,27 @@ class Board
     if ($square->is_null()) {
       throw new \OutOfBoundsException;
     }
+  }
+
+  /**
+  * Preview of the board in ASCII graphics.
+  */
+  public function preview() : string
+  {
+    $preview = '';
+    for ($rank = 7; $rank >= 0; $rank --) {
+      for ($file = 0; $file <= 7; $file ++) {
+        $piece = $this->square(new Square($file, $rank));
+        if (!$piece) {
+          $piece = '.';
+        }
+        $preview .= $piece;
+      }
+      if ($rank != 0) {
+        $preview .= "\n";
+      }
+    }
+    return $preview;
   }
 
 }

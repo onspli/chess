@@ -18,10 +18,13 @@ class Square
   private $file;
   private $alg = '-';
 
-  function __construct($file_or_alg, $rank = null)
+  function __construct($file_or_alg = null, $rank = null)
   {
     if ($rank === null)
     {
+      if ($file_or_alg === null) {
+        $file_or_alg = '-';
+      }
       $alg = $file_or_alg;
       if ($alg == '-')
       {
