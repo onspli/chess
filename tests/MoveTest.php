@@ -103,25 +103,25 @@ final class MoveTest extends TestCase
 
   public function testPromotionOfKnight() : void
   {
-    $this->expectException(ParseException::class);
+    $this->expectException(RulesException::class);
     new Move('Na8=Q');
   }
 
   public function testPromotionOnSeventhRank() : void
   {
-    $this->expectException(ParseException::class);
+    $this->expectException(RulesException::class);
     new Move('a7=Q');
   }
 
   public function testPromotionToPawn() : void
   {
-    $this->expectException(ParseException::class);
+    $this->expectException(RulesException::class);
     new Move('a8=P');
   }
 
   public function testNoPromotionOnLastRank() : void
   {
-    $this->expectException(ParseException::class);
+    $this->expectException(RulesException::class);
     new Move('a8');
   }
 

@@ -64,15 +64,15 @@ class Move
 
 
     if ($this->promotion() && $this->piece() != 'P') {
-      throw new ParseException;
+      throw new RulesException;
     }
 
     if ($this->promotion() && $this->target->rank() != 7 && $this->target->rank() != 0) {
-      throw new ParseException;
+      throw new RulesException;
     }
 
     if (!$this->promotion() && $this->piece() == 'P' && ($this->target->rank() == 7 || $this->target->rank() == 0)) {
-      throw new ParseException;
+      throw new RulesException;
     }
 
   }

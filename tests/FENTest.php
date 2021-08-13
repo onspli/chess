@@ -278,7 +278,7 @@ final class FENTest extends TestCase
     $fen = new FEN;
     $fen->set_active('w');
     $fen->set_board('1q5k/8/8/8/8/8/8/K7');
-    $this->expectException(ChessException::class);
+    $this->expectException(RulesException::class);
     $fen->move('Kb1');
   }
 
@@ -287,7 +287,7 @@ final class FENTest extends TestCase
     $fen = new FEN;
     $fen->set_active('w');
     $fen->set_board('1q5k/8/8/8/8/8/8/K7');
-    $this->expectException(ChessException::class);
+    $this->expectException(RulesException::class);
     $fen->move('Ka3');
   }
 
@@ -300,11 +300,20 @@ final class FENTest extends TestCase
     $this->assertEquals('Qq5k/8/8/8/8/8/8/K7', $fen->board());
   }
 
+  public function testPromotionNotSpecified() : void
+  {
+    $fen = new FEN;
+    $fen->set_active('w');
+    $fen->set_board('1q5k/P7/8/8/8/8/8/K7');
+    $this->expectException(RulesException::class);
+    $fen->move('a8');
+  }
+
   public function testAmbiguousMoveException() : void {
     $fen = new FEN;
     $fen->set_active('w');
     $fen->set_board('1q5k/8/8/8/8/8/N3N3/K7');
-    $this->expectException(ChessException::class);
+    $this->expectException(RulesException::class);
     $fen->move('Nc3');
   }
 
@@ -329,7 +338,7 @@ final class FENTest extends TestCase
     $fen = new FEN;
     $fen->set_active('w');
     $fen->set_board('1q5k/8/8/8/8/8/8/K7');
-    $this->expectException(ChessException::class);
+    $this->expectException(RulesException::class);
     $fen->move('Kxa2');
   }
 
@@ -344,16 +353,48 @@ final class FENTest extends TestCase
     $this->assertEquals('rnbqkbnr/pppp1ppp/4P3/8/8/8/PPP1PPPP/RNBQKBNR', $fen->board());
   }
 
-  public function testTargetSquareOccupied() : void {
+  public function testTargetSquareOccupied() : void
+  {
     $fen = new FEN;
-    $this->expectException(ChessException::class);
+    $this->expectException(RulesException::class);
     $fen->move('Ra2');
   }
 
-  public function testCannotCaptureOwnPiece() : void {
+  public function testCannotCaptureOwnPiece() : void
+  {
     $fen = new FEN;
-    $this->expectException(ChessException::class);
+    $this->expectException(RulesException::class);
     $fen->move('Rxa2');
+  }
+
+  public function testMovingRoocksDismissCastling() : void
+  {
+    $fen = new FEN;
+    $fen->move('a4');
+    $fen->move('a5');
+    $this->assertEquals('KQkq', $fen->castling());
+    $fen->move('Ra3');
+    $this->assertEquals('Kkq', $fen->castling());
+    $fen->move('Ra7');
+    $this->assertEquals('Kk', $fen->castling());
+    $fen->move('h4');
+    $fen->move('h5');
+    $fen->move('Rh2');
+    $this->assertEquals('k', $fen->castling());
+    $fen->move('Rh6');
+    $this->assertEquals('-', $fen->castling());
+  }
+
+  public function testBongcloud() : void
+  {
+    $fen = new FEN;
+    $fen->move('e4');
+    $fen->move('e5');
+    $this->assertEquals('KQkq', $fen->castling());
+    $fen->move('Ke2');
+    $this->assertEquals('kq', $fen->castling());
+    $fen->move('Ke7');
+    $this->assertEquals('-', $fen->castling());
   }
 
 }

@@ -241,7 +241,7 @@ class Board
     self::validate_active($active);
     $king_squares = $this->find(self::active_piece('K', $active), true);
     if (sizeof($king_squares) != 1) {
-      throw new ChessException("There are " . sizeof($king_squares) . " kings on the board.");
+      throw new RulesException("There are " . sizeof($king_squares) . " kings on the board.");
     }
     $king_square = $king_squares[0];
 
@@ -252,7 +252,7 @@ class Board
     };
 
     if ($check_check_from('K')) {
-      throw new ChessException("Kings are on adjacent squares.");
+      throw new RulesException("Kings are on adjacent squares.");
     }
 
     if ($check_check_from('P')) {

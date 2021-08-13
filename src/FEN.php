@@ -300,20 +300,15 @@ class FEN
       $target_piece = $this->square($target);
 
       if ($move->capture() && $target_piece == '' && !($target->alg() == $this->en_passant() && $move->piece() == 'P')) {
-        throw new ChessException("Cannot capture on empty square.");
+        throw new RulesException("Cannot capture on empty square.");
       }
 
       if (!$move->capture() && $target_piece) {
-        throw new ChessException("Target square is occupied.");
+        throw new RulesException("Target square is occupied.");
       }
 
       if ($target_piece && $this->is_active_piece($target_piece)) {
-        throw new ChessException("Cannot capture player's own piece.");
-      }
-
-      // Do we need this check? It is already checked by move parser.
-      if ($move->piece() == 'P' && ($target->rank() == 0 || $target->rank() == 7) && !$move->promotion()) {
-        throw new ParseException("Promotion not specified.");
+        throw new RulesException("Cannot capture player's own piece.");
       }
 
       $move_piece = $this->active_piece($move->piece());
@@ -346,11 +341,11 @@ class FEN
       }
 
       if (sizeof($origin_candidates2) == 0) {
-        throw new ChessException("Invalid move.");
+        throw new RulesException("Invalid move.");
       }
 
       if (sizeof($origin_candidates2) > 1) {
-        throw new ChessException("Ambiguous move.");
+        throw new RulesException("Ambiguous move.");
       }
 
       $origin = $origin_candidates2[0];
@@ -371,7 +366,7 @@ class FEN
       }
 
       if ($new_board->is_check($this->active())) {
-        throw new ChessException('King is in check.');
+        throw new RulesException('King is in check.');
       }
 
       $this->set_board($new_board);
@@ -388,6 +383,34 @@ class FEN
         $this->set_en_passant($target->rel(0, 1));
       } else {
         $this->set_en_passant('-');
+      }
+
+      if ($move->piece() == 'R') {
+        switch ($origin->alg()) {
+          case 'a1':
+            $this->set_castling_availability('Q', false);
+            break;
+          case 'h1':
+            $this->set_castling_availability('K', false);
+            break;
+          case 'a8':
+            $this->set_castling_availability('q', false);
+            break;
+          case 'h8':
+            $this->set_castling_availability('k', false);
+            break;
+        }
+      } else if ($move->piece() == 'K') {
+        switch ($origin->alg()) {
+          case 'e1':
+            $this->set_castling_availability('Q', false);
+            $this->set_castling_availability('K', false);
+            break;
+          case 'e8':
+            $this->set_castling_availability('q', false);
+            $this->set_castling_availability('k', false);
+            break;
+        }
       }
 
       if ($this->active() == 'b') {

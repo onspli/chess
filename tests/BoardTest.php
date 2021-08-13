@@ -218,21 +218,21 @@ final class BoardTest extends TestCase
 
   public function testCheckTwoKings1() : void
   {
-    $this->expectException(ChessException::class);
+    $this->expectException(RulesException::class);
     $board = new Board('8/8/8/8/8/8/8/KK4kk');
     $board->is_check('w');
   }
 
   public function testCheckTwoKings2() : void
   {
-    $this->expectException(ChessException::class);
+    $this->expectException(RulesException::class);
     $board = new Board('8/8/8/8/8/8/8/KK4kk');
     $board->is_check('w');
   }
 
   public function testCheckAdjacentKings() : void
   {
-    $this->expectException(ChessException::class);
+    $this->expectException(RulesException::class);
     $board = new Board('8/8/8/8/8/8/8/Kk6');
     $board->is_check('w');
   }
