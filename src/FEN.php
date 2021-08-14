@@ -292,77 +292,152 @@ class FEN
     public function move(string $move) : void
     {
       $move = new Move($move);
-      if ($move->castling()) {
-        throw new NotImplementedException;
-      }
-
-      $target = $move->target(true);
-      $target_piece = $this->square($target);
-
-      if ($move->capture() && $target_piece == '' && !($target->alg() == $this->en_passant() && $move->piece() == 'P')) {
-        throw new RulesException("Cannot capture on empty square.");
-      }
-
-      if (!$move->capture() && $target_piece) {
-        throw new RulesException("Target square is occupied.");
-      }
-
-      if ($target_piece && $this->is_active_piece($target_piece)) {
-        throw new RulesException("Cannot capture player's own piece.");
-      }
-
       $move_piece = $this->active_piece($move->piece());
 
-      if ($move_piece == 'P' && !$move->capture()) {
-        $origin_candidates = [$target->rel(0, -1)];
-        if ($target->rank() == 3 && $this->square($target->rel(0, -1)) == '') {
-          $origin_candidates[] = $target->rel(0, -2);
+      if ($move->castling() == 'O-O')
+      {
+
+        if (!$this->castling_availability($this->active_piece('K'))) {
+          throw new RulesException("Castling not available.");
         }
-      } else if($move_piece == 'p' && !$move->capture()) {
-        $origin_candidates = [$target->rel(0, 1)];
-        if ($target->rank() == 4 && $this->square($target->rel(0, 1)) == '') {
-          $origin_candidates[] = $target->rel(0, 2);
+
+        if ($this->active() == 'w') {
+          $origin = new Square('e1');
+        } else {
+          $origin = new Square('e8');
         }
+
+        if ($this->square($origin) != $this->active_piece('K')) {
+          throw new RulesException("Castling not available. King not in initial position.");
+        }
+        if ($this->square($origin->rel(1, 0)) || $this->square($origin->rel(2, 0))) {
+          throw new RulesException("Castling not available. There are pieces in the way.");
+        }
+        if ($this->square($origin->rel(3, 0)) != $this->active_piece('R')) {
+          throw new RulesException("Castling not available. Rook not in initial position");
+        }
+        if ($this->is_check()) {
+          throw new RulesException("Castling not available. King in check.");
+        }
+
+        $new_board = $this->board->copy();
+        $new_board->set_square($origin, '');
+        $new_board->set_square($origin->rel(1, 0), $this->active_piece('K'));
+        if ($new_board->is_check($this->active())) {
+          throw new RulesException("Castling not available. King in check.");
+        }
+
+        $new_board->set_square($origin->rel(1, 0), $this->active_piece('R'));
+        $new_board->set_square($origin->rel(3, 0), '');
+        $new_board->set_square($origin->rel(2, 0), $this->active_piece('K'));
+
+      }
+      else if ($move->castling() == 'O-O-O')
+      {
+
+        if (!$this->castling_availability($this->active_piece('Q'))) {
+          throw new RulesException("Castling not available.");
+        }
+
+        if ($this->active() == 'w') {
+          $origin = new Square('e1');
+        } else {
+          $origin = new Square('e8');
+        }
+
+        if ($this->square($origin) != $this->active_piece('K')) {
+          throw new RulesException("Castling not available. King not in initial position.");
+        }
+        if ($this->square($origin->rel(-1, 0)) || $this->square($origin->rel(-2, 0)) || $this->square($origin->rel(-3, 0))) {
+          throw new RulesException("Castling not available. There are pieces in the way.");
+        }
+        if ($this->square($origin->rel(-4, 0)) != $this->active_piece('R')) {
+          throw new RulesException("Castling not available. Rook not in initial position");
+        }
+        if ($this->is_check()) {
+          throw new RulesException("Castling not available. King in check.");
+        }
+
+        $new_board = $this->board->copy();
+        $new_board->set_square($origin, '');
+        $new_board->set_square($origin->rel(-1, 0), $this->active_piece('K'));
+        if ($new_board->is_check($this->active())) {
+          throw new RulesException("Castling not available. King in check.");
+        }
+
+        $new_board->set_square($origin->rel(-1, 0), $this->active_piece('R'));
+        $new_board->set_square($origin->rel(-4, 0), '');
+        $new_board->set_square($origin->rel(-2, 0), $this->active_piece('K'));
+
       } else {
-        $origin_candidates = $this->board->attacked_squares($target, $this->opponents_piece($move_piece), true);
-      }
 
-      $origin_candidates2 = [];
-      foreach ($origin_candidates as $origin_candidate) {
-        if ($this->square($origin_candidate) == $move_piece) {
-          if ($move->origin_file(true) !== null && $origin_candidate->file() != $move->origin_file(true)) {
-            continue;
-          }
-          if ($move->origin_rank(true) !== null && $origin_candidate->rank() != $move->origin_rank(true)) {
-            continue;
-          }
-          $origin_candidates2[] = $origin_candidate;
+        $target = $move->target(true);
+        $target_piece = $this->square($target);
+
+        if ($move->capture() && $target_piece == '' && !($target->alg() == $this->en_passant() && $move->piece() == 'P')) {
+          throw new RulesException("Cannot capture on empty square.");
         }
-      }
 
-      if (sizeof($origin_candidates2) == 0) {
-        throw new RulesException("Invalid move.");
-      }
+        if (!$move->capture() && $target_piece) {
+          throw new RulesException("Target square is occupied.");
+        }
 
-      if (sizeof($origin_candidates2) > 1) {
-        throw new RulesException("Ambiguous move.");
-      }
+        if ($target_piece && $this->is_active_piece($target_piece)) {
+          throw new RulesException("Cannot capture player's own piece.");
+        }
 
-      $origin = $origin_candidates2[0];
-      $new_board = $this->board->copy();
+        if ($move_piece == 'P' && !$move->capture()) {
+          $origin_candidates = [$target->rel(0, -1)];
+          if ($target->rank() == 3 && $this->square($target->rel(0, -1)) == '') {
+            $origin_candidates[] = $target->rel(0, -2);
+          }
+        } else if($move_piece == 'p' && !$move->capture()) {
+          $origin_candidates = [$target->rel(0, 1)];
+          if ($target->rank() == 4 && $this->square($target->rel(0, 1)) == '') {
+            $origin_candidates[] = $target->rel(0, 2);
+          }
+        } else {
+          $origin_candidates = $this->board->attacked_squares($target, $this->opponents_piece($move_piece), true);
+        }
 
-      $new_board->set_square($origin, '');
-      if ($move->promotion()) {
-        $new_board->set_square($target, $move->promotion());
-      } else {
-        $new_board->set_square($target, $move_piece);
-        if ($target->alg() == $this->en_passant()) {
-          if ($this->active() == 'w') {
-            $new_board->set_square($target->rel(0, -1), '');
-          } else {
-            $new_board->set_square($target->rel(0, 1), '');
+        $origin_candidates2 = [];
+        foreach ($origin_candidates as $origin_candidate) {
+          if ($this->square($origin_candidate) == $move_piece) {
+            if ($move->origin_file(true) !== null && $origin_candidate->file() != $move->origin_file(true)) {
+              continue;
+            }
+            if ($move->origin_rank(true) !== null && $origin_candidate->rank() != $move->origin_rank(true)) {
+              continue;
+            }
+            $origin_candidates2[] = $origin_candidate;
           }
         }
+
+        if (sizeof($origin_candidates2) == 0) {
+          throw new RulesException("Invalid move.");
+        }
+
+        if (sizeof($origin_candidates2) > 1) {
+          throw new RulesException("Ambiguous move.");
+        }
+
+        $origin = $origin_candidates2[0];
+        $new_board = $this->board->copy();
+
+        $new_board->set_square($origin, '');
+        if ($move->promotion()) {
+          $new_board->set_square($target, $move->promotion());
+        } else {
+          $new_board->set_square($target, $move_piece);
+          if ($target->alg() == $this->en_passant()) {
+            if ($this->active() == 'w') {
+              $new_board->set_square($target->rel(0, -1), '');
+            } else {
+              $new_board->set_square($target->rel(0, 1), '');
+            }
+          }
+        }
+
       }
 
       if ($new_board->is_check($this->active())) {

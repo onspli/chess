@@ -113,22 +113,26 @@ PPPPPPPP
 RNBQKBNR
 */
 $fen->move('e4');
-$fen->move('e5');
+$fen->move('g6');
 $fen->move('Nf3');
-$fen->move('Nc6');
+$fen->move('Nf6');
+$fen->move('Bc4');
+$fen->move('Bg7');
+$fen->move('O-O');
+$fen->move('O-O');
 echo($fen->preview());
 /*
-r.bqkbnr
-pppp.ppp
-..n.....
-....p...
-....P...
+rnbq.rk.
+ppppppbp
+.....np.
+........
+..B.P...
 .....N..
 PPPP.PPP
-RNBQKB.R
+RNBQ.RK.
 */
 echo($fen->export());
-// r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3
+// rnbq1rk1/ppppppbp/5np1/8/2B1P3/5N2/PPPP1PPP/RNBQ1RK1 w - - 6 5
 ```
 
 Test check:

@@ -367,7 +367,7 @@ final class FENTest extends TestCase
     $fen->move('Rxa2');
   }
 
-  public function testMovingRoocksDismissCastling() : void
+  public function testMovingRooksDismissCastling() : void
   {
     $fen = new FEN;
     $fen->move('a4');
@@ -395,6 +395,240 @@ final class FENTest extends TestCase
     $this->assertEquals('kq', $fen->castling());
     $fen->move('Ke7');
     $this->assertEquals('-', $fen->castling());
+  }
+
+  public function testCastlingKingside() : void
+  {
+    $fen = new FEN;
+    $fen->move('g3');
+    $fen->move('g6');
+    $fen->move('Nf3');
+    $fen->move('Nf6');
+    $fen->move('Bg2');
+    $fen->move('Bg7');
+    $fen->move('O-O');
+    $fen->move('O-O');
+    $this->assertEquals('-', $fen->castling());
+    $this->assertEquals('rnbq1rk1/ppppppbp/5np1/8/8/5NP1/PPPPPPBP/RNBQ1RK1', $fen->board());
+  }
+
+  public function testCastlingQueenside() : void
+  {
+    $fen = new FEN;
+    $fen->move('d4');
+    $fen->move('d5');
+    $fen->move('b3');
+    $fen->move('b6');
+    $fen->move('Nc3');
+    $fen->move('Nc6');
+    $fen->move('Bb2');
+    $fen->move('Bb7');
+    $fen->move('Qd2');
+    $fen->move('Qd7');
+    $fen->move('O-O-O');
+    $fen->move('O-O-O');
+    $this->assertEquals('-', $fen->castling());
+    $this->assertEquals('2kr1bnr/pbpqpppp/1pn5/3p4/3P4/1PN5/PBPQPPPP/2KR1BNR', $fen->board());
+  }
+
+  public function testCastlingKingsideNotAvailableWhite() : void
+  {
+    $fen = new FEN;
+    $fen->set_active('w');
+    $fen->set_castling('Qkq');
+    $fen->set_board('r3k2r/8/8/8/8/8/8/R3K2R');
+    $this->expectException(RulesException::class);
+    $fen->move('O-O');
+  }
+
+  public function testCastlingKingsideNotAvailableBlack() : void
+  {
+    $fen = new FEN;
+    $fen->set_active('b');
+    $fen->set_castling('KQq');
+    $fen->set_board('r3k2r/8/8/8/8/8/8/R3K2R');
+    $this->expectException(RulesException::class);
+    $fen->move('O-O');
+  }
+
+  public function testCastlingQueensideNotAvailableWhite() : void
+  {
+    $fen = new FEN;
+    $fen->set_active('w');
+    $fen->set_castling('Kkq');
+    $fen->set_board('r3k2r/8/8/8/8/8/8/R3K2R');
+    $this->expectException(RulesException::class);
+    $fen->move('O-O-O');
+  }
+
+  public function testCastlingQueensideNotAvailableBlack() : void
+  {
+    $fen = new FEN;
+    $fen->set_active('b');
+    $fen->set_castling('KQk');
+    $fen->set_board('r3k2r/8/8/8/8/8/8/R3K2R');
+    $this->expectException(RulesException::class);
+    $fen->move('O-O-O');
+  }
+
+  public function testCastlingKingsideNotAvailableKingMovedWhite() : void
+  {
+    $fen = new FEN;
+    $fen->set_active('w');
+    $fen->set_castling('KQkq');
+    $fen->set_board('r4k1r/8/8/8/8/8/8/R4K1R');
+    $this->expectException(RulesException::class);
+    $fen->move('O-O');
+  }
+
+  public function testCastlingKingsideNotAvailableKingMovedBlack() : void
+  {
+    $fen = new FEN;
+    $fen->set_active('b');
+    $fen->set_castling('KQkq');
+    $fen->set_board('r4k1r/8/8/8/8/8/8/R4K1R');
+    $this->expectException(RulesException::class);
+    $fen->move('O-O');
+  }
+
+  public function testCastlingQueensideNotAvailableKingMovedWhite() : void
+  {
+    $fen = new FEN;
+    $fen->set_active('w');
+    $fen->set_castling('KQkq');
+    $fen->set_board('r4k1r/8/8/8/8/8/8/R4K1R');
+    $this->expectException(RulesException::class);
+    $fen->move('O-O-O');
+  }
+
+  public function testCastlingQueensideNotAvailableKingMovedBlack() : void
+  {
+    $fen = new FEN;
+    $fen->set_active('b');
+    $fen->set_castling('KQkq');
+    $fen->set_board('r4k1r/8/8/8/8/8/8/R4K1R');
+    $this->expectException(RulesException::class);
+    $fen->move('O-O-O');
+  }
+
+  public function testCastlingKingsideNotAvailableRookMovedWhite() : void
+  {
+    $fen = new FEN;
+    $fen->set_active('w');
+    $fen->set_castling('KQkq');
+    $fen->set_board('r3k3/8/8/7r/7R/8/8/R3K3');
+    $this->expectException(RulesException::class);
+    $fen->move('O-O');
+  }
+
+  public function testCastlingKingsideNotAvailableRookMovedBlack() : void
+  {
+    $fen = new FEN;
+    $fen->set_active('b');
+    $fen->set_castling('KQkq');
+    $fen->set_board('r3k3/8/8/7r/7R/8/8/R3K3');
+    $this->expectException(RulesException::class);
+    $fen->move('O-O');
+  }
+
+  public function testCastlingQueensideNotAvailableRookMovedWhite() : void
+  {
+    $fen = new FEN;
+    $fen->set_active('w');
+    $fen->set_castling('KQkq');
+    $fen->set_board('4k2r/r7/8/8/8/8/R7/4K2R');
+    $this->expectException(RulesException::class);
+    $fen->move('O-O-O');
+  }
+
+  public function testCastlingQueensideNotAvailableRookMovedBlack() : void
+  {
+    $fen = new FEN;
+    $fen->set_active('b');
+    $fen->set_castling('KQkq');
+    $fen->set_board('4k2r/r7/8/8/8/8/R7/4K2R');
+    $this->expectException(RulesException::class);
+    $fen->move('O-O-O');
+  }
+
+  public function testCastlingKingsidePiecesInWayWhite() : void
+  {
+    $fen = new FEN;
+    $fen->set_active('w');
+    $fen->set_castling('KQkq');
+    $fen->set_board('rn2kb2/8/8/7r/7R/8/8/RN2KB2');
+    $this->expectException(RulesException::class);
+    $fen->move('O-O');
+  }
+
+  public function testCastlingQueensidePiecesInWayWhite() : void
+  {
+    $fen = new FEN;
+    $fen->set_active('w');
+    $fen->set_castling('KQkq');
+    $fen->set_board('rn2kb2/8/8/7r/7R/8/8/RN2KB2');
+    $this->expectException(RulesException::class);
+    $fen->move('O-O-O');
+  }
+
+  public function testCastlingKingsideCheckWhite() : void
+  {
+    $fen = new FEN;
+    $fen->set_active('w');
+    $fen->set_castling('KQkq');
+    $fen->set_board('r3k2r/4q3/8/8/8/8/8/R3K2R');
+    $this->expectException(RulesException::class);
+    $fen->move('O-O');
+  }
+
+  public function testCastlingQueensideCheckWhite() : void
+  {
+    $fen = new FEN;
+    $fen->set_active('w');
+    $fen->set_castling('KQkq');
+    $fen->set_board('r3k2r/4q3/8/8/8/8/8/R3K2R');
+    $this->expectException(RulesException::class);
+    $fen->move('O-O-O');
+  }
+
+  public function testCastlingKingsideCheckOnTheWayWhite() : void
+  {
+    $fen = new FEN;
+    $fen->set_active('w');
+    $fen->set_castling('KQkq');
+    $fen->set_board('r3k2r/5q2/8/8/8/8/8/R3K2R');
+    $this->expectException(RulesException::class);
+    $fen->move('O-O');
+  }
+
+  public function testCastlingQueensideCheckOnTheWayWhite() : void
+  {
+    $fen = new FEN;
+    $fen->set_active('w');
+    $fen->set_castling('KQkq');
+    $fen->set_board('r3k2r/3q4/8/8/8/8/8/R3K2R');
+    $this->expectException(RulesException::class);
+    $fen->move('O-O-O');
+  }
+
+  public function testCastlingKingsideCheckOnTargetWhite() : void
+  {
+    $fen = new FEN;
+    $fen->set_active('w');
+    $fen->set_castling('KQkq');
+    $fen->set_board('r3k2r/6q1/8/8/8/8/8/R3K2R');
+    $this->expectException(RulesException::class);
+    $fen->move('O-O');
+  }
+
+  public function testCastlingQueensideCheckOnTargetWhite() : void
+  {
+    $fen = new FEN;
+    $fen->set_active('w');
+    $fen->set_castling('KQkq');
+    $fen->set_board('r3k2r/2q5/8/8/8/8/8/R3K2R');
+    $this->expectException(RulesException::class);
+    $fen->move('O-O-O');
   }
 
 }

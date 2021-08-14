@@ -57,9 +57,13 @@ Perform moves:
 $fen = new Onspli\Chess\FEN;
 echo($fen->preview());
 $fen->move('e4');
-$fen->move('e5');
+$fen->move('g6');
 $fen->move('Nf3');
-$fen->move('Nc6');
+$fen->move('Nf6');
+$fen->move('Bc4');
+$fen->move('Bg7');
+$fen->move('O-O');
+$fen->move('O-O');
 echo($fen->preview());
 echo($fen->export());
 ```
