@@ -19,7 +19,7 @@
 | [Board::opponents_piece](#Boardopponents_piece) |  |
 | [Board::is_check](#Boardis_check) | Returns true if king of active color is in check. |
 | [Board::preview](#Boardpreview) | Preview of the board in ASCII graphics. |
-| [**FEN**](#FEN) |  |
+| [**FEN**](#FEN) | FEN is a standard notation for describing a particular board position of a chess game |
 | [FEN::__construct](#FEN__construct) | Load FEN or setup starting position. |
 | [FEN::export](#FENexport) | Export whole FEN string. |
 | [FEN::preview](#FENpreview) | Preview of the board in ASCII graphics. |
@@ -434,9 +434,16 @@ Board::preview(  ): string
 ---
 ## FEN
 
+FEN is a standard notation for describing a particular board position of a chess game
 
+Forsyth–Edwards Notation (FEN) is a standard notation for describing a particular board
+position of a chess game. The purpose of FEN is to provide all the necessary information
+to restart a game from a particular position.
 
-
+Class provides intefrace for reading and setting all FEN fields, and also
+method for checking game state (check, mate, stalemate, fifty-move rule draw),
+getting all available moves in the position and changing the position by performing
+move according to chess rules.
 
 * Full name: \Onspli\Chess\FEN
 
