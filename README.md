@@ -11,6 +11,8 @@ composer require onspli/chess
 
 ## Usage
 
+Read complete auto-generated [documentation](docs) or learn from the following examples.
+
 Setup chess board to starting position and read FEN fields.
 ``` php
 $fen = new Onspli\Chess\FEN;
