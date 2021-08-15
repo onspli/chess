@@ -2,78 +2,87 @@
 
 ## Table of Contents
 
-* [Board](#Board)
-    * [__construct](#__construct)
-    * [export](#export)
-    * [square](#square)
-    * [square_nothrow](#square_nothrow)
-    * [set_square](#set_square)
-    * [set_square_nothrow](#set_square_nothrow)
-    * [attacked_squares](#attacked_squares)
-    * [pieces_on_squares](#pieces_on_squares)
-    * [find](#find)
-    * [copy](#copy)
-    * [active_piece](#active_piece)
-    * [opponents_piece](#opponents_piece)
-    * [is_check](#is_check)
-    * [preview](#preview)
-* [FEN](#FEN)
-    * [__construct](#__construct)
-    * [export](#export)
-    * [preview](#preview)
-    * [board](#board)
-    * [set_board](#set_board)
-    * [square](#square)
-    * [set_square](#set_square)
-    * [active](#active)
-    * [set_active](#set_active)
-    * [castling](#castling)
-    * [set_castling](#set_castling)
-    * [castling_availability](#castling_availability)
-    * [set_castling_availability](#set_castling_availability)
-    * [en_passant](#en_passant)
-    * [set_en_passant](#set_en_passant)
-    * [halfmove](#halfmove)
-    * [set_halfmove](#set_halfmove)
-    * [fullmove](#fullmove)
-    * [set_fullmove](#set_fullmove)
-    * [is_mate](#is_mate)
-    * [is_stalemate](#is_stalemate)
-    * [is_fifty_move](#is_fifty_move)
-    * [is_check](#is_check)
-    * [possible_moves](#possible_moves)
-    * [move](#move)
-* [Move](#Move)
-    * [__construct](#__construct)
-    * [alg](#alg)
-    * [capture](#capture)
-    * [target](#target)
-    * [origin_file](#origin_file)
-    * [origin_rank](#origin_rank)
-    * [piece](#piece)
-    * [castling](#castling)
-    * [promotion](#promotion)
-    * [check_mate](#check_mate)
-    * [annotation](#annotation)
-* [NotImplementedException](#NotImplementedException)
-* [ParseException](#ParseException)
-* [RulesException](#RulesException)
-* [Square](#Square)
-    * [__construct](#__construct)
-    * [rank](#rank)
-    * [file](#file)
-    * [alg](#alg)
-    * [is_null](#is_null)
-    * [n](#n)
-    * [w](#w)
-    * [s](#s)
-    * [e](#e)
-    * [nw](#nw)
-    * [ne](#ne)
-    * [sw](#sw)
-    * [se](#se)
-    * [rel](#rel)
-    * [add_to](#add_to)
+* [Board](#Board) 
+    * [Board::__construct](#Board::__construct) Piece placement (from White's perspective). Each rank is described,
+starting with rank 8 and ending with rank 1; within each rank,
+the contents of each square are described from file "a" through file "h".
+    * [Board::export](#Board::export) 
+    * [Board::square](#Board::square) 
+    * [Board::square_nothrow](#Board::square_nothrow) 
+    * [Board::set_square](#Board::set_square) 
+    * [Board::set_square_nothrow](#Board::set_square_nothrow) 
+    * [Board::attacked_squares](#Board::attacked_squares) Get array of all squares attacked (or defended) by $attacking_piece being on $attacker_square.
+    * [Board::pieces_on_squares](#Board::pieces_on_squares) Get list of pieces on squares (including multiplicities, excluding blank squares).
+    * [Board::find](#Board::find) Returns array of squares containing piece.
+    * [Board::copy](#Board::copy) 
+    * [Board::active_piece](#Board::active_piece) 
+    * [Board::opponents_piece](#Board::opponents_piece) 
+    * [Board::is_check](#Board::is_check) Returns true if king of active color is in check.
+    * [Board::preview](#Board::preview) Preview of the board in ASCII graphics.
+* [FEN](#FEN) 
+    * [FEN::__construct](#FEN::__construct) Load fen or setup starting position.
+    * [FEN::export](#FEN::export) Export whole FEN string
+    * [FEN::preview](#FEN::preview) Preview of the board in ASCII graphics.
+    * [FEN::board](#FEN::board) Piece placement (from White's perspective). Each rank is described,
+starting with rank 8 and ending with rank 1; within each rank,
+the contents of each square are described from file "a" through file "h".
+    * [FEN::set_board](#FEN::set_board) 
+    * [FEN::square](#FEN::square) 
+    * [FEN::set_square](#FEN::set_square) 
+    * [FEN::active](#FEN::active) Active color. "w" means White moves next, "b" means Black moves next.
+    * [FEN::set_active](#FEN::set_active) 
+    * [FEN::castling](#FEN::castling) Castling availability. If neither side can castle, this is "-".
+    * [FEN::set_castling](#FEN::set_castling) 
+    * [FEN::castling_availability](#FEN::castling_availability) 
+    * [FEN::set_castling_availability](#FEN::set_castling_availability) 
+    * [FEN::en_passant](#FEN::en_passant) En passant target square in algebraic notation. If there's no en passant
+target square, this is "-". If a pawn has just made a two-square move,
+this is the position "behind" the pawn. This is recorded regardless of
+whether there is a pawn in position to make an en passant capture.
+    * [FEN::set_en_passant](#FEN::set_en_passant) 
+    * [FEN::halfmove](#FEN::halfmove) Halfmove clock: The number of halfmoves since the last capture or pawn
+advance, used for the fifty-move rule.
+    * [FEN::set_halfmove](#FEN::set_halfmove) 
+    * [FEN::fullmove](#FEN::fullmove) Fullmove number: The number of the full move. It starts at 1, and is
+incremented after Black's move.
+    * [FEN::set_fullmove](#FEN::set_fullmove) 
+    * [FEN::is_mate](#FEN::is_mate) Returns true if king of active color is in mate.
+    * [FEN::is_stalemate](#FEN::is_stalemate) Returns true if king of active color is in stalemate.
+    * [FEN::is_fifty_move](#FEN::is_fifty_move) Returns true if fifty move rule draw can be claimed by active color.
+    * [FEN::is_check](#FEN::is_check) Returns true if king of active color is in check.
+    * [FEN::possible_moves](#FEN::possible_moves) Array of all possible moves in current position.
+    * [FEN::move](#FEN::move) Perform a move.
+* [Move](#Move) 
+    * [Move::__construct](#Move::__construct) 
+    * [Move::alg](#Move::alg) 
+    * [Move::capture](#Move::capture) 
+    * [Move::target](#Move::target) 
+    * [Move::origin_file](#Move::origin_file) 
+    * [Move::origin_rank](#Move::origin_rank) 
+    * [Move::piece](#Move::piece) 
+    * [Move::castling](#Move::castling) 
+    * [Move::promotion](#Move::promotion) 
+    * [Move::check_mate](#Move::check_mate) 
+    * [Move::annotation](#Move::annotation) 
+* [NotImplementedException](#NotImplementedException) 
+* [ParseException](#ParseException) 
+* [RulesException](#RulesException) 
+* [Square](#Square) There are two handy notations of squares on the chess board.
+    * [Square::__construct](#Square::__construct) 
+    * [Square::rank](#Square::rank) 
+    * [Square::file](#Square::file) 
+    * [Square::alg](#Square::alg) 
+    * [Square::is_null](#Square::is_null) 
+    * [Square::n](#Square::n) 
+    * [Square::w](#Square::w) 
+    * [Square::s](#Square::s) 
+    * [Square::e](#Square::e) 
+    * [Square::nw](#Square::nw) 
+    * [Square::ne](#Square::ne) 
+    * [Square::sw](#Square::sw) 
+    * [Square::se](#Square::se) 
+    * [Square::rel](#Square::rel) 
+    * [Square::add_to](#Square::add_to) 
 
 ## Board
 
@@ -84,7 +93,7 @@
 * Full name: \Onspli\Chess\Board
 
 
-### __construct
+### Board::__construct
 
 Piece placement (from White's perspective). Each rank is described,
 starting with rank 8 and ending with rank 1; within each rank,
@@ -116,8 +125,7 @@ digits 1 through 8 (the number of empty squares), and "/" separates ranks.
 
 
 ---
-
-### export
+### Board::export
 
 
 
@@ -136,8 +144,7 @@ Board::export(  ): string
 
 
 ---
-
-### square
+### Board::square
 
 
 
@@ -162,8 +169,7 @@ Board::square( mixed square ): string
 
 
 ---
-
-### square_nothrow
+### Board::square_nothrow
 
 
 
@@ -188,8 +194,7 @@ Board::square_nothrow( mixed square ): string
 
 
 ---
-
-### set_square
+### Board::set_square
 
 
 
@@ -215,8 +220,7 @@ Board::set_square( mixed square, string piece ): void
 
 
 ---
-
-### set_square_nothrow
+### Board::set_square_nothrow
 
 
 
@@ -242,8 +246,7 @@ Board::set_square_nothrow( mixed square, string piece ): void
 
 
 ---
-
-### attacked_squares
+### Board::attacked_squares
 
 Get array of all squares attacked (or defended) by $attacking_piece being on $attacker_square.
 
@@ -270,8 +273,7 @@ Board::attacked_squares( mixed attacker_square, mixed attacking_piece, bool as_o
 
 
 ---
-
-### pieces_on_squares
+### Board::pieces_on_squares
 
 Get list of pieces on squares (including multiplicities, excluding blank squares).
 
@@ -296,8 +298,7 @@ Board::pieces_on_squares( array squares ): array
 
 
 ---
-
-### find
+### Board::find
 
 Returns array of squares containing piece.
 
@@ -323,8 +324,7 @@ Board::find( string piece, bool as_object = false ): array
 
 
 ---
-
-### copy
+### Board::copy
 
 
 
@@ -343,8 +343,7 @@ Board::copy(  ): mixed
 
 
 ---
-
-### active_piece
+### Board::active_piece
 
 
 
@@ -370,8 +369,7 @@ Board::active_piece( string piece, string active ): string
 
 
 ---
-
-### opponents_piece
+### Board::opponents_piece
 
 
 
@@ -397,8 +395,7 @@ Board::opponents_piece( string piece, string active ): string
 
 
 ---
-
-### is_check
+### Board::is_check
 
 Returns true if king of active color is in check.
 
@@ -423,8 +420,7 @@ Board::is_check( string active ): bool
 
 
 ---
-
-### preview
+### Board::preview
 
 Preview of the board in ASCII graphics.
 
@@ -443,7 +439,6 @@ Board::preview(  ): string
 
 
 ---
-
 ## FEN
 
 
@@ -453,7 +448,7 @@ Board::preview(  ): string
 * Full name: \Onspli\Chess\FEN
 
 
-### __construct
+### FEN::__construct
 
 Load fen or setup starting position.
 
@@ -478,8 +473,7 @@ FEN::__construct( string fen = &#039;&#039; ): mixed
 
 
 ---
-
-### export
+### FEN::export
 
 Export whole FEN string
 
@@ -498,8 +492,7 @@ FEN::export(  ): string
 
 
 ---
-
-### preview
+### FEN::preview
 
 Preview of the board in ASCII graphics.
 
@@ -518,8 +511,7 @@ FEN::preview(  ): string
 
 
 ---
-
-### board
+### FEN::board
 
 Piece placement (from White's perspective). Each rank is described,
 starting with rank 8 and ending with rank 1; within each rank,
@@ -551,8 +543,7 @@ digits 1 through 8 (the number of empty squares), and "/" separates ranks.
 
 
 ---
-
-### set_board
+### FEN::set_board
 
 
 
@@ -577,8 +568,7 @@ FEN::set_board( mixed board ): void
 
 
 ---
-
-### square
+### FEN::square
 
 
 
@@ -603,8 +593,7 @@ FEN::square( mixed square ): string
 
 
 ---
-
-### set_square
+### FEN::set_square
 
 
 
@@ -630,8 +619,7 @@ FEN::set_square( mixed square, string piece ): void
 
 
 ---
-
-### active
+### FEN::active
 
 Active color. "w" means White moves next, "b" means Black moves next.
 
@@ -650,8 +638,7 @@ FEN::active(  ): string
 
 
 ---
-
-### set_active
+### FEN::set_active
 
 
 
@@ -676,8 +663,7 @@ FEN::set_active( string color ): void
 
 
 ---
-
-### castling
+### FEN::castling
 
 Castling availability. If neither side can castle, this is "-".
 
@@ -699,8 +685,7 @@ does not negate this notation.
 
 
 ---
-
-### set_castling
+### FEN::set_castling
 
 
 
@@ -725,8 +710,7 @@ FEN::set_castling( string castling ): void
 
 
 ---
-
-### castling_availability
+### FEN::castling_availability
 
 
 
@@ -751,8 +735,7 @@ FEN::castling_availability( string type ): bool
 
 
 ---
-
-### set_castling_availability
+### FEN::set_castling_availability
 
 
 
@@ -778,8 +761,7 @@ FEN::set_castling_availability( string type, bool avalability ): void
 
 
 ---
-
-### en_passant
+### FEN::en_passant
 
 En passant target square in algebraic notation. If there's no en passant
 target square, this is "-". If a pawn has just made a two-square move,
@@ -807,8 +789,7 @@ FEN::en_passant( bool as_object = false ): mixed
 
 
 ---
-
-### set_en_passant
+### FEN::set_en_passant
 
 
 
@@ -833,8 +814,7 @@ FEN::set_en_passant( mixed square ): void
 
 
 ---
-
-### halfmove
+### FEN::halfmove
 
 Halfmove clock: The number of halfmoves since the last capture or pawn
 advance, used for the fifty-move rule.
@@ -854,8 +834,7 @@ FEN::halfmove(  ): int
 
 
 ---
-
-### set_halfmove
+### FEN::set_halfmove
 
 
 
@@ -880,8 +859,7 @@ FEN::set_halfmove( mixed halfmove ): void
 
 
 ---
-
-### fullmove
+### FEN::fullmove
 
 Fullmove number: The number of the full move. It starts at 1, and is
 incremented after Black's move.
@@ -901,8 +879,7 @@ FEN::fullmove(  ): int
 
 
 ---
-
-### set_fullmove
+### FEN::set_fullmove
 
 
 
@@ -927,8 +904,7 @@ FEN::set_fullmove( mixed fullmove ): void
 
 
 ---
-
-### is_mate
+### FEN::is_mate
 
 Returns true if king of active color is in mate.
 
@@ -947,8 +923,7 @@ FEN::is_mate(  ): bool
 
 
 ---
-
-### is_stalemate
+### FEN::is_stalemate
 
 Returns true if king of active color is in stalemate.
 
@@ -967,8 +942,7 @@ FEN::is_stalemate(  ): bool
 
 
 ---
-
-### is_fifty_move
+### FEN::is_fifty_move
 
 Returns true if fifty move rule draw can be claimed by active color.
 
@@ -987,8 +961,7 @@ FEN::is_fifty_move(  ): bool
 
 
 ---
-
-### is_check
+### FEN::is_check
 
 Returns true if king of active color is in check.
 
@@ -1007,8 +980,7 @@ FEN::is_check(  ): bool
 
 
 ---
-
-### possible_moves
+### FEN::possible_moves
 
 Array of all possible moves in current position.
 
@@ -1027,8 +999,7 @@ FEN::possible_moves(  ): array
 
 
 ---
-
-### move
+### FEN::move
 
 Perform a move.
 
@@ -1053,7 +1024,6 @@ FEN::move( string move ): void
 
 
 ---
-
 ## Move
 
 
@@ -1063,7 +1033,7 @@ FEN::move( string move ): void
 * Full name: \Onspli\Chess\Move
 
 
-### __construct
+### Move::__construct
 
 
 
@@ -1088,8 +1058,7 @@ Move::__construct( string move ): mixed
 
 
 ---
-
-### alg
+### Move::alg
 
 
 
@@ -1108,8 +1077,7 @@ Move::alg(  ): string
 
 
 ---
-
-### capture
+### Move::capture
 
 
 
@@ -1128,8 +1096,7 @@ Move::capture(  ): bool
 
 
 ---
-
-### target
+### Move::target
 
 
 
@@ -1154,8 +1121,7 @@ Move::target( bool as_object = false ): mixed
 
 
 ---
-
-### origin_file
+### Move::origin_file
 
 
 
@@ -1180,8 +1146,7 @@ Move::origin_file( bool as_index = false ): mixed
 
 
 ---
-
-### origin_rank
+### Move::origin_rank
 
 
 
@@ -1206,8 +1171,7 @@ Move::origin_rank( bool as_index = false ): mixed
 
 
 ---
-
-### piece
+### Move::piece
 
 
 
@@ -1226,8 +1190,7 @@ Move::piece(  ): string
 
 
 ---
-
-### castling
+### Move::castling
 
 
 
@@ -1246,8 +1209,7 @@ Move::castling(  ): string
 
 
 ---
-
-### promotion
+### Move::promotion
 
 
 
@@ -1266,8 +1228,7 @@ Move::promotion(  ): string
 
 
 ---
-
-### check_mate
+### Move::check_mate
 
 
 
@@ -1286,8 +1247,7 @@ Move::check_mate(  ): string
 
 
 ---
-
-### annotation
+### Move::annotation
 
 
 
@@ -1306,7 +1266,6 @@ Move::annotation(  ): string
 
 
 ---
-
 ## NotImplementedException
 
 
@@ -1351,7 +1310,7 @@ or new Square(4, 3).
 * Full name: \Onspli\Chess\Square
 
 
-### __construct
+### Square::__construct
 
 
 
@@ -1377,8 +1336,7 @@ Square::__construct( mixed file_or_alg = null, mixed rank = null ): mixed
 
 
 ---
-
-### rank
+### Square::rank
 
 
 
@@ -1397,8 +1355,7 @@ Square::rank(  ): int
 
 
 ---
-
-### file
+### Square::file
 
 
 
@@ -1417,8 +1374,7 @@ Square::file(  ): int
 
 
 ---
-
-### alg
+### Square::alg
 
 
 
@@ -1437,8 +1393,7 @@ Square::alg(  ): string
 
 
 ---
-
-### is_null
+### Square::is_null
 
 
 
@@ -1457,8 +1412,7 @@ Square::is_null(  ): bool
 
 
 ---
-
-### n
+### Square::n
 
 
 
@@ -1477,8 +1431,7 @@ Square::n(  ): mixed
 
 
 ---
-
-### w
+### Square::w
 
 
 
@@ -1497,8 +1450,7 @@ Square::w(  ): mixed
 
 
 ---
-
-### s
+### Square::s
 
 
 
@@ -1517,8 +1469,7 @@ Square::s(  ): mixed
 
 
 ---
-
-### e
+### Square::e
 
 
 
@@ -1537,8 +1488,7 @@ Square::e(  ): mixed
 
 
 ---
-
-### nw
+### Square::nw
 
 
 
@@ -1557,8 +1507,7 @@ Square::nw(  ): mixed
 
 
 ---
-
-### ne
+### Square::ne
 
 
 
@@ -1577,8 +1526,7 @@ Square::ne(  ): mixed
 
 
 ---
-
-### sw
+### Square::sw
 
 
 
@@ -1597,8 +1545,7 @@ Square::sw(  ): mixed
 
 
 ---
-
-### se
+### Square::se
 
 
 
@@ -1617,8 +1564,7 @@ Square::se(  ): mixed
 
 
 ---
-
-### rel
+### Square::rel
 
 
 
@@ -1644,8 +1590,7 @@ Square::rel( mixed east, mixed north ): mixed
 
 
 ---
-
-### add_to
+### Square::add_to
 
 
 
@@ -1671,7 +1616,6 @@ Square::add_to( array &array, bool as_object = false ): void
 
 
 ---
-
 
 
 --------
