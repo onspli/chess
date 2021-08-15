@@ -174,6 +174,115 @@ class Board
   }
 
   /**
+  * Get array of all squares reachable from $origin_square by $moving_piece.
+  */
+  public function reachable_squares($origin_square, $moving_piece, $en_passant_square = '-', bool $as_object = false) : array
+  {
+    self::validate_square($origin_square);
+    self::validate_piece($moving_piece);
+
+    if (is_string($en_passant_square)) {
+      $en_passant_square = new Square($en_passant_square);
+    }
+    $arr = [];
+
+    /**
+    * Add square in the direction specified up to the first piece or the end of the board
+    */
+    $add_direction = function ($north, $east) use (&$arr, $origin_square, $moving_piece, $as_object) {
+        $square = $origin_square;
+        while ($square = $square->rel($north, $east)) {
+          if ($square->is_null()) {
+            break;
+          }
+          $target_piece = $this->square($target_square);
+          if (self::piece_color($target_piece) == self::piece_color($moving_piece)) {
+            break;
+          }
+          $square->add_to($arr, $as_object);
+          if ($target_piece != '') {
+            break;
+          }
+        }
+    };
+
+    $add_pawn_capture = function($target_square) use (&$arr, $moving_piece, $en_passant_square, $as_object) {
+      if ($target_square->alg() == $en_passant_square->alg()) {
+        $target_square->add_to($arr, $as_object);
+        return;
+      }
+      $target_piece = $this->square($target_square);
+      if (!$target_piece) {
+        return;
+      }
+      if (self::piece_color($target_piece) == self::piece_color($moving_piece)) {
+        return;
+      }
+      $target_square->add_to($arr, $as_object);
+    };
+
+    $add_target_square = function($target_square) use (&$arr, $moving_piece, $as_object) {
+      if ($target_square->is_null()) {
+        return;
+      }
+      $target_piece = $this->square($target_square);
+      if ($target_piece && self::piece_color($target_piece) == self::piece_color($moving_piece)) {
+        return;
+      }
+      $target_square->add_to($arr, $as_object);
+    };
+
+    if ($moving_piece == 'P') {
+      if ($origin_square->rank() == 1 && $this->square($origin_square->n()) == '') {
+        $add_target_square($origin_square->rel(0, 2));
+      }
+      $add_target_square($origin_square->n());
+      $add_pawn_capture($origin_square->nw());
+      $add_pawn_capture($origin_square->ne());
+    } else if ($moving_piece == 'p') {
+      if ($origin_square->rank() == 6 && $this->square($origin_square->s()) == '') {
+        $add_target_square($origin_square->rel(0, -2));
+      }
+      $add_target_square($origin_square->s());
+      $add_pawn_capture($origin_square->sw());
+      $add_pawn_capture($origin_square->se());
+    } else if ($moving_piece == 'K' || $moving_piece == 'k') {
+      $add_target_square($origin_square->n());
+      $add_target_square($origin_square->nw());
+      $add_target_square($origin_square->w());
+      $add_target_square($origin_square->sw());
+      $add_target_square($origin_square->s());
+      $add_target_square($origin_square->se());
+      $add_target_square($origin_square->e());
+      $add_target_square($origin_square->ne());
+    } else if ($moving_piece == 'N' || $moving_piece == 'n') {
+      $add_target_square($origin_square->rel(2, 1));
+      $add_target_square($origin_square->rel(2, -1));
+      $add_target_square($origin_square->rel(-2, 1));
+      $add_target_square($origin_square->rel(-2, -1));
+      $add_target_square($origin_square->rel(1, 2));
+      $add_target_square($origin_square->rel(1, -2));
+      $add_target_square($origin_square->rel(-1, 2));
+      $add_target_square($origin_square->rel(-1, -2));
+    } else {
+      if ($moving_piece == 'B' || $moving_piece == 'b'  || $moving_piece == 'Q'  || $moving_piece == 'q') {
+        $add_direction(1, 1);
+        $add_direction(1, -1);
+        $add_direction(-1, 1);
+        $add_direction(-1, -1);
+      }
+      if ($moving_piece == 'R' || $moving_piece == 'r'  || $moving_piece == 'Q'  || $moving_piece == 'q') {
+        $add_direction(1, 0);
+        $add_direction(-1, 0);
+        $add_direction(0, 1);
+        $add_direction(0, -1);
+      }
+    }
+
+    return $arr;
+  }
+
+  /**
   * Get list of pieces on squares (including multiplicities, excluding blank squares).
   */
   public function pieces_on_squares(array $squares) : array
@@ -230,6 +339,16 @@ class Board
       return strtoupper($piece);
     } else {
       return strtolower($piece);
+    }
+  }
+
+  public static function piece_color(string $piece) : string
+  {
+    self::validate_piece($piece);
+    if ($piece == self::active_piece($piece, 'w')) {
+      return 'w';
+    } else {
+      return 'b';
     }
   }
 

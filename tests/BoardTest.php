@@ -245,4 +245,12 @@ final class BoardTest extends TestCase
 
   }
 
+  public function testReachableSquares() : void
+  {
+    $board = new Board();
+    $this->assertEqualsCanonicalizing(['e3', 'e4'], $board->reachable_squares('e2', 'P'));
+    $this->assertEqualsCanonicalizing(['e5', 'e6'], $board->reachable_squares('e7', 'p'));
+    $this->assertEqualsCanonicalizing(['f3', 'h3'], $board->reachable_squares('g1', 'N'));
+  }
+
 }
