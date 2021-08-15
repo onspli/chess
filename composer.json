@@ -19,7 +19,7 @@
     "require-dev": {
         "phpunit/phpunit": "^9.5",
         "php-coveralls/php-coveralls": "^2.4",
-        "onspli/phpdoc-markdown-public": "dev-master"
+        "onspli/phpdoc-markdown": "dev-master"
     },
     "scripts": {
         "test": [
@@ -30,7 +30,7 @@
         ],
         "docs": [
           "php bin/generate_readme.php",
-          "php phpDocumentor.phar --directory=src --target=docs --template=vendor/onspli/phpdoc-markdown-public/data/templates/markdown-public"
+          "php phpDocumentor.phar --directory=src --target=docs --template=vendor/onspli/phpdoc-markdown/templates/public-onefile"
         ],
         "download-phpdoc": [
           "wget https://phpdoc.org/phpDocumentor.phar"

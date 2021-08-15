@@ -72,7 +72,7 @@ class FEN
     * black pieces use lowercase ("pnbrqk"). Empty squares are noted using
     * digits 1 through 8 (the number of empty squares), and "/" separates ranks.
     *
-    * @param bool $as_object return Board object instead of string
+    * @param bool $as_object return object instead of string
     * @return string|Board
     */
     public function board(bool $as_object = false)
@@ -97,7 +97,6 @@ class FEN
     * digits 1 through 8 (the number of empty squares), and "/" separates ranks.
     *
     * @param string|Board $board piece placement
-    * @return void
     */
     public function set_board($board) : void
     {
@@ -118,6 +117,12 @@ class FEN
       return $this->board->square($square);
     }
 
+    /**
+    * Set piece on a particular square.
+    *
+    * @param string|Square square on the board.
+    * @param string piece - one of PNBRQKpnbrqk or empty string for empty square
+    */
     public function set_square($square, string $piece) : void
     {
       $this->board->set_square($square, $piece);
@@ -141,7 +146,6 @@ class FEN
     * "w" means White moves next, "b" means Black moves next.
     *
     * @param string $color w|b
-    * @return void
     */
     public function set_active(string $color) : void
     {
@@ -167,6 +171,17 @@ class FEN
       return $this->castling;
     }
 
+    /**
+    * Set castling availability.
+    *
+    * If neither side can castle, this is "-".
+    * Otherwise, this has one or more letters: "K" (White can castle kingside),
+    * "Q" (White can castle queenside), "k" (Black can castle kingside), and/or
+    * "q" (Black can castle queenside). A move that temporarily prevents castling
+    * does not negate this notation.
+    *
+    * @param string castling availability string
+    */
     public function set_castling(string $castling) : void
     {
       if (!in_array($castling, ['-', 'KQkq', 'KQk', 'KQq', 'KQ', 'Kkq', 'Kk', 'Kq', 'K', 'Qkq', 'Qk', 'Qq', 'Q', 'kq', 'k', 'q'])) {
@@ -217,10 +232,15 @@ class FEN
     }
 
     /**
+    * Get En Passant target square.
+    *
     * En passant target square in algebraic notation. If there's no en passant
     * target square, this is "-". If a pawn has just made a two-square move,
     * this is the position "behind" the pawn. This is recorded regardless of
     * whether there is a pawn in position to make an en passant capture.
+    *
+    * @param bool $as_object return object instead of string
+    * @return string|Square
     */
     public function en_passant(bool $as_object = false)
     {
@@ -230,6 +250,16 @@ class FEN
       return $this->en_passant->alg();
     }
 
+    /**
+    * Set En Passant target square.
+    *
+    * En passant target square in algebraic notation. If there's no en passant
+    * target square, this is "-". If a pawn has just made a two-square move,
+    * this is the position "behind" the pawn. This is recorded regardless of
+    * whether there is a pawn in position to make an en passant capture.
+    *
+    * @param string|Square en passant target square
+    */
     public function set_en_passant($square) : void
     {
       if (is_string($square)) {
@@ -242,7 +272,9 @@ class FEN
     }
 
     /**
-    * Halfmove clock: The number of halfmoves since the last capture or pawn
+    * Get Halfmove clock
+    *
+    * The number of halfmoves since the last capture or pawn
     * advance, used for the fifty-move rule.
     */
     public function halfmove() : int
@@ -250,6 +282,12 @@ class FEN
       return $this->halfmove;
     }
 
+    /**
+    * Set Halfmove clock
+    *
+    * The number of halfmoves since the last capture or pawn
+    * advance, used for the fifty-move rule.
+    */
     public function set_halfmove($halfmove) : void
     {
       if (intval($halfmove) != $halfmove || $halfmove < 0) {
@@ -259,7 +297,9 @@ class FEN
     }
 
     /**
-    * Fullmove number: The number of the full move. It starts at 1, and is
+    * Get Fullmove number
+    *
+    * The number of the full move. It starts at 1, and is
     * incremented after Black's move.
     */
     public function fullmove() : int
@@ -267,6 +307,12 @@ class FEN
       return $this->fullmove;
     }
 
+    /**
+    * Set Fullmove number
+    *
+    * The number of the full move. It starts at 1, and is
+    * incremented after Black's move.
+    */
     public function set_fullmove($fullmove) : void
     {
       if (intval($fullmove) != $fullmove || $fullmove <= 0) {
@@ -277,6 +323,7 @@ class FEN
 
     /**
     * Returns true if king of active color is in mate.
+    *
     * @codeCoverageIgnore
     */
     public function is_mate() : bool
@@ -286,6 +333,7 @@ class FEN
 
     /**
     * Returns true if king of active color is in stalemate.
+    *
     * @codeCoverageIgnore
     */
     public function is_stalemate() : bool

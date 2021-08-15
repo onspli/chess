@@ -26,19 +26,19 @@
 | [FEN::board](#FENboard) | Get piece placement. |
 | [FEN::set_board](#FENset_board) | Setup piece placement. |
 | [FEN::square](#FENsquare) | Get piece on a particular square. |
-| [FEN::set_square](#FENset_square) |  |
+| [FEN::set_square](#FENset_square) | Set piece on a particular square. |
 | [FEN::active](#FENactive) | Active color. |
 | [FEN::set_active](#FENset_active) | Set active color. |
 | [FEN::castling](#FENcastling) | Castling availability. |
-| [FEN::set_castling](#FENset_castling) |  |
+| [FEN::set_castling](#FENset_castling) | Set castling availability. |
 | [FEN::castling_availability](#FENcastling_availability) |  |
 | [FEN::set_castling_availability](#FENset_castling_availability) |  |
-| [FEN::en_passant](#FENen_passant) | En passant target square in algebraic notation. If there&#039;s no en passanttarget square, this is &quot;-&quot;. If a pawn has just made a two-square move,this is the position &quot;behind&quot; the pawn. This is recorded regardless ofwhether there is a pawn in position to make an en passant capture. |
-| [FEN::set_en_passant](#FENset_en_passant) |  |
-| [FEN::halfmove](#FENhalfmove) | Halfmove clock: The number of halfmoves since the last capture or pawnadvance, used for the fifty-move rule. |
-| [FEN::set_halfmove](#FENset_halfmove) |  |
-| [FEN::fullmove](#FENfullmove) | Fullmove number: The number of the full move. It starts at 1, and isincremented after Black&#039;s move. |
-| [FEN::set_fullmove](#FENset_fullmove) |  |
+| [FEN::en_passant](#FENen_passant) | Get En Passant target square. |
+| [FEN::set_en_passant](#FENset_en_passant) | Set En Passant target square. |
+| [FEN::halfmove](#FENhalfmove) | Get Halfmove clock |
+| [FEN::set_halfmove](#FENset_halfmove) | Set Halfmove clock |
+| [FEN::fullmove](#FENfullmove) | Get Fullmove number |
+| [FEN::set_fullmove](#FENset_fullmove) | Set Fullmove number |
 | [FEN::is_mate](#FENis_mate) | Returns true if king of active color is in mate. |
 | [FEN::is_stalemate](#FENis_stalemate) | Returns true if king of active color is in stalemate. |
 | [FEN::is_fifty_move](#FENis_fifty_move) | Returns true if fifty move rule draw can be claimed by active color. |
@@ -527,7 +527,7 @@ digits 1 through 8 (the number of empty squares), and "/" separates ranks.
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `as_object` | **bool** | return Board object instead of string |
+| `as_object` | **bool** | return object instead of string |
 
 
 **Return Value:**
@@ -597,7 +597,7 @@ piece - one of PNBRQKpnbrqk or empty string for empty square
 ---
 ### FEN::set_square
 
-
+Set piece on a particular square.
 
 ```php
 FEN::set_square( mixed square, string piece ): void
@@ -690,13 +690,17 @@ castling availability string
 ---
 ### FEN::set_castling
 
-
+Set castling availability.
 
 ```php
 FEN::set_castling( string castling ): void
 ```
 
-
+If neither side can castle, this is "-".
+Otherwise, this has one or more letters: "K" (White can castle kingside),
+"Q" (White can castle queenside), "k" (Black can castle kingside), and/or
+"q" (Black can castle queenside). A move that temporarily prevents castling
+does not negate this notation.
 
 
 **Parameters:**
@@ -766,23 +770,23 @@ FEN::set_castling_availability( string type, bool avalability ): void
 ---
 ### FEN::en_passant
 
+Get En Passant target square.
+
+```php
+FEN::en_passant( bool as_object = false ): string|\Onspli\Chess\Square
+```
+
 En passant target square in algebraic notation. If there's no en passant
 target square, this is "-". If a pawn has just made a two-square move,
 this is the position "behind" the pawn. This is recorded regardless of
 whether there is a pawn in position to make an en passant capture.
-
-```php
-FEN::en_passant( bool as_object = false ): mixed
-```
-
-
 
 
 **Parameters:**
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `as_object` | **bool** |  |
+| `as_object` | **bool** | return object instead of string |
 
 
 **Return Value:**
@@ -794,13 +798,16 @@ FEN::en_passant( bool as_object = false ): mixed
 ---
 ### FEN::set_en_passant
 
-
+Set En Passant target square.
 
 ```php
 FEN::set_en_passant( mixed square ): void
 ```
 
-
+En passant target square in algebraic notation. If there's no en passant
+target square, this is "-". If a pawn has just made a two-square move,
+this is the position "behind" the pawn. This is recorded regardless of
+whether there is a pawn in position to make an en passant capture.
 
 
 **Parameters:**
@@ -819,14 +826,14 @@ FEN::set_en_passant( mixed square ): void
 ---
 ### FEN::halfmove
 
-Halfmove clock: The number of halfmoves since the last capture or pawn
-advance, used for the fifty-move rule.
+Get Halfmove clock
 
 ```php
 FEN::halfmove(  ): int
 ```
 
-
+The number of halfmoves since the last capture or pawn
+advance, used for the fifty-move rule.
 
 
 
@@ -839,13 +846,14 @@ FEN::halfmove(  ): int
 ---
 ### FEN::set_halfmove
 
-
+Set Halfmove clock
 
 ```php
 FEN::set_halfmove( mixed halfmove ): void
 ```
 
-
+The number of halfmoves since the last capture or pawn
+advance, used for the fifty-move rule.
 
 
 **Parameters:**
@@ -864,14 +872,14 @@ FEN::set_halfmove( mixed halfmove ): void
 ---
 ### FEN::fullmove
 
-Fullmove number: The number of the full move. It starts at 1, and is
-incremented after Black's move.
+Get Fullmove number
 
 ```php
 FEN::fullmove(  ): int
 ```
 
-
+The number of the full move. It starts at 1, and is
+incremented after Black's move.
 
 
 
@@ -884,13 +892,14 @@ FEN::fullmove(  ): int
 ---
 ### FEN::set_fullmove
 
-
+Set Fullmove number
 
 ```php
 FEN::set_fullmove( mixed fullmove ): void
 ```
 
-
+The number of the full move. It starts at 1, and is
+incremented after Black's move.
 
 
 **Parameters:**
