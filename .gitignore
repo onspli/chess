@@ -4,4 +4,4 @@ www
 tmp
 build
 phpDocumentor*
-.phpdoc
+.phpdoc*
