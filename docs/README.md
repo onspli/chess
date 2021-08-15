@@ -3,86 +3,86 @@
 ## Table of Contents
 
 * [Board](#Board) 
-    * [Board::__construct](#Board::__construct) Piece placement (from White's perspective). Each rank is described,
+    * [Board::__construct](#Board__construct) Piece placement (from White's perspective). Each rank is described,
 starting with rank 8 and ending with rank 1; within each rank,
 the contents of each square are described from file "a" through file "h".
-    * [Board::export](#Board::export) 
-    * [Board::square](#Board::square) 
-    * [Board::square_nothrow](#Board::square_nothrow) 
-    * [Board::set_square](#Board::set_square) 
-    * [Board::set_square_nothrow](#Board::set_square_nothrow) 
-    * [Board::attacked_squares](#Board::attacked_squares) Get array of all squares attacked (or defended) by $attacking_piece being on $attacker_square.
-    * [Board::pieces_on_squares](#Board::pieces_on_squares) Get list of pieces on squares (including multiplicities, excluding blank squares).
-    * [Board::find](#Board::find) Returns array of squares containing piece.
-    * [Board::copy](#Board::copy) 
-    * [Board::active_piece](#Board::active_piece) 
-    * [Board::opponents_piece](#Board::opponents_piece) 
-    * [Board::is_check](#Board::is_check) Returns true if king of active color is in check.
-    * [Board::preview](#Board::preview) Preview of the board in ASCII graphics.
+    * [Board::export](#Boardexport) 
+    * [Board::square](#Boardsquare) 
+    * [Board::square_nothrow](#Boardsquare_nothrow) 
+    * [Board::set_square](#Boardset_square) 
+    * [Board::set_square_nothrow](#Boardset_square_nothrow) 
+    * [Board::attacked_squares](#Boardattacked_squares) Get array of all squares attacked (or defended) by $attacking_piece being on $attacker_square.
+    * [Board::pieces_on_squares](#Boardpieces_on_squares) Get list of pieces on squares (including multiplicities, excluding blank squares).
+    * [Board::find](#Boardfind) Returns array of squares containing piece.
+    * [Board::copy](#Boardcopy) 
+    * [Board::active_piece](#Boardactive_piece) 
+    * [Board::opponents_piece](#Boardopponents_piece) 
+    * [Board::is_check](#Boardis_check) Returns true if king of active color is in check.
+    * [Board::preview](#Boardpreview) Preview of the board in ASCII graphics.
 * [FEN](#FEN) 
-    * [FEN::__construct](#FEN::__construct) Load fen or setup starting position.
-    * [FEN::export](#FEN::export) Export whole FEN string
-    * [FEN::preview](#FEN::preview) Preview of the board in ASCII graphics.
-    * [FEN::board](#FEN::board) Piece placement (from White's perspective). Each rank is described,
+    * [FEN::__construct](#FEN__construct) Load fen or setup starting position.
+    * [FEN::export](#FENexport) Export whole FEN string
+    * [FEN::preview](#FENpreview) Preview of the board in ASCII graphics.
+    * [FEN::board](#FENboard) Piece placement (from White's perspective). Each rank is described,
 starting with rank 8 and ending with rank 1; within each rank,
 the contents of each square are described from file "a" through file "h".
-    * [FEN::set_board](#FEN::set_board) 
-    * [FEN::square](#FEN::square) 
-    * [FEN::set_square](#FEN::set_square) 
-    * [FEN::active](#FEN::active) Active color. "w" means White moves next, "b" means Black moves next.
-    * [FEN::set_active](#FEN::set_active) 
-    * [FEN::castling](#FEN::castling) Castling availability. If neither side can castle, this is "-".
-    * [FEN::set_castling](#FEN::set_castling) 
-    * [FEN::castling_availability](#FEN::castling_availability) 
-    * [FEN::set_castling_availability](#FEN::set_castling_availability) 
-    * [FEN::en_passant](#FEN::en_passant) En passant target square in algebraic notation. If there's no en passant
+    * [FEN::set_board](#FENset_board) 
+    * [FEN::square](#FENsquare) 
+    * [FEN::set_square](#FENset_square) 
+    * [FEN::active](#FENactive) Active color. "w" means White moves next, "b" means Black moves next.
+    * [FEN::set_active](#FENset_active) 
+    * [FEN::castling](#FENcastling) Castling availability. If neither side can castle, this is "-".
+    * [FEN::set_castling](#FENset_castling) 
+    * [FEN::castling_availability](#FENcastling_availability) 
+    * [FEN::set_castling_availability](#FENset_castling_availability) 
+    * [FEN::en_passant](#FENen_passant) En passant target square in algebraic notation. If there's no en passant
 target square, this is "-". If a pawn has just made a two-square move,
 this is the position "behind" the pawn. This is recorded regardless of
 whether there is a pawn in position to make an en passant capture.
-    * [FEN::set_en_passant](#FEN::set_en_passant) 
-    * [FEN::halfmove](#FEN::halfmove) Halfmove clock: The number of halfmoves since the last capture or pawn
+    * [FEN::set_en_passant](#FENset_en_passant) 
+    * [FEN::halfmove](#FENhalfmove) Halfmove clock: The number of halfmoves since the last capture or pawn
 advance, used for the fifty-move rule.
-    * [FEN::set_halfmove](#FEN::set_halfmove) 
-    * [FEN::fullmove](#FEN::fullmove) Fullmove number: The number of the full move. It starts at 1, and is
+    * [FEN::set_halfmove](#FENset_halfmove) 
+    * [FEN::fullmove](#FENfullmove) Fullmove number: The number of the full move. It starts at 1, and is
 incremented after Black's move.
-    * [FEN::set_fullmove](#FEN::set_fullmove) 
-    * [FEN::is_mate](#FEN::is_mate) Returns true if king of active color is in mate.
-    * [FEN::is_stalemate](#FEN::is_stalemate) Returns true if king of active color is in stalemate.
-    * [FEN::is_fifty_move](#FEN::is_fifty_move) Returns true if fifty move rule draw can be claimed by active color.
-    * [FEN::is_check](#FEN::is_check) Returns true if king of active color is in check.
-    * [FEN::possible_moves](#FEN::possible_moves) Array of all possible moves in current position.
-    * [FEN::move](#FEN::move) Perform a move.
+    * [FEN::set_fullmove](#FENset_fullmove) 
+    * [FEN::is_mate](#FENis_mate) Returns true if king of active color is in mate.
+    * [FEN::is_stalemate](#FENis_stalemate) Returns true if king of active color is in stalemate.
+    * [FEN::is_fifty_move](#FENis_fifty_move) Returns true if fifty move rule draw can be claimed by active color.
+    * [FEN::is_check](#FENis_check) Returns true if king of active color is in check.
+    * [FEN::possible_moves](#FENpossible_moves) Array of all possible moves in current position.
+    * [FEN::move](#FENmove) Perform a move.
 * [Move](#Move) 
-    * [Move::__construct](#Move::__construct) 
-    * [Move::alg](#Move::alg) 
-    * [Move::capture](#Move::capture) 
-    * [Move::target](#Move::target) 
-    * [Move::origin_file](#Move::origin_file) 
-    * [Move::origin_rank](#Move::origin_rank) 
-    * [Move::piece](#Move::piece) 
-    * [Move::castling](#Move::castling) 
-    * [Move::promotion](#Move::promotion) 
-    * [Move::check_mate](#Move::check_mate) 
-    * [Move::annotation](#Move::annotation) 
+    * [Move::__construct](#Move__construct) 
+    * [Move::alg](#Movealg) 
+    * [Move::capture](#Movecapture) 
+    * [Move::target](#Movetarget) 
+    * [Move::origin_file](#Moveorigin_file) 
+    * [Move::origin_rank](#Moveorigin_rank) 
+    * [Move::piece](#Movepiece) 
+    * [Move::castling](#Movecastling) 
+    * [Move::promotion](#Movepromotion) 
+    * [Move::check_mate](#Movecheck_mate) 
+    * [Move::annotation](#Moveannotation) 
 * [NotImplementedException](#NotImplementedException) 
 * [ParseException](#ParseException) 
 * [RulesException](#RulesException) 
 * [Square](#Square) There are two handy notations of squares on the chess board.
-    * [Square::__construct](#Square::__construct) 
-    * [Square::rank](#Square::rank) 
-    * [Square::file](#Square::file) 
-    * [Square::alg](#Square::alg) 
-    * [Square::is_null](#Square::is_null) 
-    * [Square::n](#Square::n) 
-    * [Square::w](#Square::w) 
-    * [Square::s](#Square::s) 
-    * [Square::e](#Square::e) 
-    * [Square::nw](#Square::nw) 
-    * [Square::ne](#Square::ne) 
-    * [Square::sw](#Square::sw) 
-    * [Square::se](#Square::se) 
-    * [Square::rel](#Square::rel) 
-    * [Square::add_to](#Square::add_to) 
+    * [Square::__construct](#Square__construct) 
+    * [Square::rank](#Squarerank) 
+    * [Square::file](#Squarefile) 
+    * [Square::alg](#Squarealg) 
+    * [Square::is_null](#Squareis_null) 
+    * [Square::n](#Squaren) 
+    * [Square::w](#Squarew) 
+    * [Square::s](#Squares) 
+    * [Square::e](#Squaree) 
+    * [Square::nw](#Squarenw) 
+    * [Square::ne](#Squarene) 
+    * [Square::sw](#Squaresw) 
+    * [Square::se](#Squarese) 
+    * [Square::rel](#Squarerel) 
+    * [Square::add_to](#Squareadd_to) 
 
 ## Board
 
