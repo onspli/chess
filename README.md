@@ -1,7 +1,7 @@
 # onspli/chess
 PHP library for parsing chess games in PGN and FEN formats
 
-![build](https://github.com/onspli/chess/actions/workflows/build.yml/badge.svg) [![coverage](https://coveralls.io/repos/github/onspli/chess/badge.svg?branch=master)](https://coveralls.io/github/onspli/chess?branch=master) [![license](https://img.shields.io/github/license/onspli/chess?label=license)](https://github.com/onspli/chess/blob/master/LICENSE) [![last commit](https://img.shields.io/github/last-commit/onspli/chess)](https://github.com/onspli/chess)
+![build](https://github.com/onspli/chess/actions/workflows/build.yml/badge.svg) [![license](https://img.shields.io/github/license/onspli/chess?label=license)](https://github.com/onspli/chess/blob/master/LICENSE) [![coverage](https://coveralls.io/repos/github/onspli/chess/badge.svg?branch=master)](https://coveralls.io/github/onspli/chess?branch=master) ![Code Climate maintainability](https://img.shields.io/codeclimate/maintainability-percentage/onspli/chess) [![last commit](https://img.shields.io/github/last-commit/onspli/chess)](https://github.com/onspli/chess)
 
 ## Installation
 Install with composer:
