@@ -2,4 +2,6 @@ vendor
 composer.lock
 www
 tmp
-build/logs
+build
+phpDocumentor*
+.phpdoc
