@@ -1,7 +1,7 @@
 # onspli/chess
 PHP library for parsing chess games in PGN and FEN formats
 
-![build](https://github.com/onspli/chess/actions/workflows/build.yml/badge.svg) [![license](https://img.shields.io/github/license/onspli/chess?label=license)](https://github.com/onspli/chess/blob/master/LICENSE) [![coverage](https://coveralls.io/repos/github/onspli/chess/badge.svg?branch=master)](https://coveralls.io/github/onspli/chess?branch=master) [![maintainability](https://api.codeclimate.com/v1/badges/4c2f7aaf563a1f492c21/maintainability)](https://codeclimate.com/github/onspli/chess/maintainability) [![last commit](https://img.shields.io/github/last-commit/onspli/chess)](https://github.com/onspli/chess)
+![build](https://github.com/onspli/chess/actions/workflows/build.yml/badge.svg) [![coverage](https://coveralls.io/repos/github/onspli/chess/badge.svg?branch=master)](https://coveralls.io/github/onspli/chess?branch=master) [![license](https://img.shields.io/github/license/onspli/chess?label=license)](https://github.com/onspli/chess/blob/master/LICENSE) [![last commit](https://img.shields.io/github/last-commit/onspli/chess)](https://github.com/onspli/chess)
 
 ## Installation
 Install with composer:
@@ -137,7 +137,7 @@ echo($fen->export());
 // rnbq1rk1/ppppppbp/5np1/8/2B1P3/5N2/PPPP1PPP/RNBQ1RK1 w - - 6 5
 ```
 
-Test check:
+Test check, mate, stalemate:
 ``` php
 $fen = new Onspli\Chess\FEN;
 $fen->set_active('w');
@@ -155,6 +155,8 @@ K.......
 */
 echo($fen->is_check() ? 'true' : 'false');
 // false
+echo($fen->is_stalemate() ? 'true' : 'false');
+// false
 $fen->move('Ka2');
 $fen->move('Qa8');
 echo($fen->preview());
@@ -170,4 +172,61 @@ K.......
 */
 echo($fen->is_check() ? 'true' : 'false');
 // true
+echo($fen->is_mate() ? 'true' : 'false');
+// false
+```
+
+List all possible moves:
+``` php
+$fen = new Onspli\Chess\FEN;
+$fen->move('e4');
+$fen->move('g6');
+echo($fen->preview());
+/*
+rnbqkbnr
+pppppp.p
+......p.
+........
+....P...
+........
+PPPP.PPP
+RNBQKBNR
+*/
+print_r($fen->possible_moves());
+/*
+Array
+(
+    [0] => Ba6
+    [1] => Bb5
+    [2] => Bc4
+    [3] => Bd3
+    [4] => Be2
+    [5] => Ke2
+    [6] => Na3
+    [7] => Nc3
+    [8] => Ne2
+    [9] => Nf3
+    [10] => Nh3
+    [11] => Qe2
+    [12] => Qf3
+    [13] => Qg4
+    [14] => Qh5
+    [15] => a3
+    [16] => a4
+    [17] => b3
+    [18] => b4
+    [19] => c3
+    [20] => c4
+    [21] => d3
+    [22] => d4
+    [23] => e5
+    [24] => f3
+    [25] => f4
+    [26] => g3
+    [27] => g4
+    [28] => h3
+    [29] => h4
+)
+
+*/
 ```

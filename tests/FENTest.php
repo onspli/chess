@@ -631,4 +631,22 @@ final class FENTest extends TestCase
     $fen->move('O-O-O');
   }
 
+  public function testPossibleMoves() : void
+  {
+    $fen = new FEN;
+    $this->assertEqualsCanonicalizing(['Nf3', 'Nh3', 'Na3', 'Nc3', 'a3', 'a4', 'b3', 'b4', 'c3', 'c4', 'd3', 'd4', 'e3', 'e4', 'f3', 'f4', 'g3', 'g4', 'h3', 'h4'], $fen->possible_moves());
+  }
+
+  public function testMate() : void
+  {
+    $fen = new FEN('4R1k1/ppp2ppp/8/8/PQ1r4/1P6/6PP/1R4K1 b - - 1 26');
+    $this->assertTrue($fen->is_mate());
+  }
+
+  public function testStalemate() : void
+  {
+    $fen = new FEN('5k2/8/4QP2/8/8/8/6K1/8 b - - 0 57');
+    $this->assertTrue($fen->is_stalemate());
+  }
+
 }

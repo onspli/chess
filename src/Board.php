@@ -195,8 +195,8 @@ class Board
           if ($square->is_null()) {
             break;
           }
-          $target_piece = $this->square($target_square);
-          if (self::piece_color($target_piece) == self::piece_color($moving_piece)) {
+          $target_piece = $this->square($square);
+          if ($target_piece && self::piece_color($target_piece) == self::piece_color($moving_piece)) {
             break;
           }
           $square->add_to($arr, $as_object);

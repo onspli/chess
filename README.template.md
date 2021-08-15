@@ -70,15 +70,26 @@ echo($fen->preview());
 echo($fen->export());
 ```
 
-Test check:
+Test check, mate, stalemate:
 ``` php
 $fen = new Onspli\Chess\FEN;
 $fen->set_active('w');
 $fen->set_board('1q5k/8/8/8/8/8/8/K7');
 echo($fen->preview());
 echo($fen->is_check() ? 'true' : 'false');
+echo($fen->is_stalemate() ? 'true' : 'false');
 $fen->move('Ka2');
 $fen->move('Qa8');
 echo($fen->preview());
 echo($fen->is_check() ? 'true' : 'false');
+echo($fen->is_mate() ? 'true' : 'false');
+```
+
+List all possible moves:
+``` php
+$fen = new Onspli\Chess\FEN;
+$fen->move('e4');
+$fen->move('g6');
+echo($fen->preview());
+print_r($fen->possible_moves());
 ```

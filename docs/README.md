@@ -12,11 +12,13 @@
 | [Board::set_square](#Boardset_square) |  |
 | [Board::set_square_nothrow](#Boardset_square_nothrow) |  |
 | [Board::attacked_squares](#Boardattacked_squares) | Get array of all squares attacked (or defended) by $attacking_piece being on $attacker_square. |
+| [Board::reachable_squares](#Boardreachable_squares) | Get array of all squares reachable from $origin_square by $moving_piece. |
 | [Board::pieces_on_squares](#Boardpieces_on_squares) | Get list of pieces on squares (including multiplicities, excluding blank squares). |
 | [Board::find](#Boardfind) | Returns array of squares containing piece. |
 | [Board::copy](#Boardcopy) |  |
 | [Board::active_piece](#Boardactive_piece) |  |
 | [Board::opponents_piece](#Boardopponents_piece) |  |
+| [Board::piece_color](#Boardpiece_color) |  |
 | [Board::is_check](#Boardis_check) | Returns true if king of active color is in check. |
 | [Board::preview](#Boardpreview) | Preview of the board in ASCII graphics. |
 | [**FEN**](#FEN) | FEN is a standard notation for describing a particular board position of a chess game |
@@ -266,6 +268,34 @@ Board::attacked_squares( mixed attacker_square, mixed attacking_piece, bool as_o
 
 
 ---
+### Board::reachable_squares
+
+Get array of all squares reachable from $origin_square by $moving_piece.
+
+```php
+Board::reachable_squares( mixed origin_square, mixed moving_piece, mixed en_passant_square = '-', bool as_object = false ): array
+```
+
+
+
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `origin_square` | **mixed** |  |
+| `moving_piece` | **mixed** |  |
+| `en_passant_square` | **mixed** |  |
+| `as_object` | **bool** |  |
+
+
+**Return Value:**
+
+
+
+
+
+---
 ### Board::pieces_on_squares
 
 Get list of pieces on squares (including multiplicities, excluding blank squares).
@@ -379,6 +409,31 @@ Board::opponents_piece( string piece, string active ): string
 |-----------|------|-------------|
 | `piece` | **string** |  |
 | `active` | **string** |  |
+
+
+**Return Value:**
+
+
+
+
+
+---
+### Board::piece_color
+
+
+
+```php
+Board::piece_color( string piece ): string
+```
+
+
+
+* This method is **static**.
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `piece` | **string** |  |
 
 
 **Return Value:**

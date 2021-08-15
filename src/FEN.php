@@ -335,8 +335,6 @@ class FEN
 
     /**
     * Returns true if king of active color is in mate.
-    *
-    * @codeCoverageIgnore
     */
     public function is_mate() : bool
     {
@@ -345,8 +343,6 @@ class FEN
 
     /**
     * Returns true if king of active color is in stalemate.
-    *
-    * @codeCoverageIgnore
     */
     public function is_stalemate() : bool
     {
@@ -386,11 +382,105 @@ class FEN
 
     /**
     * Array of all possible moves in current position.
-    * @codeCoverageIgnore
     */
     public function possible_moves() : array
     {
-      throw new NotImplementedException;
+      $candidate_moves = [];
+
+      $candidate_moves_for_piece = function($moving_piece) use (&$candidate_moves) {
+        $reachable_squares_origins = [];
+        for ($rank = 0; $rank < 8; $rank ++) {
+          for ($file = 0; $file < 8; $file ++) {
+            $origin_square = new Square($file, $rank);
+            $piece = $this->square($origin_square);
+            if ($piece != $moving_piece) {
+              continue;
+            }
+
+            $reachable_squares = $this->board->reachable_squares($origin_square, $moving_piece);
+            foreach ($reachable_squares as $reachable_square) {
+              if (!array_key_exists($reachable_square, $reachable_squares_origins)) {
+                $reachable_squares_origins[$reachable_square] = [];
+              }
+              $reachable_squares_origins[$reachable_square][] = $origin_square;
+            }
+          }
+        }
+        foreach ($reachable_squares_origins as $reachable_square => $origins) {
+          $capture = '';
+          if ($this->square($reachable_square)) {
+            $capture = 'x';
+          }
+          if (sizeof($origins) == 1) {
+            $candidate_moves[] = strtoupper($moving_piece) . $capture . $reachable_square;
+          } else if (sizeof($origins) == 2) {
+            if ($origins[0]->file() != $origins[1]->file()) {
+              $candidate_moves[] = strtoupper($moving_piece) . $origins[0]->file() . $capture . $reachable_square;
+              $candidate_moves[] = strtoupper($moving_piece) . $origins[1]->file() . $capture . $reachable_square;
+            } else {
+              $candidate_moves[] = strtoupper($moving_piece) . $origins[0]->rank() . $capture . $reachable_square;
+              $candidate_moves[] = strtoupper($moving_piece) . $origins[1]->rank() . $capture . $reachable_square;
+            }
+          } else {
+            foreach ($origins as $origin) {
+              $candidate_moves[] = strtoupper($moving_piece) . $origin->alg() . $capture . $reachable_square;
+            }
+          }
+        }
+      };
+
+      $candidate_moves_for_pawn = function($moving_piece) use (&$candidate_moves) {
+        for ($rank = 0; $rank < 8; $rank ++) {
+          for ($file = 0; $file < 8; $file ++) {
+            $origin_square = new Square($file, $rank);
+            $piece = $this->square($origin_square);
+            if ($piece != $moving_piece) {
+              continue;
+            }
+
+            $reachable_squares = $this->board->reachable_squares($origin_square, $moving_piece, $this->en_passant());
+            foreach ($reachable_squares as $reachable_square) {
+
+              if (($this->active() == 'w' && $origin_square->rank() == 6) ||
+                  ($this->active() == 'b' && $origin_square->rank() == 1)) {
+                    $promotions = ['=N', '=B', '=R', '=Q'];
+              } else {
+                $promotions = [''];
+              }
+              foreach ($promotions as $promotion) {
+                if ($this->square($reachable_square)) {
+                  $candidate_moves[] = $origin_square->file() . 'x' . $reachable_square . $promotion;
+                } else {
+                  $candidate_moves[] = $reachable_square . $promotion;
+                }
+              }
+            }
+          }
+        }
+      };
+
+      $candidate_moves_for_pawn($this->active_piece('P'));
+      $candidate_moves_for_piece($this->active_piece('N'));
+      $candidate_moves_for_piece($this->active_piece('B'));
+      $candidate_moves_for_piece($this->active_piece('R'));
+      $candidate_moves_for_piece($this->active_piece('Q'));
+      $candidate_moves_for_piece($this->active_piece('K'));
+      if ($this->castling_availability($this->active_piece('Q'))) {
+        $candidate_moves[] = 'O-O-O';
+      }
+      if ($this->castling_availability($this->active_piece('K'))) {
+        $candidate_moves[] = 'O-O';
+      }
+      $possible_moves = [];
+      foreach ($candidate_moves as $candidate_move) {
+        $fen = new static($this->export());
+        try {
+          $fen->move($candidate_move);
+          $possible_moves[] = $candidate_move;
+        } catch (\Exception $e) {};
+      }
+      sort($possible_moves);
+      return $possible_moves;
     }
 
     /**
