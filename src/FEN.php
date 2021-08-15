@@ -12,7 +12,9 @@ class FEN
     private $fullmove = 1;
 
     /**
-    * Load fen or setup starting position.
+    * Load FEN or setup starting position.
+    * @param string $fen
+    * @return void
     */
     function __construct(string $fen = '')
     {
@@ -40,7 +42,8 @@ class FEN
     }
 
     /**
-    * Export whole FEN string
+    * Export whole FEN string.
+    * @return string FEN string
     */
     public function export() : string
     {
@@ -49,6 +52,7 @@ class FEN
 
     /**
     * Preview of the board in ASCII graphics.
+    * @return string ascii preview of the board
     */
     public function preview() : string
     {
@@ -56,6 +60,8 @@ class FEN
     }
 
     /**
+    * Get piece placement.
+    *
     * Piece placement (from White's perspective). Each rank is described,
     * starting with rank 8 and ending with rank 1; within each rank,
     * the contents of each square are described from file "a" through file "h".
@@ -65,6 +71,9 @@ class FEN
     * White pieces are designated using upper-case letters ("PNBRQK") while
     * black pieces use lowercase ("pnbrqk"). Empty squares are noted using
     * digits 1 through 8 (the number of empty squares), and "/" separates ranks.
+    *
+    * @param bool $as_object return Board object instead of string
+    * @return string|Board
     */
     public function board(bool $as_object = false)
     {
@@ -74,6 +83,22 @@ class FEN
       return $this->board->export();
     }
 
+    /**
+    * Setup piece placement.
+    *
+    * Piece placement (from White's perspective). Each rank is described,
+    * starting with rank 8 and ending with rank 1; within each rank,
+    * the contents of each square are described from file "a" through file "h".
+    * Following the Standard Algebraic Notation (SAN), each piece is identified
+    * by a single letter taken from the standard English names (pawn = "P",
+    * knight = "N", bishop = "B", rook = "R", queen = "Q" and king = "K").
+    * White pieces are designated using upper-case letters ("PNBRQK") while
+    * black pieces use lowercase ("pnbrqk"). Empty squares are noted using
+    * digits 1 through 8 (the number of empty squares), and "/" separates ranks.
+    *
+    * @param string|Board $board piece placement
+    * @return void
+    */
     public function set_board($board) : void
     {
       if (is_string($board)) {
@@ -82,6 +107,12 @@ class FEN
       $this->board = $board;
     }
 
+    /**
+    * Get piece on a particular square.
+    *
+    * @param string|Square square on the board.
+    * @return string piece - one of PNBRQKpnbrqk or empty string for empty square
+    */
     public function square($square) : string
     {
       return $this->board->square($square);
@@ -93,13 +124,25 @@ class FEN
     }
 
     /**
-    * Active color. "w" means White moves next, "b" means Black moves next.
+    * Active color.
+    *
+    * "w" means White moves next, "b" means Black moves next.
+    *
+    * @return string w|b
     */
     public function active() : string
     {
       return $this->active;
     }
 
+    /**
+    * Set active color.
+    *
+    * "w" means White moves next, "b" means Black moves next.
+    *
+    * @param string $color w|b
+    * @return void
+    */
     public function set_active(string $color) : void
     {
       if ($color != 'w' && $color != 'b') {
@@ -109,11 +152,15 @@ class FEN
     }
 
     /**
-    * Castling availability. If neither side can castle, this is "-".
+    * Castling availability.
+    *
+    * If neither side can castle, this is "-".
     * Otherwise, this has one or more letters: "K" (White can castle kingside),
     * "Q" (White can castle queenside), "k" (Black can castle kingside), and/or
     * "q" (Black can castle queenside). A move that temporarily prevents castling
     * does not negate this notation.
+    *
+    * @return string castling availability string
     */
     public function castling() : string
     {

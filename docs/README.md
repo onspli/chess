@@ -20,18 +20,16 @@ the contents of each square are described from file "a" through file "h".
     * [Board::is_check](#Boardis_check) Returns true if king of active color is in check.
     * [Board::preview](#Boardpreview) Preview of the board in ASCII graphics.
 * [FEN](#FEN) 
-    * [FEN::__construct](#FEN__construct) Load fen or setup starting position.
-    * [FEN::export](#FENexport) Export whole FEN string
+    * [FEN::__construct](#FEN__construct) Load FEN or setup starting position.
+    * [FEN::export](#FENexport) Export whole FEN string.
     * [FEN::preview](#FENpreview) Preview of the board in ASCII graphics.
-    * [FEN::board](#FENboard) Piece placement (from White's perspective). Each rank is described,
-starting with rank 8 and ending with rank 1; within each rank,
-the contents of each square are described from file "a" through file "h".
-    * [FEN::set_board](#FENset_board) 
-    * [FEN::square](#FENsquare) 
+    * [FEN::board](#FENboard) Get piece placement.
+    * [FEN::set_board](#FENset_board) Setup piece placement.
+    * [FEN::square](#FENsquare) Get piece on a particular square.
     * [FEN::set_square](#FENset_square) 
-    * [FEN::active](#FENactive) Active color. "w" means White moves next, "b" means Black moves next.
-    * [FEN::set_active](#FENset_active) 
-    * [FEN::castling](#FENcastling) Castling availability. If neither side can castle, this is "-".
+    * [FEN::active](#FENactive) Active color.
+    * [FEN::set_active](#FENset_active) Set active color.
+    * [FEN::castling](#FENcastling) Castling availability.
     * [FEN::set_castling](#FENset_castling) 
     * [FEN::castling_availability](#FENcastling_availability) 
     * [FEN::set_castling_availability](#FENset_castling_availability) 
@@ -450,10 +448,10 @@ Board::preview(  ): string
 
 ### FEN::__construct
 
-Load fen or setup starting position.
+Load FEN or setup starting position.
 
 ```php
-FEN::__construct( string fen = '' ): mixed
+FEN::__construct( string fen = '' ): void
 ```
 
 
@@ -475,7 +473,7 @@ FEN::__construct( string fen = '' ): mixed
 ---
 ### FEN::export
 
-Export whole FEN string
+Export whole FEN string.
 
 ```php
 FEN::export(  ): string
@@ -487,7 +485,7 @@ FEN::export(  ): string
 
 **Return Value:**
 
-
+FEN string
 
 
 
@@ -506,21 +504,22 @@ FEN::preview(  ): string
 
 **Return Value:**
 
-
+ascii preview of the board
 
 
 
 ---
 ### FEN::board
 
+Get piece placement.
+
+```php
+FEN::board( bool as_object = false ): string|\Onspli\Chess\Board
+```
+
 Piece placement (from White's perspective). Each rank is described,
 starting with rank 8 and ending with rank 1; within each rank,
 the contents of each square are described from file "a" through file "h".
-
-```php
-FEN::board( bool as_object = false ): mixed
-```
-
 Following the Standard Algebraic Notation (SAN), each piece is identified
 by a single letter taken from the standard English names (pawn = "P",
 knight = "N", bishop = "B", rook = "R", queen = "Q" and king = "K").
@@ -533,7 +532,7 @@ digits 1 through 8 (the number of empty squares), and "/" separates ranks.
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `as_object` | **bool** |  |
+| `as_object` | **bool** | return Board object instead of string |
 
 
 **Return Value:**
@@ -545,20 +544,28 @@ digits 1 through 8 (the number of empty squares), and "/" separates ranks.
 ---
 ### FEN::set_board
 
-
+Setup piece placement.
 
 ```php
-FEN::set_board( mixed board ): void
+FEN::set_board( string|\Onspli\Chess\Board board ): void
 ```
 
-
+Piece placement (from White's perspective). Each rank is described,
+starting with rank 8 and ending with rank 1; within each rank,
+the contents of each square are described from file "a" through file "h".
+Following the Standard Algebraic Notation (SAN), each piece is identified
+by a single letter taken from the standard English names (pawn = "P",
+knight = "N", bishop = "B", rook = "R", queen = "Q" and king = "K").
+White pieces are designated using upper-case letters ("PNBRQK") while
+black pieces use lowercase ("pnbrqk"). Empty squares are noted using
+digits 1 through 8 (the number of empty squares), and "/" separates ranks.
 
 
 **Parameters:**
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `board` | **mixed** |  |
+| `board` | **string|\Onspli\Chess\Board** | piece placement |
 
 
 **Return Value:**
@@ -570,7 +577,7 @@ FEN::set_board( mixed board ): void
 ---
 ### FEN::square
 
-
+Get piece on a particular square.
 
 ```php
 FEN::square( mixed square ): string
@@ -588,7 +595,7 @@ FEN::square( mixed square ): string
 
 **Return Value:**
 
-
+piece - one of PNBRQKpnbrqk or empty string for empty square
 
 
 
@@ -621,39 +628,39 @@ FEN::set_square( mixed square, string piece ): void
 ---
 ### FEN::active
 
-Active color. "w" means White moves next, "b" means Black moves next.
+Active color.
 
 ```php
 FEN::active(  ): string
 ```
 
-
+"w" means White moves next, "b" means Black moves next.
 
 
 
 **Return Value:**
 
-
+w|b
 
 
 
 ---
 ### FEN::set_active
 
-
+Set active color.
 
 ```php
 FEN::set_active( string color ): void
 ```
 
-
+"w" means White moves next, "b" means Black moves next.
 
 
 **Parameters:**
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `color` | **string** |  |
+| `color` | **string** | w&#124;b |
 
 
 **Return Value:**
@@ -665,12 +672,13 @@ FEN::set_active( string color ): void
 ---
 ### FEN::castling
 
-Castling availability. If neither side can castle, this is "-".
+Castling availability.
 
 ```php
 FEN::castling(  ): string
 ```
 
+If neither side can castle, this is "-".
 Otherwise, this has one or more letters: "K" (White can castle kingside),
 "Q" (White can castle queenside), "k" (Black can castle kingside), and/or
 "q" (Black can castle queenside). A move that temporarily prevents castling
@@ -680,7 +688,7 @@ does not negate this notation.
 
 **Return Value:**
 
-
+castling availability string
 
 
 
