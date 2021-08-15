@@ -207,6 +207,9 @@ class Board
     };
 
     $add_pawn_capture = function($target_square) use (&$arr, $moving_piece, $en_passant_square, $as_object) {
+      if ($target_square->is_null()) {
+        return;
+      }
       if ($target_square->alg() == $en_passant_square->alg()) {
         $target_square->add_to($arr, $as_object);
         return;

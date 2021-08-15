@@ -637,6 +637,34 @@ final class FENTest extends TestCase
     $this->assertEqualsCanonicalizing(['Nf3', 'Nh3', 'Na3', 'Nc3', 'a3', 'a4', 'b3', 'b4', 'c3', 'c4', 'd3', 'd4', 'e3', 'e4', 'f3', 'f4', 'g3', 'g4', 'h3', 'h4'], $fen->possible_moves());
   }
 
+  public function testPossibleMovesAbiguious() : void
+  {
+    $fen = new FEN;
+    $fen->set_active('w');
+    $fen->set_board('2q4k/8/8/8/8/8/8/NK2N3');
+    $this->assertEqualsCanonicalizing(['Ka2', 'Kb2', 'Nac2', 'Nec2', 'Nb3', 'Nd3', 'Nf3', 'Ng2'], $fen->possible_moves());
+
+    $fen = new FEN;
+    $fen->set_active('w');
+    $fen->set_board('2q4k/8/8/N7/8/8/8/NK6');
+    $this->assertEqualsCanonicalizing(['Ka2', 'Kb2', 'N1b3', 'Nc2', 'N5b3', 'Nc4', 'Nc6', 'Nb7'], $fen->possible_moves());
+
+    $fen = new FEN;
+    $fen->set_active('w');
+    $fen->set_board('2q4k/8/8/8/8/N7/8/NK2N3');
+    $this->assertEqualsCanonicalizing(['Ka2', 'Kb2', 'Na1c2', 'Na3c2', 'Ne1c2', 'Nb3', 'Nd3', 'Nf3', 'Ng2', 'Nc4', 'Nb5'], $fen->possible_moves());
+
+  }
+
+  public function testPossibleMovesPromotion() : void
+  {
+    $fen = new FEN;
+    $fen->set_active('w');
+    $fen->set_board('1q5k/P7/8/8/8/8/8/K7');
+    $this->assertEqualsCanonicalizing(['Ka2', 'a8=N', 'a8=B', 'a8=R', 'a8=Q', 'axb8=N', 'axb8=B', 'axb8=R', 'axb8=Q'], $fen->possible_moves());
+  }
+
+
   public function testMate() : void
   {
     $fen = new FEN('4R1k1/ppp2ppp/8/8/PQ1r4/1P6/6PP/1R4K1 b - - 1 26');

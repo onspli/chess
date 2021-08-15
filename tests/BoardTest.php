@@ -253,8 +253,44 @@ final class BoardTest extends TestCase
     $this->assertEqualsCanonicalizing(['f3', 'h3'], $board->reachable_squares('g1', 'N'));
 
     $board->set_square('e2', '');
+    $board->set_square('a2', '');
     $this->assertEqualsCanonicalizing(['e2', 'd3', 'c4', 'b5', 'a6'], $board->reachable_squares('f1', 'B'));
     $this->assertEqualsCanonicalizing(['e2', 'f3', 'g4', 'h5'], $board->reachable_squares('d1', 'Q'));
+    $this->assertEqualsCanonicalizing(['e2'], $board->reachable_squares('e1', 'K'));
+    $this->assertEqualsCanonicalizing(['a2', 'a3', 'a4', 'a5', 'a6', 'a7'], $board->reachable_squares('a1', 'R'));
+
+    $board->set_square('c4', 'b');
+    $this->assertEqualsCanonicalizing(['e2', 'd3', 'c4'], $board->reachable_squares('f1', 'B'));
+  }
+
+  public function testReachableSquaresPawnCapture() : void
+  {
+    $board = new Board();
+    $board->set_square('e2', '');
+    $board->set_square('e3', 'P');
+    $board->set_square('c3', 'q');
+    $this->assertEqualsCanonicalizing(['d3', 'd4', 'c3'], $board->reachable_squares('d2', 'P'));
+  }
+
+  public function testReachableSquaresEnPassant() : void
+  {
+    $board = new Board();
+    $board->set_square('e2', '');
+    $board->set_square('e4', 'P');
+    $board->set_square('d7', '');
+    $board->set_square('d4', 'p');
+    $this->assertEqualsCanonicalizing(['d3', 'e3'], $board->reachable_squares('d4', 'p', 'e3'));
+    $board->set_square('a2', '');
+    $board->set_square('a5', 'P');
+    $board->set_square('b7', '');
+    $board->set_square('b5', 'p');
+    $this->assertEqualsCanonicalizing(['a6', 'b6'], $board->reachable_squares('a5', 'P', 'b6'));
+  }
+
+  public function testPieceColor() : void
+  {
+    $this->assertEquals('w', Board::piece_color('K'));
+    $this->assertEquals('b', Board::piece_color('k'));
   }
 
 }
