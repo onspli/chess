@@ -100,7 +100,7 @@ starting with rank 8 and ending with rank 1; within each rank,
 the contents of each square are described from file "a" through file "h".
 
 ```php
-Board::__construct( string pieces = &#039;rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR&#039; ): mixed
+Board::__construct( string pieces = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR' ): mixed
 ```
 
 Following the Standard Algebraic Notation (SAN), each piece is identified
@@ -453,7 +453,7 @@ Board::preview(  ): string
 Load fen or setup starting position.
 
 ```php
-FEN::__construct( string fen = &#039;&#039; ): mixed
+FEN::__construct( string fen = '' ): mixed
 ```
 
 
