@@ -2,85 +2,80 @@
 
 ## Table of Contents
 
-* [Board](#Board) 
-    * [Board::__construct](#Board__construct) Piece placement (from White's perspective). Each rank is described,
-starting with rank 8 and ending with rank 1; within each rank,
-the contents of each square are described from file "a" through file "h".
-    * [Board::export](#Boardexport) 
-    * [Board::square](#Boardsquare) 
-    * [Board::square_nothrow](#Boardsquare_nothrow) 
-    * [Board::set_square](#Boardset_square) 
-    * [Board::set_square_nothrow](#Boardset_square_nothrow) 
-    * [Board::attacked_squares](#Boardattacked_squares) Get array of all squares attacked (or defended) by $attacking_piece being on $attacker_square.
-    * [Board::pieces_on_squares](#Boardpieces_on_squares) Get list of pieces on squares (including multiplicities, excluding blank squares).
-    * [Board::find](#Boardfind) Returns array of squares containing piece.
-    * [Board::copy](#Boardcopy) 
-    * [Board::active_piece](#Boardactive_piece) 
-    * [Board::opponents_piece](#Boardopponents_piece) 
-    * [Board::is_check](#Boardis_check) Returns true if king of active color is in check.
-    * [Board::preview](#Boardpreview) Preview of the board in ASCII graphics.
-* [FEN](#FEN) 
-    * [FEN::__construct](#FEN__construct) Load FEN or setup starting position.
-    * [FEN::export](#FENexport) Export whole FEN string.
-    * [FEN::preview](#FENpreview) Preview of the board in ASCII graphics.
-    * [FEN::board](#FENboard) Get piece placement.
-    * [FEN::set_board](#FENset_board) Setup piece placement.
-    * [FEN::square](#FENsquare) Get piece on a particular square.
-    * [FEN::set_square](#FENset_square) 
-    * [FEN::active](#FENactive) Active color.
-    * [FEN::set_active](#FENset_active) Set active color.
-    * [FEN::castling](#FENcastling) Castling availability.
-    * [FEN::set_castling](#FENset_castling) 
-    * [FEN::castling_availability](#FENcastling_availability) 
-    * [FEN::set_castling_availability](#FENset_castling_availability) 
-    * [FEN::en_passant](#FENen_passant) En passant target square in algebraic notation. If there's no en passant
-target square, this is "-". If a pawn has just made a two-square move,
-this is the position "behind" the pawn. This is recorded regardless of
-whether there is a pawn in position to make an en passant capture.
-    * [FEN::set_en_passant](#FENset_en_passant) 
-    * [FEN::halfmove](#FENhalfmove) Halfmove clock: The number of halfmoves since the last capture or pawn
-advance, used for the fifty-move rule.
-    * [FEN::set_halfmove](#FENset_halfmove) 
-    * [FEN::fullmove](#FENfullmove) Fullmove number: The number of the full move. It starts at 1, and is
-incremented after Black's move.
-    * [FEN::set_fullmove](#FENset_fullmove) 
-    * [FEN::is_mate](#FENis_mate) Returns true if king of active color is in mate.
-    * [FEN::is_stalemate](#FENis_stalemate) Returns true if king of active color is in stalemate.
-    * [FEN::is_fifty_move](#FENis_fifty_move) Returns true if fifty move rule draw can be claimed by active color.
-    * [FEN::is_check](#FENis_check) Returns true if king of active color is in check.
-    * [FEN::possible_moves](#FENpossible_moves) Array of all possible moves in current position.
-    * [FEN::move](#FENmove) Perform a move.
-* [Move](#Move) 
-    * [Move::__construct](#Move__construct) 
-    * [Move::alg](#Movealg) 
-    * [Move::capture](#Movecapture) 
-    * [Move::target](#Movetarget) 
-    * [Move::origin_file](#Moveorigin_file) 
-    * [Move::origin_rank](#Moveorigin_rank) 
-    * [Move::piece](#Movepiece) 
-    * [Move::castling](#Movecastling) 
-    * [Move::promotion](#Movepromotion) 
-    * [Move::check_mate](#Movecheck_mate) 
-    * [Move::annotation](#Moveannotation) 
-* [NotImplementedException](#NotImplementedException) 
-* [ParseException](#ParseException) 
-* [RulesException](#RulesException) 
-* [Square](#Square) There are two handy notations of squares on the chess board.
-    * [Square::__construct](#Square__construct) 
-    * [Square::rank](#Squarerank) 
-    * [Square::file](#Squarefile) 
-    * [Square::alg](#Squarealg) 
-    * [Square::is_null](#Squareis_null) 
-    * [Square::n](#Squaren) 
-    * [Square::w](#Squarew) 
-    * [Square::s](#Squares) 
-    * [Square::e](#Squaree) 
-    * [Square::nw](#Squarenw) 
-    * [Square::ne](#Squarene) 
-    * [Square::sw](#Squaresw) 
-    * [Square::se](#Squarese) 
-    * [Square::rel](#Squarerel) 
-    * [Square::add_to](#Squareadd_to) 
+| Method | Description |
+|--------|-------------|
+| [**Board**](#Board) |  |
+| [Board::__construct](#Board__construct) | Piece placement (from White&#039;s perspective). Each rank is described,starting with rank 8 and ending with rank 1; within each rank,the contents of each square are described from file &quot;a&quot; through file &quot;h&quot;. |
+| [Board::export](#Boardexport) |  |
+| [Board::square](#Boardsquare) |  |
+| [Board::square_nothrow](#Boardsquare_nothrow) |  |
+| [Board::set_square](#Boardset_square) |  |
+| [Board::set_square_nothrow](#Boardset_square_nothrow) |  |
+| [Board::attacked_squares](#Boardattacked_squares) | Get array of all squares attacked (or defended) by $attacking_piece being on $attacker_square. |
+| [Board::pieces_on_squares](#Boardpieces_on_squares) | Get list of pieces on squares (including multiplicities, excluding blank squares). |
+| [Board::find](#Boardfind) | Returns array of squares containing piece. |
+| [Board::copy](#Boardcopy) |  |
+| [Board::active_piece](#Boardactive_piece) |  |
+| [Board::opponents_piece](#Boardopponents_piece) |  |
+| [Board::is_check](#Boardis_check) | Returns true if king of active color is in check. |
+| [Board::preview](#Boardpreview) | Preview of the board in ASCII graphics. |
+| [**FEN**](#FEN) |  |
+| [FEN::__construct](#FEN__construct) | Load FEN or setup starting position. |
+| [FEN::export](#FENexport) | Export whole FEN string. |
+| [FEN::preview](#FENpreview) | Preview of the board in ASCII graphics. |
+| [FEN::board](#FENboard) | Get piece placement. |
+| [FEN::set_board](#FENset_board) | Setup piece placement. |
+| [FEN::square](#FENsquare) | Get piece on a particular square. |
+| [FEN::set_square](#FENset_square) |  |
+| [FEN::active](#FENactive) | Active color. |
+| [FEN::set_active](#FENset_active) | Set active color. |
+| [FEN::castling](#FENcastling) | Castling availability. |
+| [FEN::set_castling](#FENset_castling) |  |
+| [FEN::castling_availability](#FENcastling_availability) |  |
+| [FEN::set_castling_availability](#FENset_castling_availability) |  |
+| [FEN::en_passant](#FENen_passant) | En passant target square in algebraic notation. If there&#039;s no en passanttarget square, this is &quot;-&quot;. If a pawn has just made a two-square move,this is the position &quot;behind&quot; the pawn. This is recorded regardless ofwhether there is a pawn in position to make an en passant capture. |
+| [FEN::set_en_passant](#FENset_en_passant) |  |
+| [FEN::halfmove](#FENhalfmove) | Halfmove clock: The number of halfmoves since the last capture or pawnadvance, used for the fifty-move rule. |
+| [FEN::set_halfmove](#FENset_halfmove) |  |
+| [FEN::fullmove](#FENfullmove) | Fullmove number: The number of the full move. It starts at 1, and isincremented after Black&#039;s move. |
+| [FEN::set_fullmove](#FENset_fullmove) |  |
+| [FEN::is_mate](#FENis_mate) | Returns true if king of active color is in mate. |
+| [FEN::is_stalemate](#FENis_stalemate) | Returns true if king of active color is in stalemate. |
+| [FEN::is_fifty_move](#FENis_fifty_move) | Returns true if fifty move rule draw can be claimed by active color. |
+| [FEN::is_check](#FENis_check) | Returns true if king of active color is in check. |
+| [FEN::possible_moves](#FENpossible_moves) | Array of all possible moves in current position. |
+| [FEN::move](#FENmove) | Perform a move. |
+| [**Move**](#Move) |  |
+| [Move::__construct](#Move__construct) |  |
+| [Move::alg](#Movealg) |  |
+| [Move::capture](#Movecapture) |  |
+| [Move::target](#Movetarget) |  |
+| [Move::origin_file](#Moveorigin_file) |  |
+| [Move::origin_rank](#Moveorigin_rank) |  |
+| [Move::piece](#Movepiece) |  |
+| [Move::castling](#Movecastling) |  |
+| [Move::promotion](#Movepromotion) |  |
+| [Move::check_mate](#Movecheck_mate) |  |
+| [Move::annotation](#Moveannotation) |  |
+| [**NotImplementedException**](#NotImplementedException) |  |
+| [**ParseException**](#ParseException) |  |
+| [**RulesException**](#RulesException) |  |
+| [**Square**](#Square) | There are two handy notations of squares on the chess board. |
+| [Square::__construct](#Square__construct) |  |
+| [Square::rank](#Squarerank) |  |
+| [Square::file](#Squarefile) |  |
+| [Square::alg](#Squarealg) |  |
+| [Square::is_null](#Squareis_null) |  |
+| [Square::n](#Squaren) |  |
+| [Square::w](#Squarew) |  |
+| [Square::s](#Squares) |  |
+| [Square::e](#Squaree) |  |
+| [Square::nw](#Squarenw) |  |
+| [Square::ne](#Squarene) |  |
+| [Square::sw](#Squaresw) |  |
+| [Square::se](#Squarese) |  |
+| [Square::rel](#Squarerel) |  |
+| [Square::add_to](#Squareadd_to) |  |
 
 ## Board
 
@@ -565,7 +560,7 @@ digits 1 through 8 (the number of empty squares), and "/" separates ranks.
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `board` | **string|\Onspli\Chess\Board** | piece placement |
+| `board` | **string\|\Onspli\Chess\Board** | piece placement |
 
 
 **Return Value:**
@@ -660,7 +655,7 @@ FEN::set_active( string color ): void
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `color` | **string** | w&#124;b |
+| `color` | **string** | w\|b |
 
 
 **Return Value:**
@@ -1624,7 +1619,3 @@ Square::add_to( array &array, bool as_object = false ): void
 
 
 ---
-
-
---------
-> This document was automatically generated from source code comments on 2021-08-15 using [phpDocumentor](http://www.phpdoc.org/) and [cvuorinen/phpdoc-markdown-public](https://github.com/cvuorinen/phpdoc-markdown-public)
