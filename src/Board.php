@@ -122,13 +122,7 @@ class Board
     * Add square in the direction specified up to the first piece or the end of the board
     */
     $add_direction = function ($north, $east) use (&$arr, $defender_square, $as_object) {
-        $square = $defender_square;
-        while ($square = $square->relative($north, $east)) {
-          $square->push_to_array($arr, $as_object);
-          if ($square->is_null() || $this->square($square) != '') {
-            break;
-          }
-        }
+      $this->push_squares_in_direction_to_array($arr, $defender_square, $north, $east, $as_object);
     };
 
     if ($defender == 'P') {
@@ -173,6 +167,24 @@ class Board
     return $arr;
   }
 
+  private function push_squares_in_direction_to_array(array &$arr, $origin_square, int $north, int $east, bool $as_object, string $moving_piece = '') {
+      $square = $origin_square;
+      while ($square = $square->relative($north, $east)) {
+        if ($square->is_null()) {
+          break;
+        }
+        $target_piece = $this->square($square);
+        if ($target_piece && $moving_piece && self::piece_color($target_piece) == self::piece_color($moving_piece)) {
+          break;
+        }
+        $square->push_to_array($arr, $as_object);
+        if ($target_piece != '') {
+          break;
+        }
+      }
+  }
+
+
   /**
   * Get array of all squares reachable from $origin_square by $moving_piece.
   */
@@ -190,20 +202,7 @@ class Board
     * Add square in the direction specified up to the first piece or the end of the board
     */
     $add_direction = function ($north, $east) use (&$arr, $origin_square, $moving_piece, $as_object) {
-        $square = $origin_square;
-        while ($square = $square->relative($north, $east)) {
-          if ($square->is_null()) {
-            break;
-          }
-          $target_piece = $this->square($square);
-          if ($target_piece && self::piece_color($target_piece) == self::piece_color($moving_piece)) {
-            break;
-          }
-          $square->push_to_array($arr, $as_object);
-          if ($target_piece != '') {
-            break;
-          }
-        }
+      $this->push_squares_in_direction_to_array($arr, $origin_square, $north, $east, $as_object, $moving_piece);
     };
 
     $add_pawn_capture = function($target_square) use (&$arr, $moving_piece, $en_passant_square, $as_object) {
