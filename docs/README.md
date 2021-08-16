@@ -47,13 +47,12 @@
 | [FEN::is_check](#FENis_check) | Returns true if king of active color is in check. |
 | [FEN::possible_moves](#FENpossible_moves) | Array of all possible moves in current position. |
 | [FEN::move](#FENmove) | Perform a move. |
-| [**Move**](#Move) |  |
+| [**Move**](#Move) | Class for parsing moves in SAN (standard algebraic notation). |
 | [Move::__construct](#Move__construct) |  |
 | [Move::san](#Movesan) |  |
 | [Move::capture](#Movecapture) |  |
 | [Move::target](#Movetarget) |  |
-| [Move::origin_file](#Moveorigin_file) |  |
-| [Move::origin_rank](#Moveorigin_rank) |  |
+| [Move::origin](#Moveorigin) |  |
 | [Move::piece](#Movepiece) |  |
 | [Move::castling](#Movecastling) |  |
 | [Move::promotion](#Movepromotion) |  |
@@ -71,7 +70,9 @@
 | [Square::san](#Squaresan) | Returns SAN (standard algebraic notation) string. |
 | [Square::is_null](#Squareis_null) | Check wether square is null. |
 | [Square::is_rank](#Squareis_rank) | Check wether square is rank. |
+| [Square::has_rank](#Squarehas_rank) | Check wether square has rank. |
 | [Square::is_file](#Squareis_file) | Check wether square is file. |
+| [Square::has_file](#Squarehas_file) | Check wether square has file. |
 | [Square::is_regular](#Squareis_regular) | Check wether square is regular square. |
 | [Square::relative](#Squarerelative) | Get square with relative position to this square. |
 | [Square::push_to_array](#Squarepush_to_array) | Add square to the end of array. |
@@ -1097,7 +1098,7 @@ FEN::move( string move ): void
 ---
 ## Move
 
-
+Class for parsing moves in SAN (standard algebraic notation).
 
 
 
@@ -1192,12 +1193,12 @@ Move::target( bool as_object = false ): mixed
 
 
 ---
-### Move::origin_file
+### Move::origin
 
 
 
 ```php
-Move::origin_file( bool as_index = false ): mixed
+Move::origin( bool as_object = false ): mixed
 ```
 
 
@@ -1207,32 +1208,7 @@ Move::origin_file( bool as_index = false ): mixed
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `as_index` | **bool** |  |
-
-
-**Return Value:**
-
-
-
-
-
----
-### Move::origin_rank
-
-
-
-```php
-Move::origin_rank( bool as_index = false ): mixed
-```
-
-
-
-
-**Parameters:**
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `as_index` | **bool** |  |
+| `as_object` | **bool** |  |
 
 
 **Return Value:**
@@ -1555,12 +1531,50 @@ Square::is_rank(  ): bool
 
 
 ---
+### Square::has_rank
+
+Check wether square has rank.
+
+```php
+Square::has_rank(  ): bool
+```
+
+
+
+
+
+**Return Value:**
+
+
+
+
+
+---
 ### Square::is_file
 
 Check wether square is file.
 
 ```php
 Square::is_file(  ): bool
+```
+
+
+
+
+
+**Return Value:**
+
+
+
+
+
+---
+### Square::has_file
+
+Check wether square has file.
+
+```php
+Square::has_file(  ): bool
 ```
 
 

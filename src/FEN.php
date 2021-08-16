@@ -600,10 +600,10 @@ class FEN
         $origin_candidates2 = [];
         foreach ($origin_candidates as $origin_candidate) {
           if ($this->square($origin_candidate) == $move_piece) {
-            if ($move->origin_file(true) !== null && $origin_candidate->file_index() != $move->origin_file(true)) {
+            if ($move->origin(true)->has_file() && $origin_candidate->file() != $move->origin(true)->file()) {
               continue;
             }
-            if ($move->origin_rank(true) !== null && $origin_candidate->rank_index() != $move->origin_rank(true)) {
+            if ($move->origin(true)->has_rank() && $origin_candidate->rank() != $move->origin(true)->rank()) {
               continue;
             }
             $origin_candidates2[] = $origin_candidate;

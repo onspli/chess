@@ -2,11 +2,13 @@
 
 namespace Onspli\Chess;
 
+/**
+* Class for parsing moves in SAN (standard algebraic notation).
+*/
 class Move
 {
 
-  private $origin_rank = null;
-  private $origin_file = null;
+  private $origin;
   private $target;
   private $piece;
   private $capture = false;
@@ -19,20 +21,21 @@ class Move
   {
     $matches = array();
 
-    if (preg_match('/([O-]+)([+#]?)([!?]*)/', $move, $matches)) {
+    if (preg_match('/^([O-]+)([+#]?)([!?]*)$/', $move, $matches)) {
       $castling = $matches[1];
       if ($castling != 'O-O' && $castling != 'O-O-O') {
         throw new ParseException;
       }
       $this->piece = 'K';
       $this->castling = $castling;
+      $this->origin = new Square;
       $this->target = new Square;
       $this->check_mate = $matches[2];
       $this->annotation = $matches[3];
       return;
     }
 
-    if (!preg_match('/([PNBRQK]?)([a-h]?)([1-8]?)([x]?)([a-h][1-8])(?:=([NBRQ]))?([+#]?)([!?]*)/', $move, $matches)) {
+    if (!preg_match('/^([PNBRQK]?)([a-h]?[1-8]?)([x]?)([a-h][1-8])(?:=([NBRQ]))?([+#]?)([!?]*)$/', $move, $matches)) {
       throw new ParseException;
     }
 
@@ -40,28 +43,13 @@ class Move
     if (!$piece) {
       $piece = 'P';
     }
-
     $this->piece = $piece;
-    $this->capture = ($matches[4] == 'x');
-    $this->target = new Square($matches[5]);
-    $this->promotion = $matches[6];
-    $this->check_mate = $matches[7];
-    $this->annotation = $matches[8];
-
-    $file = $matches[2];
-    if ($file === '') {
-      $this->origin_file = null;
-    } else {
-      $this->origin_file = ord($file[0]) - ord('a');
-    }
-
-    $rank = $matches[3];
-    if ($rank === '') {
-      $this->origin_rank = null;
-    } else {
-      $this->origin_rank = intval($rank) - 1;
-    }
-
+    $this->origin = new Square($matches[2] ? $matches[2] : '-');
+    $this->capture = ($matches[3] == 'x');
+    $this->target = new Square($matches[4]);
+    $this->promotion = $matches[5];
+    $this->check_mate = $matches[6];
+    $this->annotation = $matches[7];
 
     if ($this->promotion() && $this->piece() != 'P') {
       throw new RulesException;
@@ -87,8 +75,9 @@ class Move
       if ($this->piece() != 'P') {
         $str .= $this->piece();
       }
-      $str .= $this->origin_file();
-      $str .= $this->origin_rank();
+      if (!$this->origin->is_null()) {
+        $str .= $this->origin->san();
+      }
       if ($this->capture()) {
         $str .= 'x';
       }
@@ -116,26 +105,13 @@ class Move
     }
   }
 
-  public function origin_file(bool $as_index = false)
+  public function origin(bool $as_object = false)
   {
-    if ($as_index) {
-      return $this->origin_file;
+    if ($as_object) {
+      return $this->origin;
+    } else {
+      return $this->origin->san();
     }
-    if ($this->origin_file === null) {
-      return '';
-    }
-    return chr(ord('a') + $this->origin_file);
-  }
-
-  public function origin_rank(bool $as_index = false)
-  {
-    if ($as_index) {
-      return $this->origin_rank;
-    }
-    if ($this->origin_rank === null) {
-      return '';
-    }
-    return $this->origin_rank + 1;
   }
 
   public function piece() : string
