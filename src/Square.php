@@ -190,15 +190,22 @@ class Square
     $this->rank_index = null;
   }
 
+  private static function is_index_valid($index) : bool
+  {
+    return $index === null || intval($index) === $index;
+  }
+
+  private static function is_index_in_range($index) : bool
+  {
+    return $index >= 0 && $index <= 7;
+  }
+
   private function validate_range() : void
   {
-    if ($this->file_index !== null && intval($this->file_index) !== $this->file_index) {
+    if (!self::is_index_valid($this->file_index) || !self::is_index_valid($this->rank_index)) {
       throw new ParseException;
-    } else if ($this->rank_index !== null && intval($this->rank_index) !== $this->rank_index) {
-      throw new ParseException;
-    } else if ($this->file_index < 0 || $this->file_index > 7) {
-      $this->set_to_null();
-    } else if ($this->rank_index < 0 || $this->rank_index > 7) {
+    }
+    if (!self::is_index_in_range($this->file_index) || !self::is_index_in_range($this->rank_index)) {
       $this->set_to_null();
     }
   }
