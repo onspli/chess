@@ -38,7 +38,7 @@ class Square
     } else {
       $this->file_index = $san_or_file_index;
       $this->rank_index = $rank_index;
-      $this->validate_range();
+      $this->validate_indices();
     }
   }
 
@@ -200,7 +200,7 @@ class Square
     return $index >= 0 && $index <= 7;
   }
 
-  private function validate_range() : void
+  private function validate_indices() : void
   {
     if (!self::is_index_valid($this->file_index) || !self::is_index_valid($this->rank_index)) {
       throw new ParseException;
