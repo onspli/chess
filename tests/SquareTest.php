@@ -40,12 +40,6 @@ final class SquareTest extends TestCase
     $s = new Square(0, -1);
     $this->assertTrue($s->is_null());
 
-    $s = new Square(0.5, 0);
-    $this->assertTrue($s->is_null());
-
-    $s = new Square(0, 0.5);
-    $this->assertTrue($s->is_null());
-
     $s = new Square('e');
     $this->assertEquals('e', $s->file());
     $this->assertEquals('', $s->rank());
@@ -106,6 +100,18 @@ final class SquareTest extends TestCase
   {
     $this->expectException(ParseException::class);
     new Square('a9');
+  }
+
+  public function testInvalidFloatFile() : void
+  {
+    $this->expectException(ParseException::class);
+    $s = new Square(0.5, 0);
+  }
+
+  public function testInvalidFloarRank() : void
+  {
+    $this->expectException(ParseException::class);
+    $s = new Square(0, 0.5);
   }
 
   public function testNullRank() : void

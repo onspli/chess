@@ -193,9 +193,9 @@ class Square
   private function validate_range() : void
   {
     if ($this->file_index !== null && intval($this->file_index) !== $this->file_index) {
-      $this->set_to_null();
+      throw new ParseException;
     } else if ($this->rank_index !== null && intval($this->rank_index) !== $this->rank_index) {
-      $this->set_to_null();
+      throw new ParseException;
     } else if ($this->file_index < 0 || $this->file_index > 7) {
       $this->set_to_null();
     } else if ($this->rank_index < 0 || $this->rank_index > 7) {
