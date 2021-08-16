@@ -10,7 +10,7 @@ namespace Onspli\Chess;
 *  - regular square - 'e4'
 *  - file - 'e' for e-file
 *  - rank - '4' for 4th rank
-*  - null square - '-', square not on a board
+*  - null square - '-', '', square not on a board
 *
 */
 class Square
@@ -235,12 +235,12 @@ class Square
 
   private function parse_san(string $san) : void
   {
-    if ($san == '-') {
+    if ($san == '-' || $san == '') {
       $this->set_to_null();
       return;
     }
     $matches = [];
-    if (strlen($san) == 0 || !preg_match('/^([a-h]?)([1-8]?)$/', $san, $matches)) {
+    if (!preg_match('/^([a-h]?)([1-8]?)$/', $san, $matches)) {
       throw new ParseException;
     }
     if ($matches[1]) {

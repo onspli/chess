@@ -11,7 +11,7 @@ class Move
   private $origin;
   private $target;
   private $piece;
-  private $capture = false;
+  private $capture = '';
   private $castling = '';
   private $promotion = '';
   private $check_mate = '';
@@ -39,18 +39,19 @@ class Move
       throw new ParseException;
     }
 
-    $piece = $matches[1];
-    if (!$piece) {
-      $piece = 'P';
-    }
-    $this->piece = $piece;
-    $this->origin = new Square($matches[2] ? $matches[2] : '-');
-    $this->capture = ($matches[3] == 'x');
+    $this->piece = $matches[1];
+    $this->origin = new Square($matches[2]);
+    $this->capture = $matches[3];
     $this->target = new Square($matches[4]);
     $this->promotion = $matches[5];
     $this->check_mate = $matches[6];
     $this->annotation = $matches[7];
 
+    self::validate_promotion();
+  }
+
+  private function validate_promotion() : void
+  {
     if ($this->promotion() && $this->piece() != 'P') {
       throw new RulesException;
     }
@@ -62,7 +63,6 @@ class Move
     if (!$this->promotion() && $this->piece() == 'P' && ($this->target->rank_index() == 7 || $this->target->rank_index() == 0)) {
       throw new RulesException;
     }
-
   }
 
   public function san() : string
@@ -73,7 +73,7 @@ class Move
     } else {
       $str .= $this->san_piece();
       $str .= $this->san_origin();
-      $str .= $this->san_capture();
+      $str .= $this->capture;
       $str .= $this->target();
       $str .= $this->san_promotion();
     }
@@ -94,14 +94,6 @@ class Move
   {
     if ($this->piece() != 'P') {
       return $this->piece();
-    }
-    return '';
-  }
-
-  private function san_capture() : string
-  {
-    if ($this->capture()) {
-      return 'x';
     }
     return '';
   }
@@ -144,6 +136,9 @@ class Move
 
   public function piece() : string
   {
+    if ($this->piece == '') {
+      return 'P';
+    }
     return $this->piece;
   }
 

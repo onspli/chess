@@ -1351,7 +1351,7 @@ Square can be on of the following types:
 - regular square - 'e4'
 - file - 'e' for e-file
 - rank - '4' for 4th rank
-- null square - '-', square not on a board
+- null square - '-', '', square not on a board
 
 * Full name: \Onspli\Chess\Square
 
