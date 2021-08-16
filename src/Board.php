@@ -170,20 +170,27 @@ class Board
   private function push_squares_in_direction_to_array(array &$arr, $origin_square, int $north, int $east, bool $as_object, string $moving_piece = '') {
       $square = $origin_square;
       while ($square = $square->relative($north, $east)) {
-        if ($square->is_null()) {
-          break;
-        }
-        $target_piece = $this->square($square);
-        if ($target_piece && $moving_piece && self::piece_color($target_piece) == self::piece_color($moving_piece)) {
-          break;
-        }
-        $square->push_to_array($arr, $as_object);
-        if ($target_piece != '') {
+        if (!$this->push_square_to_array($arr, $square, $as_object, $moving_piece)) {
           break;
         }
       }
   }
 
+  private function push_square_to_array(array &$arr, $square, bool $as_object, string $moving_piece = '') : bool
+  {
+    if ($square->is_null()) {
+      return false;
+    }
+    $target_piece = $this->square($square);
+    if ($target_piece && $moving_piece && self::piece_color($target_piece) == self::piece_color($moving_piece)) {
+      return false;
+    }
+    $square->push_to_array($arr, $as_object);
+    if ($target_piece != '') {
+      return false;
+    }
+    return true;
+  }
 
   /**
   * Get array of all squares reachable from $origin_square by $moving_piece.
@@ -224,14 +231,7 @@ class Board
     };
 
     $add_target_square = function($target_square) use (&$arr, $moving_piece, $as_object) {
-      if ($target_square->is_null()) {
-        return;
-      }
-      $target_piece = $this->square($target_square);
-      if ($target_piece && self::piece_color($target_piece) == self::piece_color($moving_piece)) {
-        return;
-      }
-      $target_square->push_to_array($arr, $as_object);
+      $this->push_square_to_array($arr, $target_square, $as_object, $moving_piece);
     };
 
     if ($moving_piece == 'P') {
