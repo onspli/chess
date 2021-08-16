@@ -11,7 +11,7 @@
 | [Board::square_nothrow](#Boardsquare_nothrow) |  |
 | [Board::set_square](#Boardset_square) |  |
 | [Board::set_square_nothrow](#Boardset_square_nothrow) |  |
-| [Board::attacked_squares](#Boardattacked_squares) | Get array of all squares attacked (or defended) by $attacking_piece being on $attacker_square. |
+| [Board::defended_squares](#Boarddefended_squares) | Get array of all squares attacked (or defended) by $defender being on $defender_square. |
 | [Board::reachable_squares](#Boardreachable_squares) | Get array of all squares reachable from $origin_square by $moving_piece. |
 | [Board::pieces_on_squares](#Boardpieces_on_squares) | Get list of pieces on squares (including multiplicities, excluding blank squares). |
 | [Board::find](#Boardfind) | Returns array of squares containing piece. |
@@ -239,12 +239,12 @@ Board::set_square_nothrow( mixed square, string piece ): void
 
 
 ---
-### Board::attacked_squares
+### Board::defended_squares
 
-Get array of all squares attacked (or defended) by $attacking_piece being on $attacker_square.
+Get array of all squares attacked (or defended) by $defender being on $defender_square.
 
 ```php
-Board::attacked_squares( mixed attacker_square, mixed attacking_piece, bool as_object = false ): array
+Board::defended_squares( mixed defender_square, mixed defender, bool as_object = false ): array
 ```
 
 
@@ -254,8 +254,8 @@ Board::attacked_squares( mixed attacker_square, mixed attacking_piece, bool as_o
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `attacker_square` | **mixed** |  |
-| `attacking_piece` | **mixed** |  |
+| `defender_square` | **mixed** |  |
+| `defender` | **mixed** |  |
 | `as_object` | **bool** |  |
 
 

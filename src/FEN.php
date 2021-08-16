@@ -594,7 +594,7 @@ class FEN
             $origin_candidates[] = $target->relative(0, 2);
           }
         } else {
-          $origin_candidates = $this->board->attacked_squares($target, $this->opponents_piece($move_piece), true);
+          $origin_candidates = $this->board->defended_squares($target, $this->opponents_piece($move_piece), true);
         }
 
         $origin_candidates2 = [];

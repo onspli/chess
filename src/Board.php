@@ -110,19 +110,19 @@ class Board
   }
 
   /**
-  * Get array of all squares attacked (or defended) by $attacking_piece being on $attacker_square.
+  * Get array of all squares attacked (or defended) by $defender being on $defender_square.
   */
-  public function attacked_squares($attacker_square, $attacking_piece, bool $as_object = false) : array
+  public function defended_squares($defender_square, $defender, bool $as_object = false) : array
   {
-    self::validate_square($attacker_square);
-    self::validate_piece($attacking_piece);
+    self::validate_square($defender_square);
+    self::validate_piece($defender);
     $arr = [];
 
     /**
     * Add square in the direction specified up to the first piece or the end of the board
     */
-    $add_direction = function ($north, $east) use (&$arr, $attacker_square, $as_object) {
-        $square = $attacker_square;
+    $add_direction = function ($north, $east) use (&$arr, $defender_square, $as_object) {
+        $square = $defender_square;
         while ($square = $square->relative($north, $east)) {
           $square->push_to_array($arr, $as_object);
           if ($square->is_null() || $this->square($square) != '') {
@@ -131,38 +131,38 @@ class Board
         }
     };
 
-    if ($attacking_piece == 'P') {
-      $attacker_square->relative(-1,1)->push_to_array($arr, $as_object);
-      $attacker_square->relative(1,1)->push_to_array($arr, $as_object);
-    } else if ($attacking_piece == 'p') {
-      $attacker_square->relative(-1,-1)->push_to_array($arr, $as_object);
-      $attacker_square->relative(1,-1)->push_to_array($arr, $as_object);
-    } else if ($attacking_piece == 'K' || $attacking_piece == 'k') {
-      $attacker_square->relative(0,1)->push_to_array($arr, $as_object);
-      $attacker_square->relative(-1,1)->push_to_array($arr, $as_object);
-      $attacker_square->relative(-1,0)->push_to_array($arr, $as_object);
-      $attacker_square->relative(-1,-1)->push_to_array($arr, $as_object);
-      $attacker_square->relative(0,-1)->push_to_array($arr, $as_object);
-      $attacker_square->relative(1,-1)->push_to_array($arr, $as_object);
-      $attacker_square->relative(1,0)->push_to_array($arr, $as_object);
-      $attacker_square->relative(1,1)->push_to_array($arr, $as_object);
-    } else if ($attacking_piece == 'N' || $attacking_piece == 'n') {
-      $attacker_square->relative(2, 1)->push_to_array($arr, $as_object);
-      $attacker_square->relative(2, -1)->push_to_array($arr, $as_object);
-      $attacker_square->relative(-2, 1)->push_to_array($arr, $as_object);
-      $attacker_square->relative(-2, -1)->push_to_array($arr, $as_object);
-      $attacker_square->relative(1, 2)->push_to_array($arr, $as_object);
-      $attacker_square->relative(1, -2)->push_to_array($arr, $as_object);
-      $attacker_square->relative(-1, 2)->push_to_array($arr, $as_object);
-      $attacker_square->relative(-1, -2)->push_to_array($arr, $as_object);
+    if ($defender == 'P') {
+      $defender_square->relative(-1,1)->push_to_array($arr, $as_object);
+      $defender_square->relative(1,1)->push_to_array($arr, $as_object);
+    } else if ($defender == 'p') {
+      $defender_square->relative(-1,-1)->push_to_array($arr, $as_object);
+      $defender_square->relative(1,-1)->push_to_array($arr, $as_object);
+    } else if ($defender == 'K' || $defender == 'k') {
+      $defender_square->relative(0,1)->push_to_array($arr, $as_object);
+      $defender_square->relative(-1,1)->push_to_array($arr, $as_object);
+      $defender_square->relative(-1,0)->push_to_array($arr, $as_object);
+      $defender_square->relative(-1,-1)->push_to_array($arr, $as_object);
+      $defender_square->relative(0,-1)->push_to_array($arr, $as_object);
+      $defender_square->relative(1,-1)->push_to_array($arr, $as_object);
+      $defender_square->relative(1,0)->push_to_array($arr, $as_object);
+      $defender_square->relative(1,1)->push_to_array($arr, $as_object);
+    } else if ($defender == 'N' || $defender == 'n') {
+      $defender_square->relative(2, 1)->push_to_array($arr, $as_object);
+      $defender_square->relative(2, -1)->push_to_array($arr, $as_object);
+      $defender_square->relative(-2, 1)->push_to_array($arr, $as_object);
+      $defender_square->relative(-2, -1)->push_to_array($arr, $as_object);
+      $defender_square->relative(1, 2)->push_to_array($arr, $as_object);
+      $defender_square->relative(1, -2)->push_to_array($arr, $as_object);
+      $defender_square->relative(-1, 2)->push_to_array($arr, $as_object);
+      $defender_square->relative(-1, -2)->push_to_array($arr, $as_object);
     } else {
-      if ($attacking_piece == 'B' || $attacking_piece == 'b'  || $attacking_piece == 'Q'  || $attacking_piece == 'q') {
+      if ($defender == 'B' || $defender == 'b'  || $defender == 'Q'  || $defender == 'q') {
         $add_direction(1, 1);
         $add_direction(1, -1);
         $add_direction(-1, 1);
         $add_direction(-1, -1);
       }
-      if ($attacking_piece == 'R' || $attacking_piece == 'r'  || $attacking_piece == 'Q'  || $attacking_piece == 'q') {
+      if ($defender == 'R' || $defender == 'r'  || $defender == 'Q'  || $defender == 'q') {
         $add_direction(1, 0);
         $add_direction(-1, 0);
         $add_direction(0, 1);
@@ -368,7 +368,7 @@ class Board
     $king_square = $king_squares[0];
 
     $check_check_from = function ($piece) use ($king_square, $active) {
-      $attacker_squares = $this->attacked_squares($king_square, self::active_piece($piece, $active));
+      $attacker_squares = $this->defended_squares($king_square, self::active_piece($piece, $active));
       $attackers = $this->pieces_on_squares($attacker_squares);
       return in_array(self::opponents_piece($piece, $active), $attackers);
     };
