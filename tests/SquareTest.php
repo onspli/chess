@@ -43,6 +43,17 @@ final class SquareTest extends TestCase
     $s = new Square(0.5, 0);
     $this->assertTrue($s->is_null());
 
+    $s = new Square(0, 0.5);
+    $this->assertTrue($s->is_null());
+
+    $s = new Square('e');
+    $this->assertEquals('e', $s->file());
+    $this->assertEquals('', $s->rank());
+
+    $s = new Square('4');
+    $this->assertEquals('', $s->file());
+    $this->assertEquals('4', $s->rank());
+
   }
 
   public function testRelativeSquares() : void
@@ -58,6 +69,13 @@ final class SquareTest extends TestCase
     $this->assertEquals('-', $s->relative(-5, 0)->san());
     $this->assertEquals('e1', $s->relative(0, -3)->san());
     $this->assertEquals('-', $s->relative(0, -4)->san());
+  }
+
+  public function testRelativeOnNullThrows() : void
+  {
+    $s = new Square;
+    $this->expectException(\OutOfBoundsException::class);
+    $s->relative(1, 0);
   }
 
   public function testInvalid1() : void
@@ -94,6 +112,13 @@ final class SquareTest extends TestCase
   {
     $this->expectException(\OutOfBoundsException::class);
     $s = new Square('-');
+    $s->rank();
+  }
+
+  public function testNullRankIndex() : void
+  {
+    $this->expectException(\OutOfBoundsException::class);
+    $s = new Square('-');
     $s->rank_index();
   }
 
@@ -101,7 +126,28 @@ final class SquareTest extends TestCase
   {
     $this->expectException(\OutOfBoundsException::class);
     $s = new Square('-');
+    $s->file();
+  }
+
+  public function testNullFileIndex() : void
+  {
+    $this->expectException(\OutOfBoundsException::class);
+    $s = new Square('-');
     $s->file_index();
+  }
+
+  public function testFileIndexRank() : void
+  {
+    $this->expectException(\OutOfBoundsException::class);
+    $s = new Square('4');
+    $s->file_index();
+  }
+
+  public function testRankIndexFile() : void
+  {
+    $this->expectException(\OutOfBoundsException::class);
+    $s = new Square('e');
+    $s->rank_index();
   }
 
   public function testAddToArrayAsObjects() : void
