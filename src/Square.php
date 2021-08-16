@@ -181,7 +181,7 @@ class Square
   * regular squares. Returns null square if relative coordinates are outside
   * the board.
   */
-  public function relative($east, $north)
+  public function relative(int $east, int $north)
   {
     if (!$this->is_regular()) {
       throw new \OutOfBoundsException;
@@ -193,7 +193,7 @@ class Square
   * Add square to the end of array.
   *
   * Method ignores nonregular squares.
-  * @param $as_object Add square as an object rather than SAN string.
+  * @param bool $as_object Add square as an object rather than SAN string.
   */
   public function push_to_array(array &$array, bool $as_object = false) : void
   {

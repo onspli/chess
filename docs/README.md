@@ -1612,7 +1612,7 @@ Square::is_regular(  ): bool
 Get square with relative position to this square.
 
 ```php
-Square::relative( mixed east, mixed north ): mixed
+Square::relative( int east, int north ): mixed
 ```
 
 Throws `\OutOfBoundsException` when trying to get relative square of a non
@@ -1624,8 +1624,8 @@ the board.
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `east` | **mixed** |  |
-| `north` | **mixed** |  |
+| `east` | **int** |  |
+| `north` | **int** |  |
 
 
 **Return Value:**
@@ -1640,7 +1640,7 @@ the board.
 Add square to the end of array.
 
 ```php
-Square::push_to_array( array &array, as_object = false ): void
+Square::push_to_array( array &array, bool as_object = false ): void
 ```
 
 Method ignores nonregular squares.
@@ -1651,7 +1651,7 @@ Method ignores nonregular squares.
 | Parameter | Type | Description |
 |-----------|------|-------------|
 | `array` | **array** |  |
-| `as_object` | **** | Add square as an object rather than SAN string. |
+| `as_object` | **bool** | Add square as an object rather than SAN string. |
 
 
 **Return Value:**
