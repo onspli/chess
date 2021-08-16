@@ -68,27 +68,55 @@ class Move
   public function san() : string
   {
     $str = '';
-
     if ($this->castling()) {
       $str .= $this->castling();
     } else {
-      if ($this->piece() != 'P') {
-        $str .= $this->piece();
-      }
-      if (!$this->origin->is_null()) {
-        $str .= $this->origin->san();
-      }
-      if ($this->capture()) {
-        $str .= 'x';
-      }
+      $str .= $this->san_piece();
+      $str .= $this->san_origin();
+      $str .= $this->san_capture();
       $str .= $this->target();
-      if ($this->promotion()) {
-        $str .= '=' . $this->promotion();
-      }
+      $str .= $this->san_promotion();
     }
-    $str .= $this->check_mate();
-    $str .= $this->annotation();
+    $str .= $this->san_extension();
     return $str;
+  }
+
+
+  private function san_origin() : string
+  {
+    if (!$this->origin->is_null()) {
+      return $this->origin->san();
+    }
+    return '';
+  }
+
+  private function san_piece() : string
+  {
+    if ($this->piece() != 'P') {
+      return $this->piece();
+    }
+    return '';
+  }
+
+  private function san_capture() : string
+  {
+    if ($this->capture()) {
+      return 'x';
+    }
+    return '';
+  }
+
+  private function san_extension() : string
+  {
+    return $this->check_mate() . $this->annotation();
+  }
+
+  private function san_promotion() : string
+  {
+    if ($this->promotion()) {
+      return '=' . $this->promotion();
+    }
+    return '';
   }
 
   public function capture() : bool
