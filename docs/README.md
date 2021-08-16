@@ -1371,7 +1371,7 @@ or file and rank indexes.
  - file: `new Square('e'); new Square(4, null);`
  - rank: `new Square('4'); new Square(null, 3);`
 
-Throws `ParseException` if SAN is invalid.
+Throws `ParseException` if SAN is invalid or if indices are not integers.
 Creates null square if file or rank index is out of bounds.
 
 
@@ -1419,7 +1419,7 @@ Square::rank(  ): string
 ```
 
 For square 'e4' it returns '4'. Throws `\OutOfBoundsException` for null squares.
-Returns '' for files.
+Returns empty string for files.
 
 
 
@@ -1459,7 +1459,7 @@ Square::file(  ): string
 ```
 
 For square 'e4' it returns 'e'. Throws `\OutOfBoundsException` for null squares.
-Returns '' for ranks.
+Returns empty string for ranks.
 
 
 
@@ -1539,7 +1539,7 @@ Check wether square has rank.
 Square::has_rank(  ): bool
 ```
 
-
+Regular squares and ranks has rank.
 
 
 
@@ -1577,7 +1577,7 @@ Check wether square has file.
 Square::has_file(  ): bool
 ```
 
-
+Regular squares and files has file.
 
 
 
@@ -1615,7 +1615,9 @@ Get square with relative position to this square.
 Square::relative( mixed east, mixed north ): mixed
 ```
 
-Throws `\OutOfBoundsException` for non regular squares.
+Throws `\OutOfBoundsException` when trying to get relative square of a non
+regular squares. Returns null square if relative coordinates are outside
+the board.
 
 
 **Parameters:**
@@ -1638,7 +1640,7 @@ Throws `\OutOfBoundsException` for non regular squares.
 Add square to the end of array.
 
 ```php
-Square::push_to_array( array &array, bool as_object = false ): void
+Square::push_to_array( array &array, as_object = false ): void
 ```
 
 Method ignores nonregular squares.
@@ -1649,7 +1651,7 @@ Method ignores nonregular squares.
 | Parameter | Type | Description |
 |-----------|------|-------------|
 | `array` | **array** |  |
-| `as_object` | **bool** |  |
+| `as_object` | **** | Add square as an object rather than SAN string. |
 
 
 **Return Value:**

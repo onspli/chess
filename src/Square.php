@@ -28,7 +28,7 @@ class Square
   *  - file: `new Square('e'); new Square(4, null);`
   *  - rank: `new Square('4'); new Square(null, 3);`
   *
-  * Throws `ParseException` if SAN is invalid.
+  * Throws `ParseException` if SAN is invalid or if indices are not integers.
   * Creates null square if file or rank index is out of bounds.
   */
   function __construct($san_or_file_index = null, $rank_index = null)
@@ -60,7 +60,7 @@ class Square
   * Get rank of the square.
   *
   * For square 'e4' it returns '4'. Throws `\OutOfBoundsException` for null squares.
-  * Returns '' for files.
+  * Returns empty string for files.
   */
   public function rank() : string
   {
@@ -91,7 +91,7 @@ class Square
   * Get file of the square.
   *
   * For square 'e4' it returns 'e'. Throws `\OutOfBoundsException` for null squares.
-  * Returns '' for ranks.
+  * Returns empty string for ranks.
   */
   public function file() : string
   {
@@ -140,6 +140,8 @@ class Square
 
   /**
   * Check wether square has rank.
+  *
+  * Regular squares and ranks has rank.
   */
   public function has_rank() : bool
   {
@@ -156,6 +158,8 @@ class Square
 
   /**
   * Check wether square has file.
+  *
+  * Regular squares and files has file.
   */
   public function has_file() : bool
   {
@@ -173,7 +177,9 @@ class Square
   /**
   * Get square with relative position to this square.
   *
-  * Throws `\OutOfBoundsException` for non regular squares.
+  * Throws `\OutOfBoundsException` when trying to get relative square of a non
+  * regular squares. Returns null square if relative coordinates are outside
+  * the board.
   */
   public function relative($east, $north)
   {
@@ -187,6 +193,7 @@ class Square
   * Add square to the end of array.
   *
   * Method ignores nonregular squares.
+  * @param $as_object Add square as an object rather than SAN string.
   */
   public function push_to_array(array &$array, bool $as_object = false) : void
   {

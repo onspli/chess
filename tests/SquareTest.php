@@ -8,51 +8,52 @@ use PHPUnit\Framework\TestCase;
 final class SquareTest extends TestCase
 {
 
-  public function testInitialization() : void
+  public function testInitializationRegular() : void
   {
-    $s = new Square('-');
-    $this->assertTrue($s->is_null());
+    $s = new Square('e4');
+    $this->assertTrue($s->is_regular());
 
+    $s = new Square(4, 3);
+    $this->assertTrue($s->is_regular());
+  }
+
+  public function testInitializationNull() : void
+  {
     $s = new Square;
     $this->assertTrue($s->is_null());
 
-    $s = new Square('e4');
-    $this->assertFalse($s->is_null());
-    $this->assertEquals('e4', $s->san());
-    $this->assertEquals(4, $s->file_index());
-    $this->assertEquals(3, $s->rank_index());
-
-    $s = new Square(4, 3);
-    $this->assertFalse($s->is_null());
-    $this->assertEquals('e4', $s->san());
-    $this->assertEquals(4, $s->file_index());
-    $this->assertEquals(3, $s->rank_index());
-
-    $s = new Square(-1, 0);
+    $s = new Square('-');
     $this->assertTrue($s->is_null());
 
-    $s = new Square(8, 0);
+    $s = new Square(null, null);
     $this->assertTrue($s->is_null());
+  }
 
-    $s = new Square(0, 8);
-    $this->assertTrue($s->is_null());
-
-    $s = new Square(0, -1);
-    $this->assertTrue($s->is_null());
-
+  public function testInitializationFile() : void
+  {
     $s = new Square('e');
+    $this->assertTrue($s->is_file());
     $this->assertEquals('e', $s->file());
     $this->assertEquals('', $s->rank());
 
+    $s = new Square(4, null);
+    $this->assertTrue($s->is_file());
+  }
+
+  public function testInitializationRank() : void
+  {
+
     $s = new Square('4');
+    $this->assertTrue($s->is_rank());
     $this->assertEquals('', $s->file());
     $this->assertEquals('4', $s->rank());
 
+    $s = new Square(null, 3);
+    $this->assertTrue($s->is_rank());
   }
 
   public function testRelativeSquares() : void
   {
-
     $s = new Square('e4');
     $this->assertEquals('e4', $s->relative(0, 0)->san());
     $this->assertEquals('h4', $s->relative(3, 0)->san());
@@ -116,29 +117,29 @@ final class SquareTest extends TestCase
 
   public function testNullRank() : void
   {
-    $this->expectException(\OutOfBoundsException::class);
     $s = new Square('-');
+    $this->expectException(\OutOfBoundsException::class);
     $s->rank();
   }
 
   public function testNullRankIndex() : void
   {
-    $this->expectException(\OutOfBoundsException::class);
     $s = new Square('-');
+    $this->expectException(\OutOfBoundsException::class);
     $s->rank_index();
   }
 
   public function testNullFile() : void
   {
-    $this->expectException(\OutOfBoundsException::class);
     $s = new Square('-');
+    $this->expectException(\OutOfBoundsException::class);
     $s->file();
   }
 
   public function testNullFileIndex() : void
   {
-    $this->expectException(\OutOfBoundsException::class);
     $s = new Square('-');
+    $this->expectException(\OutOfBoundsException::class);
     $s->file_index();
   }
 
@@ -151,8 +152,8 @@ final class SquareTest extends TestCase
 
   public function testRankIndexFile() : void
   {
-    $this->expectException(\OutOfBoundsException::class);
     $s = new Square('e');
+    $this->expectException(\OutOfBoundsException::class);
     $s->rank_index();
   }
 
