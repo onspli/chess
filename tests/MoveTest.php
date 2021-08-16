@@ -15,7 +15,7 @@ final class MoveTest extends TestCase
     $this->assertEquals('', $move->castling());
     $this->assertEquals('P', $move->piece());
     $this->assertEquals('e4', $move->target());
-    $this->assertEquals('e4', $move->target(true)->alg());
+    $this->assertEquals('e4', $move->target(true)->san());
     $this->assertEquals('', $move->origin_file());
     $this->assertEquals('', $move->origin_rank());
     $this->assertNull($move->origin_file(true));
@@ -83,16 +83,16 @@ final class MoveTest extends TestCase
 
   public function testExport() : void
   {
-      $this->assertEquals('e4', (new Move('e4'))->alg());
-      $this->assertEquals('Nxe4', (new Move('Nxe4'))->alg());
-      $this->assertEquals('Rae1', (new Move('Rae1'))->alg());
-      $this->assertEquals('N3e1', (new Move('N3e1'))->alg());
-      $this->assertEquals('Qa3xe1', (new Move('Qa3xe1'))->alg());
-      $this->assertEquals('a8=Q', (new Move('a8=Q'))->alg());
-      $this->assertEquals('a7+', (new Move('a7+'))->alg());
-      $this->assertEquals('Nf5!?', (new Move('Nf5!?'))->alg());
-      $this->assertEquals('O-O', (new Move('O-O'))->alg());
-      $this->assertEquals('O-O-O', (new Move('O-O-O'))->alg());
+      $this->assertEquals('e4', (new Move('e4'))->san());
+      $this->assertEquals('Nxe4', (new Move('Nxe4'))->san());
+      $this->assertEquals('Rae1', (new Move('Rae1'))->san());
+      $this->assertEquals('N3e1', (new Move('N3e1'))->san());
+      $this->assertEquals('Qa3xe1', (new Move('Qa3xe1'))->san());
+      $this->assertEquals('a8=Q', (new Move('a8=Q'))->san());
+      $this->assertEquals('a7+', (new Move('a7+'))->san());
+      $this->assertEquals('Nf5!?', (new Move('Nf5!?'))->san());
+      $this->assertEquals('O-O', (new Move('O-O'))->san());
+      $this->assertEquals('O-O-O', (new Move('O-O-O'))->san());
   }
 
   public function testIncompleteTarget() : void

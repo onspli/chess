@@ -80,7 +80,7 @@ class Board
   public function square($square) : string
   {
     self::validate_square($square);
-    return $this->board[$square->rank() * 8 + $square->file()];
+    return $this->board[$square->rank_index() * 8 + $square->file_index()];
   }
 
   public function square_nothrow($square) : string
@@ -97,7 +97,7 @@ class Board
   {
     self::validate_square($square);
     self::validate_piece($piece);
-    $this->board[$square->rank() * 8 + $square->file()] = $piece;
+    $this->board[$square->rank_index() * 8 + $square->file_index()] = $piece;
   }
 
   public function set_square_nothrow($square, string $piece) : void
@@ -123,8 +123,8 @@ class Board
     */
     $add_direction = function ($north, $east) use (&$arr, $attacker_square, $as_object) {
         $square = $attacker_square;
-        while ($square = $square->rel($north, $east)) {
-          $square->add_to($arr, $as_object);
+        while ($square = $square->relative($north, $east)) {
+          $square->push_to_array($arr, $as_object);
           if ($square->is_null() || $this->square($square) != '') {
             break;
           }
@@ -132,29 +132,29 @@ class Board
     };
 
     if ($attacking_piece == 'P') {
-      $attacker_square->nw()->add_to($arr, $as_object);
-      $attacker_square->ne()->add_to($arr, $as_object);
+      $attacker_square->relative(-1,1)->push_to_array($arr, $as_object);
+      $attacker_square->relative(1,1)->push_to_array($arr, $as_object);
     } else if ($attacking_piece == 'p') {
-      $attacker_square->sw()->add_to($arr, $as_object);
-      $attacker_square->se()->add_to($arr, $as_object);
+      $attacker_square->relative(-1,-1)->push_to_array($arr, $as_object);
+      $attacker_square->relative(1,-1)->push_to_array($arr, $as_object);
     } else if ($attacking_piece == 'K' || $attacking_piece == 'k') {
-      $attacker_square->n()->add_to($arr, $as_object);
-      $attacker_square->nw()->add_to($arr, $as_object);
-      $attacker_square->w()->add_to($arr, $as_object);
-      $attacker_square->sw()->add_to($arr, $as_object);
-      $attacker_square->s()->add_to($arr, $as_object);
-      $attacker_square->se()->add_to($arr, $as_object);
-      $attacker_square->e()->add_to($arr, $as_object);
-      $attacker_square->ne()->add_to($arr, $as_object);
+      $attacker_square->relative(0,1)->push_to_array($arr, $as_object);
+      $attacker_square->relative(-1,1)->push_to_array($arr, $as_object);
+      $attacker_square->relative(-1,0)->push_to_array($arr, $as_object);
+      $attacker_square->relative(-1,-1)->push_to_array($arr, $as_object);
+      $attacker_square->relative(0,-1)->push_to_array($arr, $as_object);
+      $attacker_square->relative(1,-1)->push_to_array($arr, $as_object);
+      $attacker_square->relative(1,0)->push_to_array($arr, $as_object);
+      $attacker_square->relative(1,1)->push_to_array($arr, $as_object);
     } else if ($attacking_piece == 'N' || $attacking_piece == 'n') {
-      $attacker_square->rel(2, 1)->add_to($arr, $as_object);
-      $attacker_square->rel(2, -1)->add_to($arr, $as_object);
-      $attacker_square->rel(-2, 1)->add_to($arr, $as_object);
-      $attacker_square->rel(-2, -1)->add_to($arr, $as_object);
-      $attacker_square->rel(1, 2)->add_to($arr, $as_object);
-      $attacker_square->rel(1, -2)->add_to($arr, $as_object);
-      $attacker_square->rel(-1, 2)->add_to($arr, $as_object);
-      $attacker_square->rel(-1, -2)->add_to($arr, $as_object);
+      $attacker_square->relative(2, 1)->push_to_array($arr, $as_object);
+      $attacker_square->relative(2, -1)->push_to_array($arr, $as_object);
+      $attacker_square->relative(-2, 1)->push_to_array($arr, $as_object);
+      $attacker_square->relative(-2, -1)->push_to_array($arr, $as_object);
+      $attacker_square->relative(1, 2)->push_to_array($arr, $as_object);
+      $attacker_square->relative(1, -2)->push_to_array($arr, $as_object);
+      $attacker_square->relative(-1, 2)->push_to_array($arr, $as_object);
+      $attacker_square->relative(-1, -2)->push_to_array($arr, $as_object);
     } else {
       if ($attacking_piece == 'B' || $attacking_piece == 'b'  || $attacking_piece == 'Q'  || $attacking_piece == 'q') {
         $add_direction(1, 1);
@@ -191,7 +191,7 @@ class Board
     */
     $add_direction = function ($north, $east) use (&$arr, $origin_square, $moving_piece, $as_object) {
         $square = $origin_square;
-        while ($square = $square->rel($north, $east)) {
+        while ($square = $square->relative($north, $east)) {
           if ($square->is_null()) {
             break;
           }
@@ -199,7 +199,7 @@ class Board
           if ($target_piece && self::piece_color($target_piece) == self::piece_color($moving_piece)) {
             break;
           }
-          $square->add_to($arr, $as_object);
+          $square->push_to_array($arr, $as_object);
           if ($target_piece != '') {
             break;
           }
@@ -210,8 +210,8 @@ class Board
       if ($target_square->is_null()) {
         return;
       }
-      if ($target_square->alg() == $en_passant_square->alg()) {
-        $target_square->add_to($arr, $as_object);
+      if ($target_square->san() == $en_passant_square->san()) {
+        $target_square->push_to_array($arr, $as_object);
         return;
       }
       $target_piece = $this->square($target_square);
@@ -221,7 +221,7 @@ class Board
       if (self::piece_color($target_piece) == self::piece_color($moving_piece)) {
         return;
       }
-      $target_square->add_to($arr, $as_object);
+      $target_square->push_to_array($arr, $as_object);
     };
 
     $add_target_square = function($target_square) use (&$arr, $moving_piece, $as_object) {
@@ -232,41 +232,41 @@ class Board
       if ($target_piece && self::piece_color($target_piece) == self::piece_color($moving_piece)) {
         return;
       }
-      $target_square->add_to($arr, $as_object);
+      $target_square->push_to_array($arr, $as_object);
     };
 
     if ($moving_piece == 'P') {
-      if ($origin_square->rank() == 1 && $this->square($origin_square->n()) == '') {
-        $add_target_square($origin_square->rel(0, 2));
+      if ($origin_square->rank_index() == 1 && $this->square($origin_square->relative(0,1)) == '') {
+        $add_target_square($origin_square->relative(0, 2));
       }
-      $add_target_square($origin_square->n());
-      $add_pawn_capture($origin_square->nw());
-      $add_pawn_capture($origin_square->ne());
+      $add_target_square($origin_square->relative(0,1));
+      $add_pawn_capture($origin_square->relative(-1,1));
+      $add_pawn_capture($origin_square->relative(1,1));
     } else if ($moving_piece == 'p') {
-      if ($origin_square->rank() == 6 && $this->square($origin_square->s()) == '') {
-        $add_target_square($origin_square->rel(0, -2));
+      if ($origin_square->rank_index() == 6 && $this->square($origin_square->relative(0,-1)) == '') {
+        $add_target_square($origin_square->relative(0, -2));
       }
-      $add_target_square($origin_square->s());
-      $add_pawn_capture($origin_square->sw());
-      $add_pawn_capture($origin_square->se());
+      $add_target_square($origin_square->relative(0,-1));
+      $add_pawn_capture($origin_square->relative(-1,-1));
+      $add_pawn_capture($origin_square->relative(1,-1));
     } else if ($moving_piece == 'K' || $moving_piece == 'k') {
-      $add_target_square($origin_square->n());
-      $add_target_square($origin_square->nw());
-      $add_target_square($origin_square->w());
-      $add_target_square($origin_square->sw());
-      $add_target_square($origin_square->s());
-      $add_target_square($origin_square->se());
-      $add_target_square($origin_square->e());
-      $add_target_square($origin_square->ne());
+      $add_target_square($origin_square->relative(0,1));
+      $add_target_square($origin_square->relative(-1,1));
+      $add_target_square($origin_square->relative(-1,0));
+      $add_target_square($origin_square->relative(-1,-1));
+      $add_target_square($origin_square->relative(0,-1));
+      $add_target_square($origin_square->relative(1,-1));
+      $add_target_square($origin_square->relative(1,0));
+      $add_target_square($origin_square->relative(1,1));
     } else if ($moving_piece == 'N' || $moving_piece == 'n') {
-      $add_target_square($origin_square->rel(2, 1));
-      $add_target_square($origin_square->rel(2, -1));
-      $add_target_square($origin_square->rel(-2, 1));
-      $add_target_square($origin_square->rel(-2, -1));
-      $add_target_square($origin_square->rel(1, 2));
-      $add_target_square($origin_square->rel(1, -2));
-      $add_target_square($origin_square->rel(-1, 2));
-      $add_target_square($origin_square->rel(-1, -2));
+      $add_target_square($origin_square->relative(2, 1));
+      $add_target_square($origin_square->relative(2, -1));
+      $add_target_square($origin_square->relative(-2, 1));
+      $add_target_square($origin_square->relative(-2, -1));
+      $add_target_square($origin_square->relative(1, 2));
+      $add_target_square($origin_square->relative(1, -2));
+      $add_target_square($origin_square->relative(-1, 2));
+      $add_target_square($origin_square->relative(-1, -2));
     } else {
       if ($moving_piece == 'B' || $moving_piece == 'b'  || $moving_piece == 'Q'  || $moving_piece == 'q') {
         $add_direction(1, 1);
@@ -311,7 +311,7 @@ class Board
         $square = new Square($file, $rank);
         $p = $this->square($square);
         if ($p == $piece) {
-          $square->add_to($arr, $as_object);
+          $square->push_to_array($arr, $as_object);
         }
       }
     }

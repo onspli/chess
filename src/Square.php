@@ -4,148 +4,221 @@ namespace Onspli\Chess;
 
 
 /**
-* There are two handy notations of squares on the chess board.
-* The human-readable algebraic notation (e4), and zero based coordinates (e4 = [4,3])
-* familiar to programmers.
-* The class helps conversion between these two notations.
-* Lets also consider special null square '-' (ie for en passant).
-* Square can be either constructed as new Square('e4')
-* or new Square(4, 3).
+* Class representing coordinates of a square on a chess board.
+*
+* Square can be on of the following types:
+*  - regular square - 'e4'
+*  - file - 'e' for e-file
+*  - rank - '4' for 4th rank
+*  - null square - '-', square not on a board
+*
 */
 class Square
 {
-  private $rank;
-  private $file;
-  private $alg = '-';
+  private $rank_index;
+  private $file_index;
 
-  function __construct($file_or_alg = null, $rank = null)
+  /**
+  * Create square.
+  *
+  * Constructor accepts either SAN (standard algebraic notation) string,
+  * or file and rank indexes.
+  *  - regular square: `new Square('e4'); new Square(4, 3);`
+  *  - null square: `new Square; new Square('-'); new Square(null, null);`
+  *  - file: `new Square('e'); new Square(4, null);`
+  *  - rank: `new Square('4'); new Square(null, 3);`
+  *
+  * Throws `ParseException` if SAN is invalid.
+  * Creates null square if file or rank index is out of bounds.
+  */
+  function __construct($san_or_file_index = null, $rank_index = null)
   {
-    if ($rank === null)
-    {
-      if ($file_or_alg === null) {
-        $file_or_alg = '-';
-      }
-      $alg = $file_or_alg;
-      if ($alg == '-')
-      {
-        $file = -1;
-        $rank = -1;
-      }
-      else
-      {
-        if (strlen($alg) != 2) {
-          throw new ParseException;
-        }
-        $file = ord($alg[0]) - ord('a');
-        $rank = intval($alg[1]) - 1;
-        if (!self::is_in_range($file, $rank)) {
-          throw new ParseException;
-        }
-      }
+    if (is_string($san_or_file_index)) {
+      $this->parse_san($san_or_file_index);
     } else {
-      $file = $file_or_alg;
-    }
-
-    $this->file = $file;
-    $this->rank = $rank;
-    if (self::is_in_range($file, $rank)) {
-      $this->alg = chr(ord('a') + $file) . ($rank + 1);
-    } else {
-      $this->alg = '-';
+      $this->file_index = $san_or_file_index;
+      $this->rank_index = $rank_index;
+      $this->validate_range();
     }
   }
 
-  public function rank() : int
+  /**
+  * Get rank index of the square.
+  *
+  * For square 'e4' it returns 3. Throws `\OutOfBoundsException` for null squares
+  * and files.
+  */
+  public function rank_index() : int
+  {
+    if ($this->is_null() || $this->is_file()) {
+      throw new \OutOfBoundsException;
+    }
+    return $this->rank_index;
+  }
+
+  /**
+  * Get rank of the square.
+  *
+  * For square 'e4' it returns '4'. Throws `\OutOfBoundsException` for null squares.
+  * Returns '' for files.
+  */
+  public function rank() : string
   {
     if ($this->is_null()) {
       throw new \OutOfBoundsException;
     }
-    return $this->rank;
+    if ($this->is_file()) {
+      return '';
+    }
+    return $this->rank_index + 1;
   }
 
-  public function file() : int
+  /**
+  * Get file index of the square.
+  *
+  * For square 'e4' it returns 4. Throws `\OutOfBoundsException` for null squares
+  * and ranks.
+  */
+  public function file_index() : int
+  {
+    if ($this->is_null() || $this->is_rank()) {
+      throw new \OutOfBoundsException;
+    }
+    return $this->file_index;
+  }
+
+  /**
+  * Get file of the square.
+  *
+  * For square 'e4' it returns 'e'. Throws `\OutOfBoundsException` for null squares.
+  * Returns '' for ranks.
+  */
+  public function file() : string
   {
     if ($this->is_null()) {
       throw new \OutOfBoundsException;
     }
-    return $this->file;
+    if ($this->is_rank()) {
+      return '';
+    }
+    return chr(ord('a') + $this->file_index);
   }
 
-  public function alg() : string
+  /**
+  * Returns SAN (standard algebraic notation) string.
+  *
+  * For
+  * - regular square - 'e4'
+  * - file - 'e'
+  * - rank - '4',
+  * - null square - '-'
+  */
+  public function san() : string
   {
-    return $this->alg;
+    if ($this->is_null()) {
+      return '-';
+    }
+
+    return $this->file() . $this->rank();
   }
 
+  /**
+  * Check wether square is null.
+  */
   public function is_null() : bool
   {
-    return $this->alg == '-';
+    return $this->rank_index === null && $this->file_index === null;
   }
 
-  public function n()
+  /**
+  * Check wether square is rank.
+  */
+  public function is_rank() : bool
   {
-    return $this->rel(0, 1);
+    return $this->rank_index !== null && $this->file_index === null;
   }
 
-  public function w()
+  /**
+  * Check wether square is file.
+  */
+  public function is_file() : bool
   {
-    return $this->rel(-1, 0);
+    return $this->rank_index === null && $this->file_index !== null;
   }
 
-  public function s()
+  /**
+  * Check wether square is regular square.
+  */
+  public function is_regular() : bool
   {
-    return $this->rel(0, -1);
+    return $this->rank_index !== null && $this->file_index !== null;
   }
 
-  public function e()
+  /**
+  * Get square with relative position to this square.
+  *
+  * Throws `\OutOfBoundsException` for non regular squares.
+  */
+  public function relative($east, $north)
   {
-    return $this->rel(1, 0);
+    if (!$this->is_regular()) {
+      throw new \OutOfBoundsException;
+    }
+    return new Square($this->file_index() + $east, $this->rank_index() + $north);
   }
 
-  public function nw()
+  /**
+  * Add square to the end of array.
+  *
+  * Method ignores nonregular squares.
+  */
+  public function push_to_array(array &$array, bool $as_object = false) : void
   {
-    return $this->rel(-1, 1);
-  }
-
-  public function ne()
-  {
-    return $this->rel(1, 1);
-  }
-
-  public function sw()
-  {
-    return $this->rel(-1, -1);
-  }
-
-  public function se()
-  {
-    return $this->rel(1, -1);
-  }
-
-  public function rel($east, $north)
-  {
-    return new Square($this->file() + $east, $this->rank() + $north);
-  }
-
-  public function add_to(array &$array, bool $as_object = false) : void
-  {
-    if ($this->is_null() == false) {
-      if ($as_object) {
-        $array[] = $this;
-      } else {
-        $array[] = $this->alg();
-      }
+    if (!$this->is_regular()) {
+      return;
+    }
+    if ($as_object) {
+      $array[] = $this;
+    } else {
+      $array[] = $this->san();
     }
   }
 
-  private static function is_in_range($file, $rank) : bool
+  private function set_to_null() : void
   {
-    if (intval($file) != $file || intval($rank) != $rank) {
-      return false;
+    $this->file_index = null;
+    $this->rank_index = null;
+  }
+
+  private function validate_range() : void
+  {
+    if ($this->file_index !== null && intval($this->file_index) !== $this->file_index) {
+      $this->set_to_null();
+    } else if ($this->rank_index !== null && intval($this->rank_index) !== $this->rank_index) {
+      $this->set_to_null();
+    } else if ($this->file_index < 0 || $this->file_index > 7) {
+      $this->set_to_null();
+    } else if ($this->rank_index < 0 || $this->rank_index > 7) {
+      $this->set_to_null();
     }
-    if ($file < 0 || $file >= 8 || $rank < 0 || $rank >= 8) {
-      return false;
+  }
+
+  private function parse_san(string $san) : void
+  {
+    if ($san == '-') {
+      $this->set_to_null();
+      return;
     }
-    return true;
+    $matches = [];
+    if (strlen($san) == 0 || !preg_match('/^([a-h]?)([1-8]?)$/', $san, $matches)) {
+      throw new ParseException;
+    }
+    if ($matches[1]) {
+      $this->file_index = ord($matches[1]) - ord('a');
+    }
+    if ($matches[2]) {
+      $this->rank_index = intval($matches[2]) - 1;
+    }
   }
 
 }

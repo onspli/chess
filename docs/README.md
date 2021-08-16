@@ -49,7 +49,7 @@
 | [FEN::move](#FENmove) | Perform a move. |
 | [**Move**](#Move) |  |
 | [Move::__construct](#Move__construct) |  |
-| [Move::alg](#Movealg) |  |
+| [Move::san](#Movesan) |  |
 | [Move::capture](#Movecapture) |  |
 | [Move::target](#Movetarget) |  |
 | [Move::origin_file](#Moveorigin_file) |  |
@@ -62,22 +62,19 @@
 | [**NotImplementedException**](#NotImplementedException) |  |
 | [**ParseException**](#ParseException) |  |
 | [**RulesException**](#RulesException) |  |
-| [**Square**](#Square) | There are two handy notations of squares on the chess board. |
-| [Square::__construct](#Square__construct) |  |
-| [Square::rank](#Squarerank) |  |
-| [Square::file](#Squarefile) |  |
-| [Square::alg](#Squarealg) |  |
-| [Square::is_null](#Squareis_null) |  |
-| [Square::n](#Squaren) |  |
-| [Square::w](#Squarew) |  |
-| [Square::s](#Squares) |  |
-| [Square::e](#Squaree) |  |
-| [Square::nw](#Squarenw) |  |
-| [Square::ne](#Squarene) |  |
-| [Square::sw](#Squaresw) |  |
-| [Square::se](#Squarese) |  |
-| [Square::rel](#Squarerel) |  |
-| [Square::add_to](#Squareadd_to) |  |
+| [**Square**](#Square) | Class representing coordinates of a square on a chess board. |
+| [Square::__construct](#Square__construct) | Create square. |
+| [Square::rank_index](#Squarerank_index) | Get rank index of the square. |
+| [Square::rank](#Squarerank) | Get rank of the square. |
+| [Square::file_index](#Squarefile_index) | Get file index of the square. |
+| [Square::file](#Squarefile) | Get file of the square. |
+| [Square::san](#Squaresan) | Returns SAN (standard algebraic notation) string. |
+| [Square::is_null](#Squareis_null) | Check wether square is null. |
+| [Square::is_rank](#Squareis_rank) | Check wether square is rank. |
+| [Square::is_file](#Squareis_file) | Check wether square is file. |
+| [Square::is_regular](#Squareis_regular) | Check wether square is regular square. |
+| [Square::relative](#Squarerelative) | Get square with relative position to this square. |
+| [Square::push_to_array](#Squarepush_to_array) | Add square to the end of array. |
 
 ## Board
 
@@ -1132,12 +1129,12 @@ Move::__construct( string move ): mixed
 
 
 ---
-### Move::alg
+### Move::san
 
 
 
 ```php
-Move::alg(  ): string
+Move::san(  ): string
 ```
 
 
@@ -1372,35 +1369,62 @@ Move::annotation(  ): string
 
 ## Square
 
-There are two handy notations of squares on the chess board.
+Class representing coordinates of a square on a chess board.
 
-The human-readable algebraic notation (e4), and zero based coordinates (e4 = [4,3])
-familiar to programmers.
-The class helps conversion between these two notations.
-Lets also consider special null square '-' (ie for en passant).
-Square can be either constructed as new Square('e4')
-or new Square(4, 3).
+Square can be on of the following types:
+- regular square - 'e4'
+- file - 'e' for e-file
+- rank - '4' for 4th rank
+- null square - '-', square not on a board
 
 * Full name: \Onspli\Chess\Square
 
 
 ### Square::__construct
 
-
+Create square.
 
 ```php
-Square::__construct( mixed file_or_alg = null, mixed rank = null ): mixed
+Square::__construct( mixed san_or_file_index = null, mixed rank_index = null ): mixed
 ```
 
+Constructor accepts either SAN (standard algebraic notation) string,
+or file and rank indexes.
+ - regular square: `new Square('e4'); new Square(4, 3);`
+ - null square: `new Square; new Square('-'); new Square(null, null);`
+ - file: `new Square('e'); new Square(4, null);`
+ - rank: `new Square('4'); new Square(null, 3);`
 
+Throws `ParseException` if SAN is invalid.
+Creates null square if file or rank index is out of bounds.
 
 
 **Parameters:**
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `file_or_alg` | **mixed** |  |
-| `rank` | **mixed** |  |
+| `san_or_file_index` | **mixed** |  |
+| `rank_index` | **mixed** |  |
+
+
+**Return Value:**
+
+
+
+
+
+---
+### Square::rank_index
+
+Get rank index of the square.
+
+```php
+Square::rank_index(  ): int
+```
+
+For square 'e4' it returns 3. Throws `\OutOfBoundsException` for null squares
+and files.
+
 
 
 **Return Value:**
@@ -1412,13 +1436,34 @@ Square::__construct( mixed file_or_alg = null, mixed rank = null ): mixed
 ---
 ### Square::rank
 
-
+Get rank of the square.
 
 ```php
-Square::rank(  ): int
+Square::rank(  ): string
 ```
 
+For square 'e4' it returns '4'. Throws `\OutOfBoundsException` for null squares.
+Returns '' for files.
 
+
+
+**Return Value:**
+
+
+
+
+
+---
+### Square::file_index
+
+Get file index of the square.
+
+```php
+Square::file_index(  ): int
+```
+
+For square 'e4' it returns 4. Throws `\OutOfBoundsException` for null squares
+and ranks.
 
 
 
@@ -1431,13 +1476,14 @@ Square::rank(  ): int
 ---
 ### Square::file
 
-
+Get file of the square.
 
 ```php
-Square::file(  ): int
+Square::file(  ): string
 ```
 
-
+For square 'e4' it returns 'e'. Throws `\OutOfBoundsException` for null squares.
+Returns '' for ranks.
 
 
 
@@ -1448,15 +1494,19 @@ Square::file(  ): int
 
 
 ---
-### Square::alg
+### Square::san
 
-
+Returns SAN (standard algebraic notation) string.
 
 ```php
-Square::alg(  ): string
+Square::san(  ): string
 ```
 
-
+For
+- regular square - 'e4'
+- file - 'e'
+- rank - '4',
+- null square - '-'
 
 
 
@@ -1469,7 +1519,7 @@ Square::alg(  ): string
 ---
 ### Square::is_null
 
-
+Check wether square is null.
 
 ```php
 Square::is_null(  ): bool
@@ -1486,12 +1536,12 @@ Square::is_null(  ): bool
 
 
 ---
-### Square::n
+### Square::is_rank
 
-
+Check wether square is rank.
 
 ```php
-Square::n(  ): mixed
+Square::is_rank(  ): bool
 ```
 
 
@@ -1505,12 +1555,12 @@ Square::n(  ): mixed
 
 
 ---
-### Square::w
+### Square::is_file
 
-
+Check wether square is file.
 
 ```php
-Square::w(  ): mixed
+Square::is_file(  ): bool
 ```
 
 
@@ -1524,12 +1574,12 @@ Square::w(  ): mixed
 
 
 ---
-### Square::s
+### Square::is_regular
 
-
+Check wether square is regular square.
 
 ```php
-Square::s(  ): mixed
+Square::is_regular(  ): bool
 ```
 
 
@@ -1543,110 +1593,15 @@ Square::s(  ): mixed
 
 
 ---
-### Square::e
+### Square::relative
 
-
-
-```php
-Square::e(  ): mixed
-```
-
-
-
-
-
-**Return Value:**
-
-
-
-
-
----
-### Square::nw
-
-
+Get square with relative position to this square.
 
 ```php
-Square::nw(  ): mixed
+Square::relative( mixed east, mixed north ): mixed
 ```
 
-
-
-
-
-**Return Value:**
-
-
-
-
-
----
-### Square::ne
-
-
-
-```php
-Square::ne(  ): mixed
-```
-
-
-
-
-
-**Return Value:**
-
-
-
-
-
----
-### Square::sw
-
-
-
-```php
-Square::sw(  ): mixed
-```
-
-
-
-
-
-**Return Value:**
-
-
-
-
-
----
-### Square::se
-
-
-
-```php
-Square::se(  ): mixed
-```
-
-
-
-
-
-**Return Value:**
-
-
-
-
-
----
-### Square::rel
-
-
-
-```php
-Square::rel( mixed east, mixed north ): mixed
-```
-
-
+Throws `\OutOfBoundsException` for non regular squares.
 
 
 **Parameters:**
@@ -1664,15 +1619,15 @@ Square::rel( mixed east, mixed north ): mixed
 
 
 ---
-### Square::add_to
+### Square::push_to_array
 
-
+Add square to the end of array.
 
 ```php
-Square::add_to( array &array, bool as_object = false ): void
+Square::push_to_array( array &array, bool as_object = false ): void
 ```
 
-
+Method ignores nonregular squares.
 
 
 **Parameters:**

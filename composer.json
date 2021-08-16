@@ -29,8 +29,8 @@
           "php-coveralls -v"
         ],
         "docs": [
-          "php bin/generate_readme.php",
-          "php phpDocumentor.phar --directory=src --target=docs --template=vendor/onspli/phpdoc-markdown/templates/public-onefile"
+          "php phpDocumentor.phar --directory=src --target=docs --template=vendor/onspli/phpdoc-markdown/templates/public-onefile",
+          "php bin/generate_readme.php"
         ],
         "download-phpdoc": [
           "wget https://phpdoc.org/phpDocumentor.phar"

@@ -18,15 +18,15 @@ final class SquareTest extends TestCase
 
     $s = new Square('e4');
     $this->assertFalse($s->is_null());
-    $this->assertEquals('e4', $s->alg());
-    $this->assertEquals(4, $s->file());
-    $this->assertEquals(3, $s->rank());
+    $this->assertEquals('e4', $s->san());
+    $this->assertEquals(4, $s->file_index());
+    $this->assertEquals(3, $s->rank_index());
 
     $s = new Square(4, 3);
     $this->assertFalse($s->is_null());
-    $this->assertEquals('e4', $s->alg());
-    $this->assertEquals(4, $s->file());
-    $this->assertEquals(3, $s->rank());
+    $this->assertEquals('e4', $s->san());
+    $this->assertEquals(4, $s->file_index());
+    $this->assertEquals(3, $s->rank_index());
 
     $s = new Square(-1, 0);
     $this->assertTrue($s->is_null());
@@ -49,23 +49,15 @@ final class SquareTest extends TestCase
   {
 
     $s = new Square('e4');
-    $this->assertEquals('e4', $s->rel(0, 0)->alg());
-    $this->assertEquals('h4', $s->rel(3, 0)->alg());
-    $this->assertEquals('-', $s->rel(4, 0)->alg());
-    $this->assertEquals('e8', $s->rel(0, 4)->alg());
-    $this->assertEquals('-', $s->rel(0, 5)->alg());
-    $this->assertEquals('a4', $s->rel(-4, 0)->alg());
-    $this->assertEquals('-', $s->rel(-5, 0)->alg());
-    $this->assertEquals('e1', $s->rel(0, -3)->alg());
-    $this->assertEquals('-', $s->rel(0, -4)->alg());
-    $this->assertEquals('e5', $s->n()->alg());
-    $this->assertEquals('e3', $s->s()->alg());
-    $this->assertEquals('d4', $s->w()->alg());
-    $this->assertEquals('f4', $s->e()->alg());
-    $this->assertEquals('d5', $s->nw()->alg());
-    $this->assertEquals('f5', $s->ne()->alg());
-    $this->assertEquals('d3', $s->sw()->alg());
-    $this->assertEquals('f3', $s->se()->alg());
+    $this->assertEquals('e4', $s->relative(0, 0)->san());
+    $this->assertEquals('h4', $s->relative(3, 0)->san());
+    $this->assertEquals('-', $s->relative(4, 0)->san());
+    $this->assertEquals('e8', $s->relative(0, 4)->san());
+    $this->assertEquals('-', $s->relative(0, 5)->san());
+    $this->assertEquals('a4', $s->relative(-4, 0)->san());
+    $this->assertEquals('-', $s->relative(-5, 0)->san());
+    $this->assertEquals('e1', $s->relative(0, -3)->san());
+    $this->assertEquals('-', $s->relative(0, -4)->san());
   }
 
   public function testInvalid1() : void
@@ -102,29 +94,29 @@ final class SquareTest extends TestCase
   {
     $this->expectException(\OutOfBoundsException::class);
     $s = new Square('-');
-    $s->rank();
+    $s->rank_index();
   }
 
   public function testNullFile() : void
   {
     $this->expectException(\OutOfBoundsException::class);
     $s = new Square('-');
-    $s->file();
+    $s->file_index();
   }
 
   public function testAddToArrayAsObjects() : void
   {
     $arr = [];
     $s = new Square('-');
-    $s->add_to($arr, true);
+    $s->push_to_array($arr, true);
     $this->assertEqualsCanonicalizing([], $arr);
 
     $s = new Square('e1');
-    $s->add_to($arr, true);
+    $s->push_to_array($arr, true);
     $this->assertEqualsCanonicalizing([new Square('e1')], $arr);
 
     $s = new Square('g1');
-    $s->add_to($arr, true);
+    $s->push_to_array($arr, true);
     $this->assertEqualsCanonicalizing([new Square('e1'), new Square('g1')], $arr);
   }
 
@@ -132,15 +124,15 @@ final class SquareTest extends TestCase
   {
     $arr = [];
     $s = new Square('-');
-    $s->add_to($arr);
+    $s->push_to_array($arr);
     $this->assertEqualsCanonicalizing([], $arr);
 
     $s = new Square('e1');
-    $s->add_to($arr);
+    $s->push_to_array($arr);
     $this->assertEqualsCanonicalizing(['e1'], $arr);
 
     $s = new Square('g1');
-    $s->add_to($arr);
+    $s->push_to_array($arr);
     $this->assertEqualsCanonicalizing(['e1', 'g1'], $arr);
   }
 

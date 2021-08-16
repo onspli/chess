@@ -67,17 +67,17 @@ class Move
       throw new RulesException;
     }
 
-    if ($this->promotion() && $this->target->rank() != 7 && $this->target->rank() != 0) {
+    if ($this->promotion() && $this->target->rank_index() != 7 && $this->target->rank_index() != 0) {
       throw new RulesException;
     }
 
-    if (!$this->promotion() && $this->piece() == 'P' && ($this->target->rank() == 7 || $this->target->rank() == 0)) {
+    if (!$this->promotion() && $this->piece() == 'P' && ($this->target->rank_index() == 7 || $this->target->rank_index() == 0)) {
       throw new RulesException;
     }
 
   }
 
-  public function alg() : string
+  public function san() : string
   {
     $str = '';
 
@@ -112,7 +112,7 @@ class Move
     if ($as_object) {
       return $this->target;
     } else {
-      return $this->target->alg();
+      return $this->target->san();
     }
   }
 

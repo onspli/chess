@@ -62,7 +62,7 @@ final class FENTest extends TestCase
     $this->assertEquals('-', $fen->en_passant());
     $fen->set_en_passant('e3');
     $this->assertEquals('e3', $fen->en_passant());
-    $this->assertEquals('e3', $fen->en_passant(true)->alg());
+    $this->assertEquals('e3', $fen->en_passant(true)->san());
     $fen->set_en_passant('-');
     $this->assertEquals('-', $fen->en_passant());
   }
