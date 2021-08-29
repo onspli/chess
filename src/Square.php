@@ -48,7 +48,7 @@ class Square
   * For square 'e4' it returns 3. Throws `\OutOfBoundsException` for null squares
   * and files.
   */
-  public function rank_index() : int
+  public function get_rank_index() : int
   {
     if ($this->is_null() || $this->is_file()) {
       throw new \OutOfBoundsException;
@@ -62,7 +62,7 @@ class Square
   * For square 'e4' it returns '4'. Throws `\OutOfBoundsException` for null squares.
   * Returns empty string for files.
   */
-  public function rank() : string
+  public function get_rank() : string
   {
     if ($this->is_null()) {
       throw new \OutOfBoundsException;
@@ -79,7 +79,7 @@ class Square
   * For square 'e4' it returns 4. Throws `\OutOfBoundsException` for null squares
   * and ranks.
   */
-  public function file_index() : int
+  public function get_file_index() : int
   {
     if ($this->is_null() || $this->is_rank()) {
       throw new \OutOfBoundsException;
@@ -93,7 +93,7 @@ class Square
   * For square 'e4' it returns 'e'. Throws `\OutOfBoundsException` for null squares.
   * Returns empty string for ranks.
   */
-  public function file() : string
+  public function get_file() : string
   {
     if ($this->is_null()) {
       throw new \OutOfBoundsException;
@@ -113,13 +113,13 @@ class Square
   * - rank - '4',
   * - null square - '-'
   */
-  public function san() : string
+  public function export() : string
   {
     if ($this->is_null()) {
       return '-';
     }
 
-    return $this->file() . $this->rank();
+    return $this->get_file() . $this->get_rank();
   }
 
   /**
@@ -186,7 +186,7 @@ class Square
     if (!$this->is_regular()) {
       throw new \OutOfBoundsException;
     }
-    return new Square($this->file_index() + $east, $this->rank_index() + $north);
+    return new Square($this->get_file_index() + $east, $this->get_rank_index() + $north);
   }
 
   /**
@@ -203,7 +203,7 @@ class Square
     if ($as_object) {
       $array[] = $this;
     } else {
-      $array[] = $this->san();
+      $array[] = $this->export();
     }
   }
 

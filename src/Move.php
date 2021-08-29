@@ -56,16 +56,16 @@ class Move
       throw new RulesException;
     }
 
-    if ($this->promotion() && $this->target->rank_index() != 7 && $this->target->rank_index() != 0) {
+    if ($this->promotion() && $this->target->get_rank_index() != 7 && $this->target->get_rank_index() != 0) {
       throw new RulesException;
     }
 
-    if (!$this->promotion() && $this->piece() == 'P' && ($this->target->rank_index() == 7 || $this->target->rank_index() == 0)) {
+    if (!$this->promotion() && $this->piece() == 'P' && ($this->target->get_rank_index() == 7 || $this->target->get_rank_index() == 0)) {
       throw new RulesException;
     }
   }
 
-  public function san() : string
+  public function export() : string
   {
     $str = '';
     if ($this->castling()) {
@@ -85,7 +85,7 @@ class Move
   private function san_origin() : string
   {
     if (!$this->origin->is_null()) {
-      return $this->origin->san();
+      return $this->origin->export();
     }
     return '';
   }
@@ -121,7 +121,7 @@ class Move
     if ($as_object) {
       return $this->target;
     } else {
-      return $this->target->san();
+      return $this->target->export();
     }
   }
 
@@ -130,7 +130,7 @@ class Move
     if ($as_object) {
       return $this->origin;
     } else {
-      return $this->origin->san();
+      return $this->origin->export();
     }
   }
 

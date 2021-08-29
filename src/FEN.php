@@ -259,7 +259,7 @@ class FEN
       if ($as_object) {
         return $this->en_passant;
       }
-      return $this->en_passant->san();
+      return $this->en_passant->export();
     }
 
     /**
@@ -277,8 +277,8 @@ class FEN
       if (is_string($square)) {
         $square = new Square($square);
       }
-      if ($square->is_null() == false && $square->rank_index() != 2 && $square->rank_index() != 5) {
-        throw new ParseException("Invalid En passant square '".$square->san()."'.");
+      if ($square->is_null() == false && $square->get_rank_index() != 2 && $square->get_rank_index() != 5) {
+        throw new ParseException("Invalid En passant square '".$square->export()."'.");
       }
       $this->en_passant = $square;
     }
@@ -414,16 +414,16 @@ class FEN
           if (sizeof($origins) == 1) {
             $candidate_moves[] = strtoupper($moving_piece) . $capture . $reachable_square;
           } else if (sizeof($origins) == 2) {
-            if ($origins[0]->file_index() != $origins[1]->file_index()) {
-              $candidate_moves[] = strtoupper($moving_piece) . chr(ord('a') + $origins[0]->file_index()) . $capture . $reachable_square;
-              $candidate_moves[] = strtoupper($moving_piece) . chr(ord('a') + $origins[1]->file_index()) . $capture . $reachable_square;
+            if ($origins[0]->get_file_index() != $origins[1]->get_file_index()) {
+              $candidate_moves[] = strtoupper($moving_piece) . chr(ord('a') + $origins[0]->get_file_index()) . $capture . $reachable_square;
+              $candidate_moves[] = strtoupper($moving_piece) . chr(ord('a') + $origins[1]->get_file_index()) . $capture . $reachable_square;
             } else {
-              $candidate_moves[] = strtoupper($moving_piece) . ($origins[0]->rank_index() + 1) . $capture . $reachable_square;
-              $candidate_moves[] = strtoupper($moving_piece) . ($origins[1]->rank_index() + 1) . $capture . $reachable_square;
+              $candidate_moves[] = strtoupper($moving_piece) . ($origins[0]->get_rank_index() + 1) . $capture . $reachable_square;
+              $candidate_moves[] = strtoupper($moving_piece) . ($origins[1]->get_rank_index() + 1) . $capture . $reachable_square;
             }
           } else {
             foreach ($origins as $origin) {
-              $candidate_moves[] = strtoupper($moving_piece) . $origin->san() . $capture . $reachable_square;
+              $candidate_moves[] = strtoupper($moving_piece) . $origin->export() . $capture . $reachable_square;
             }
           }
         }
@@ -441,15 +441,15 @@ class FEN
             $reachable_squares = $this->board->reachable_squares($origin_square, $moving_piece, $this->get_en_passant());
             foreach ($reachable_squares as $reachable_square) {
 
-              if (($this->get_active_color() == 'w' && $origin_square->rank_index() == 6) ||
-                  ($this->get_active_color() == 'b' && $origin_square->rank_index() == 1)) {
+              if (($this->get_active_color() == 'w' && $origin_square->get_rank_index() == 6) ||
+                  ($this->get_active_color() == 'b' && $origin_square->get_rank_index() == 1)) {
                     $promotions = ['=N', '=B', '=R', '=Q'];
               } else {
                 $promotions = [''];
               }
               foreach ($promotions as $promotion) {
                 if ($this->get_square($reachable_square)) {
-                  $candidate_moves[] = chr(ord('a') + $origin_square->file_index()) . 'x' . $reachable_square . $promotion;
+                  $candidate_moves[] = chr(ord('a') + $origin_square->get_file_index()) . 'x' . $reachable_square . $promotion;
                 } else {
                   $candidate_moves[] = $reachable_square . $promotion;
                 }
@@ -571,7 +571,7 @@ class FEN
         $target = $move->target(true);
         $target_piece = $this->get_square($target);
 
-        if ($move->capture() && $target_piece == '' && !($target->san() == $this->get_en_passant() && $move->piece() == 'P')) {
+        if ($move->capture() && $target_piece == '' && !($target->export() == $this->get_en_passant() && $move->piece() == 'P')) {
           throw new RulesException("Cannot capture on empty square.");
         }
 
@@ -585,12 +585,12 @@ class FEN
 
         if ($move_piece == 'P' && !$move->capture()) {
           $origin_candidates = [$target->relative(0, -1)];
-          if ($target->rank_index() == 3 && $this->get_square($target->relative(0, -1)) == '') {
+          if ($target->get_rank_index() == 3 && $this->get_square($target->relative(0, -1)) == '') {
             $origin_candidates[] = $target->relative(0, -2);
           }
         } else if($move_piece == 'p' && !$move->capture()) {
           $origin_candidates = [$target->relative(0, 1)];
-          if ($target->rank_index() == 4 && $this->get_square($target->relative(0, 1)) == '') {
+          if ($target->get_rank_index() == 4 && $this->get_square($target->relative(0, 1)) == '') {
             $origin_candidates[] = $target->relative(0, 2);
           }
         } else {
@@ -600,10 +600,10 @@ class FEN
         $origin_candidates2 = [];
         foreach ($origin_candidates as $origin_candidate) {
           if ($this->get_square($origin_candidate) == $move_piece) {
-            if ($move->origin(true)->has_file() && $origin_candidate->file() != $move->origin(true)->file()) {
+            if ($move->origin(true)->has_file() && $origin_candidate->get_file() != $move->origin(true)->get_file()) {
               continue;
             }
-            if ($move->origin(true)->has_rank() && $origin_candidate->rank() != $move->origin(true)->rank()) {
+            if ($move->origin(true)->has_rank() && $origin_candidate->get_rank() != $move->origin(true)->get_rank()) {
               continue;
             }
             $origin_candidates2[] = $origin_candidate;
@@ -626,7 +626,7 @@ class FEN
           $new_board->set_square($target, $move->promotion());
         } else {
           $new_board->set_square($target, $move_piece);
-          if ($target->san() == $this->get_en_passant()) {
+          if ($target->export() == $this->get_en_passant()) {
             if ($this->get_active_color() == 'w') {
               $new_board->set_square($target->relative(0, -1), '');
             } else {
@@ -649,16 +649,16 @@ class FEN
         $this->set_halfmove($this->get_halfmove() + 1);
       }
 
-      if ($move_piece == 'P' && $origin->rank_index() == 1 && $target->rank_index() == 3) {
+      if ($move_piece == 'P' && $origin->get_rank_index() == 1 && $target->get_rank_index() == 3) {
         $this->set_en_passant($target->relative(0, -1));
-      } else if ($move_piece == 'p' && $origin->rank_index() == 6 && $target->rank_index() == 4) {
+      } else if ($move_piece == 'p' && $origin->get_rank_index() == 6 && $target->get_rank_index() == 4) {
         $this->set_en_passant($target->relative(0, 1));
       } else {
         $this->set_en_passant('-');
       }
 
       if ($move->piece() == 'R') {
-        switch ($origin->san()) {
+        switch ($origin->export()) {
           case 'a1':
             $this->set_castling_availability('Q', false);
             break;
@@ -673,7 +673,7 @@ class FEN
             break;
         }
       } else if ($move->piece() == 'K') {
-        switch ($origin->san()) {
+        switch ($origin->export()) {
           case 'e1':
             $this->set_castling_availability('Q', false);
             $this->set_castling_availability('K', false);

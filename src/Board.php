@@ -80,14 +80,14 @@ class Board
   public function get_square($square) : string
   {
     self::validate_square($square);
-    return $this->board[$square->rank_index() * 8 + $square->file_index()];
+    return $this->board[$square->get_rank_index() * 8 + $square->get_file_index()];
   }
 
   public function set_square($square, string $piece) : void
   {
     self::validate_square($square);
     self::validate_piece($piece);
-    $this->board[$square->rank_index() * 8 + $square->file_index()] = $piece;
+    $this->board[$square->get_rank_index() * 8 + $square->get_file_index()] = $piece;
   }
 
   /**
@@ -197,7 +197,7 @@ class Board
       if ($target_square->is_null()) {
         return;
       }
-      if ($target_square->san() == $en_passant_square->san()) {
+      if ($target_square->export() == $en_passant_square->export()) {
         $target_square->push_to_array($arr, $as_object);
         return;
       }
@@ -216,14 +216,14 @@ class Board
     };
 
     if ($moving_piece == 'P') {
-      if ($origin_square->rank_index() == 1 && $this->get_square($origin_square->relative(0,1)) == '') {
+      if ($origin_square->get_rank_index() == 1 && $this->get_square($origin_square->relative(0,1)) == '') {
         $add_target_square($origin_square->relative(0, 2));
       }
       $add_target_square($origin_square->relative(0,1));
       $add_pawn_capture($origin_square->relative(-1,1));
       $add_pawn_capture($origin_square->relative(1,1));
     } else if ($moving_piece == 'p') {
-      if ($origin_square->rank_index() == 6 && $this->get_square($origin_square->relative(0,-1)) == '') {
+      if ($origin_square->get_rank_index() == 6 && $this->get_square($origin_square->relative(0,-1)) == '') {
         $add_target_square($origin_square->relative(0, -2));
       }
       $add_target_square($origin_square->relative(0,-1));

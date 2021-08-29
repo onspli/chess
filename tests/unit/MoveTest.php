@@ -15,9 +15,9 @@ final class MoveTest extends TestCase
     $this->assertEquals('', $move->castling());
     $this->assertEquals('P', $move->piece());
     $this->assertEquals('e4', $move->target());
-    $this->assertEquals('e4', $move->target(true)->san());
+    $this->assertEquals('e4', $move->target(true)->export());
     $this->assertEquals('-', $move->origin());
-    $this->assertEquals('-', $move->origin(true)->san());
+    $this->assertEquals('-', $move->origin(true)->export());
     $this->assertEquals('', $move->check_mate());
     $this->assertEquals('', $move->annotation());
     $this->assertFalse($move->capture());
@@ -73,16 +73,16 @@ final class MoveTest extends TestCase
 
   public function testExport() : void
   {
-      $this->assertEquals('e4', (new Move('e4'))->san());
-      $this->assertEquals('Nxe4', (new Move('Nxe4'))->san());
-      $this->assertEquals('Rae1', (new Move('Rae1'))->san());
-      $this->assertEquals('N3e1', (new Move('N3e1'))->san());
-      $this->assertEquals('Qa3xe1', (new Move('Qa3xe1'))->san());
-      $this->assertEquals('a8=Q', (new Move('a8=Q'))->san());
-      $this->assertEquals('a7+', (new Move('a7+'))->san());
-      $this->assertEquals('Nf5!?', (new Move('Nf5!?'))->san());
-      $this->assertEquals('O-O', (new Move('O-O'))->san());
-      $this->assertEquals('O-O-O', (new Move('O-O-O'))->san());
+      $this->assertEquals('e4', (new Move('e4'))->export());
+      $this->assertEquals('Nxe4', (new Move('Nxe4'))->export());
+      $this->assertEquals('Rae1', (new Move('Rae1'))->export());
+      $this->assertEquals('N3e1', (new Move('N3e1'))->export());
+      $this->assertEquals('Qa3xe1', (new Move('Qa3xe1'))->export());
+      $this->assertEquals('a8=Q', (new Move('a8=Q'))->export());
+      $this->assertEquals('a7+', (new Move('a7+'))->export());
+      $this->assertEquals('Nf5!?', (new Move('Nf5!?'))->export());
+      $this->assertEquals('O-O', (new Move('O-O'))->export());
+      $this->assertEquals('O-O-O', (new Move('O-O-O'))->export());
   }
 
   public function testIncompleteTarget() : void

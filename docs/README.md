@@ -47,7 +47,7 @@
 | [FEN::move](#FENmove) | Perform a move. |
 | [**Move**](#Move) | Class for parsing moves in SAN (standard algebraic notation). |
 | [Move::__construct](#Move__construct) |  |
-| [Move::san](#Movesan) |  |
+| [Move::export](#Moveexport) |  |
 | [Move::capture](#Movecapture) |  |
 | [Move::target](#Movetarget) |  |
 | [Move::origin](#Moveorigin) |  |
@@ -61,11 +61,11 @@
 | [**RulesException**](#RulesException) |  |
 | [**Square**](#Square) | Class representing coordinates of a square on a chess board. |
 | [Square::__construct](#Square__construct) | Create square. |
-| [Square::rank_index](#Squarerank_index) | Get rank index of the square. |
-| [Square::rank](#Squarerank) | Get rank of the square. |
-| [Square::file_index](#Squarefile_index) | Get file index of the square. |
-| [Square::file](#Squarefile) | Get file of the square. |
-| [Square::san](#Squaresan) | Returns SAN (standard algebraic notation) string. |
+| [Square::get_rank_index](#Squareget_rank_index) | Get rank index of the square. |
+| [Square::get_rank](#Squareget_rank) | Get rank of the square. |
+| [Square::get_file_index](#Squareget_file_index) | Get file index of the square. |
+| [Square::get_file](#Squareget_file) | Get file of the square. |
+| [Square::export](#Squareexport) | Returns SAN (standard algebraic notation) string. |
 | [Square::is_null](#Squareis_null) | Check wether square is null. |
 | [Square::is_rank](#Squareis_rank) | Check wether square is rank. |
 | [Square::has_rank](#Squarehas_rank) | Check wether square has rank. |
@@ -1077,12 +1077,12 @@ Move::__construct( string move ): mixed
 
 
 ---
-### Move::san
+### Move::export
 
 
 
 ```php
-Move::san(  ): string
+Move::export(  ): string
 ```
 
 
@@ -1337,12 +1337,12 @@ Creates null square if file or rank index is out of bounds.
 
 
 ---
-### Square::rank_index
+### Square::get_rank_index
 
 Get rank index of the square.
 
 ```php
-Square::rank_index(  ): int
+Square::get_rank_index(  ): int
 ```
 
 For square 'e4' it returns 3. Throws `\OutOfBoundsException` for null squares
@@ -1357,12 +1357,12 @@ and files.
 
 
 ---
-### Square::rank
+### Square::get_rank
 
 Get rank of the square.
 
 ```php
-Square::rank(  ): string
+Square::get_rank(  ): string
 ```
 
 For square 'e4' it returns '4'. Throws `\OutOfBoundsException` for null squares.
@@ -1377,12 +1377,12 @@ Returns empty string for files.
 
 
 ---
-### Square::file_index
+### Square::get_file_index
 
 Get file index of the square.
 
 ```php
-Square::file_index(  ): int
+Square::get_file_index(  ): int
 ```
 
 For square 'e4' it returns 4. Throws `\OutOfBoundsException` for null squares
@@ -1397,12 +1397,12 @@ and ranks.
 
 
 ---
-### Square::file
+### Square::get_file
 
 Get file of the square.
 
 ```php
-Square::file(  ): string
+Square::get_file(  ): string
 ```
 
 For square 'e4' it returns 'e'. Throws `\OutOfBoundsException` for null squares.
@@ -1417,12 +1417,12 @@ Returns empty string for ranks.
 
 
 ---
-### Square::san
+### Square::export
 
 Returns SAN (standard algebraic notation) string.
 
 ```php
-Square::san(  ): string
+Square::export(  ): string
 ```
 
 For
