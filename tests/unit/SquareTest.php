@@ -58,22 +58,22 @@ final class SquareTest extends TestCase
   public function testRelativeSquares() : void
   {
     $s = new Square('e4');
-    $this->assertEquals('e4', $s->relative(0, 0)->export());
-    $this->assertEquals('h4', $s->relative(3, 0)->export());
-    $this->assertEquals('-', $s->relative(4, 0)->export());
-    $this->assertEquals('e8', $s->relative(0, 4)->export());
-    $this->assertEquals('-', $s->relative(0, 5)->export());
-    $this->assertEquals('a4', $s->relative(-4, 0)->export());
-    $this->assertEquals('-', $s->relative(-5, 0)->export());
-    $this->assertEquals('e1', $s->relative(0, -3)->export());
-    $this->assertEquals('-', $s->relative(0, -4)->export());
+    $this->assertEquals('e4', $s->get_relative_square(0, 0)->export());
+    $this->assertEquals('h4', $s->get_relative_square(3, 0)->export());
+    $this->assertEquals('-', $s->get_relative_square(4, 0)->export());
+    $this->assertEquals('e8', $s->get_relative_square(0, 4)->export());
+    $this->assertEquals('-', $s->get_relative_square(0, 5)->export());
+    $this->assertEquals('a4', $s->get_relative_square(-4, 0)->export());
+    $this->assertEquals('-', $s->get_relative_square(-5, 0)->export());
+    $this->assertEquals('e1', $s->get_relative_square(0, -3)->export());
+    $this->assertEquals('-', $s->get_relative_square(0, -4)->export());
   }
 
   public function testRelativeOnNullThrows() : void
   {
     $s = new Square;
     $this->expectException(\OutOfBoundsException::class);
-    $s->relative(1, 0);
+    $s->get_relative_square(1, 0);
   }
 
   public function testInvalid1() : void

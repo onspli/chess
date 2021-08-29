@@ -489,9 +489,9 @@ class FEN
     public function move(string $move) : void
     {
       $move = new Move($move);
-      $move_piece = $this->active_piece($move->piece());
+      $move_piece = $this->active_piece($move->get_piece());
 
-      if ($move->castling() == 'O-O')
+      if ($move->get_castling() == 'O-O')
       {
 
         if (!$this->get_castling_availability($this->active_piece('K'))) {
@@ -507,10 +507,10 @@ class FEN
         if ($this->get_square($origin) != $this->active_piece('K')) {
           throw new RulesException("Castling not available. King not in initial position.");
         }
-        if ($this->get_square($origin->relative(1, 0)) || $this->get_square($origin->relative(2, 0))) {
+        if ($this->get_square($origin->get_relative_square(1, 0)) || $this->get_square($origin->get_relative_square(2, 0))) {
           throw new RulesException("Castling not available. There are pieces in the way.");
         }
-        if ($this->get_square($origin->relative(3, 0)) != $this->active_piece('R')) {
+        if ($this->get_square($origin->get_relative_square(3, 0)) != $this->active_piece('R')) {
           throw new RulesException("Castling not available. Rook not in initial position");
         }
         if ($this->is_check()) {
@@ -519,17 +519,17 @@ class FEN
 
         $new_board = $this->board->copy();
         $new_board->set_square($origin, '');
-        $new_board->set_square($origin->relative(1, 0), $this->active_piece('K'));
+        $new_board->set_square($origin->get_relative_square(1, 0), $this->active_piece('K'));
         if ($new_board->is_check($this->get_active_color())) {
           throw new RulesException("Castling not available. King in check.");
         }
 
-        $new_board->set_square($origin->relative(1, 0), $this->active_piece('R'));
-        $new_board->set_square($origin->relative(3, 0), '');
-        $new_board->set_square($origin->relative(2, 0), $this->active_piece('K'));
+        $new_board->set_square($origin->get_relative_square(1, 0), $this->active_piece('R'));
+        $new_board->set_square($origin->get_relative_square(3, 0), '');
+        $new_board->set_square($origin->get_relative_square(2, 0), $this->active_piece('K'));
 
       }
-      else if ($move->castling() == 'O-O-O')
+      else if ($move->get_castling() == 'O-O-O')
       {
 
         if (!$this->get_castling_availability($this->active_piece('Q'))) {
@@ -545,10 +545,10 @@ class FEN
         if ($this->get_square($origin) != $this->active_piece('K')) {
           throw new RulesException("Castling not available. King not in initial position.");
         }
-        if ($this->get_square($origin->relative(-1, 0)) || $this->get_square($origin->relative(-2, 0)) || $this->get_square($origin->relative(-3, 0))) {
+        if ($this->get_square($origin->get_relative_square(-1, 0)) || $this->get_square($origin->get_relative_square(-2, 0)) || $this->get_square($origin->get_relative_square(-3, 0))) {
           throw new RulesException("Castling not available. There are pieces in the way.");
         }
-        if ($this->get_square($origin->relative(-4, 0)) != $this->active_piece('R')) {
+        if ($this->get_square($origin->get_relative_square(-4, 0)) != $this->active_piece('R')) {
           throw new RulesException("Castling not available. Rook not in initial position");
         }
         if ($this->is_check()) {
@@ -557,25 +557,25 @@ class FEN
 
         $new_board = $this->board->copy();
         $new_board->set_square($origin, '');
-        $new_board->set_square($origin->relative(-1, 0), $this->active_piece('K'));
+        $new_board->set_square($origin->get_relative_square(-1, 0), $this->active_piece('K'));
         if ($new_board->is_check($this->get_active_color())) {
           throw new RulesException("Castling not available. King in check.");
         }
 
-        $new_board->set_square($origin->relative(-1, 0), $this->active_piece('R'));
-        $new_board->set_square($origin->relative(-4, 0), '');
-        $new_board->set_square($origin->relative(-2, 0), $this->active_piece('K'));
+        $new_board->set_square($origin->get_relative_square(-1, 0), $this->active_piece('R'));
+        $new_board->set_square($origin->get_relative_square(-4, 0), '');
+        $new_board->set_square($origin->get_relative_square(-2, 0), $this->active_piece('K'));
 
       } else {
 
-        $target = $move->target(true);
+        $target = $move->get_target(true);
         $target_piece = $this->get_square($target);
 
-        if ($move->capture() && $target_piece == '' && !($target->export() == $this->get_en_passant() && $move->piece() == 'P')) {
+        if ($move->get_capture() && $target_piece == '' && !($target->export() == $this->get_en_passant() && $move->get_piece() == 'P')) {
           throw new RulesException("Cannot capture on empty square.");
         }
 
-        if (!$move->capture() && $target_piece) {
+        if (!$move->get_capture() && $target_piece) {
           throw new RulesException("Target square is occupied.");
         }
 
@@ -583,15 +583,15 @@ class FEN
           throw new RulesException("Cannot capture player's own piece.");
         }
 
-        if ($move_piece == 'P' && !$move->capture()) {
-          $origin_candidates = [$target->relative(0, -1)];
-          if ($target->get_rank_index() == 3 && $this->get_square($target->relative(0, -1)) == '') {
-            $origin_candidates[] = $target->relative(0, -2);
+        if ($move_piece == 'P' && !$move->get_capture()) {
+          $origin_candidates = [$target->get_relative_square(0, -1)];
+          if ($target->get_rank_index() == 3 && $this->get_square($target->get_relative_square(0, -1)) == '') {
+            $origin_candidates[] = $target->get_relative_square(0, -2);
           }
-        } else if($move_piece == 'p' && !$move->capture()) {
-          $origin_candidates = [$target->relative(0, 1)];
-          if ($target->get_rank_index() == 4 && $this->get_square($target->relative(0, 1)) == '') {
-            $origin_candidates[] = $target->relative(0, 2);
+        } else if($move_piece == 'p' && !$move->get_capture()) {
+          $origin_candidates = [$target->get_relative_square(0, 1)];
+          if ($target->get_rank_index() == 4 && $this->get_square($target->get_relative_square(0, 1)) == '') {
+            $origin_candidates[] = $target->get_relative_square(0, 2);
           }
         } else {
           $origin_candidates = $this->board->defended_squares($target, $this->opponents_piece($move_piece), true);
@@ -600,10 +600,10 @@ class FEN
         $origin_candidates2 = [];
         foreach ($origin_candidates as $origin_candidate) {
           if ($this->get_square($origin_candidate) == $move_piece) {
-            if ($move->origin(true)->has_file() && $origin_candidate->get_file() != $move->origin(true)->get_file()) {
+            if ($move->get_origin(true)->has_file() && $origin_candidate->get_file() != $move->get_origin(true)->get_file()) {
               continue;
             }
-            if ($move->origin(true)->has_rank() && $origin_candidate->get_rank() != $move->origin(true)->get_rank()) {
+            if ($move->get_origin(true)->has_rank() && $origin_candidate->get_rank() != $move->get_origin(true)->get_rank()) {
               continue;
             }
             $origin_candidates2[] = $origin_candidate;
@@ -622,15 +622,15 @@ class FEN
         $new_board = $this->board->copy();
 
         $new_board->set_square($origin, '');
-        if ($move->promotion()) {
-          $new_board->set_square($target, $move->promotion());
+        if ($move->get_promotion()) {
+          $new_board->set_square($target, $move->get_promotion());
         } else {
           $new_board->set_square($target, $move_piece);
           if ($target->export() == $this->get_en_passant()) {
             if ($this->get_active_color() == 'w') {
-              $new_board->set_square($target->relative(0, -1), '');
+              $new_board->set_square($target->get_relative_square(0, -1), '');
             } else {
-              $new_board->set_square($target->relative(0, 1), '');
+              $new_board->set_square($target->get_relative_square(0, 1), '');
             }
           }
         }
@@ -643,21 +643,21 @@ class FEN
 
       $this->set_board($new_board);
 
-      if ($move->piece() == 'P' || $move->capture()) {
+      if ($move->get_piece() == 'P' || $move->get_capture()) {
         $this->set_halfmove(0);
       } else {
         $this->set_halfmove($this->get_halfmove() + 1);
       }
 
       if ($move_piece == 'P' && $origin->get_rank_index() == 1 && $target->get_rank_index() == 3) {
-        $this->set_en_passant($target->relative(0, -1));
+        $this->set_en_passant($target->get_relative_square(0, -1));
       } else if ($move_piece == 'p' && $origin->get_rank_index() == 6 && $target->get_rank_index() == 4) {
-        $this->set_en_passant($target->relative(0, 1));
+        $this->set_en_passant($target->get_relative_square(0, 1));
       } else {
         $this->set_en_passant('-');
       }
 
-      if ($move->piece() == 'R') {
+      if ($move->get_piece() == 'R') {
         switch ($origin->export()) {
           case 'a1':
             $this->set_castling_availability('Q', false);
@@ -672,7 +672,7 @@ class FEN
             $this->set_castling_availability('k', false);
             break;
         }
-      } else if ($move->piece() == 'K') {
+      } else if ($move->get_piece() == 'K') {
         switch ($origin->export()) {
           case 'e1':
             $this->set_castling_availability('Q', false);

@@ -181,7 +181,7 @@ class Square
   * regular squares. Returns null square if relative coordinates are outside
   * the board.
   */
-  public function relative(int $east, int $north)
+  public function get_relative_square(int $east, int $north)
   {
     if (!$this->is_regular()) {
       throw new \OutOfBoundsException;

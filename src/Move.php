@@ -52,15 +52,15 @@ class Move
 
   private function validate_promotion() : void
   {
-    if ($this->promotion() && $this->piece() != 'P') {
+    if ($this->get_promotion() && $this->get_piece() != 'P') {
       throw new RulesException;
     }
 
-    if ($this->promotion() && $this->target->get_rank_index() != 7 && $this->target->get_rank_index() != 0) {
+    if ($this->get_promotion() && $this->target->get_rank_index() != 7 && $this->target->get_rank_index() != 0) {
       throw new RulesException;
     }
 
-    if (!$this->promotion() && $this->piece() == 'P' && ($this->target->get_rank_index() == 7 || $this->target->get_rank_index() == 0)) {
+    if (!$this->get_promotion() && $this->get_piece() == 'P' && ($this->target->get_rank_index() == 7 || $this->target->get_rank_index() == 0)) {
       throw new RulesException;
     }
   }
@@ -68,13 +68,13 @@ class Move
   public function export() : string
   {
     $str = '';
-    if ($this->castling()) {
-      $str .= $this->castling();
+    if ($this->get_castling()) {
+      $str .= $this->get_castling();
     } else {
       $str .= $this->san_piece();
       $str .= $this->san_origin();
       $str .= $this->capture;
-      $str .= $this->target();
+      $str .= $this->get_target();
       $str .= $this->san_promotion();
     }
     $str .= $this->san_extension();
@@ -92,31 +92,31 @@ class Move
 
   private function san_piece() : string
   {
-    if ($this->piece() != 'P') {
-      return $this->piece();
+    if ($this->get_piece() != 'P') {
+      return $this->get_piece();
     }
     return '';
   }
 
   private function san_extension() : string
   {
-    return $this->check_mate() . $this->annotation();
+    return $this->get_check_mate() . $this->get_annotation();
   }
 
   private function san_promotion() : string
   {
-    if ($this->promotion()) {
-      return '=' . $this->promotion();
+    if ($this->get_promotion()) {
+      return '=' . $this->get_promotion();
     }
     return '';
   }
 
-  public function capture() : bool
+  public function get_capture() : bool
   {
     return $this->capture;
   }
 
-  public function target(bool $as_object = false)
+  public function get_target(bool $as_object = false)
   {
     if ($as_object) {
       return $this->target;
@@ -125,7 +125,7 @@ class Move
     }
   }
 
-  public function origin(bool $as_object = false)
+  public function get_origin(bool $as_object = false)
   {
     if ($as_object) {
       return $this->origin;
@@ -134,7 +134,7 @@ class Move
     }
   }
 
-  public function piece() : string
+  public function get_piece() : string
   {
     if ($this->piece == '') {
       return 'P';
@@ -142,22 +142,22 @@ class Move
     return $this->piece;
   }
 
-  public function castling() : string
+  public function get_castling() : string
   {
     return $this->castling;
   }
 
-  public function promotion() : string
+  public function get_promotion() : string
   {
     return $this->promotion;
   }
 
-  public function check_mate() : string
+  public function get_check_mate() : string
   {
     return $this->check_mate;
   }
 
-  public function annotation() : string
+  public function get_annotation() : string
   {
     return $this->annotation;
   }

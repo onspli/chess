@@ -48,14 +48,14 @@
 | [**Move**](#Move) | Class for parsing moves in SAN (standard algebraic notation). |
 | [Move::__construct](#Move__construct) |  |
 | [Move::export](#Moveexport) |  |
-| [Move::capture](#Movecapture) |  |
-| [Move::target](#Movetarget) |  |
-| [Move::origin](#Moveorigin) |  |
-| [Move::piece](#Movepiece) |  |
-| [Move::castling](#Movecastling) |  |
-| [Move::promotion](#Movepromotion) |  |
-| [Move::check_mate](#Movecheck_mate) |  |
-| [Move::annotation](#Moveannotation) |  |
+| [Move::get_capture](#Moveget_capture) |  |
+| [Move::get_target](#Moveget_target) |  |
+| [Move::get_origin](#Moveget_origin) |  |
+| [Move::get_piece](#Moveget_piece) |  |
+| [Move::get_castling](#Moveget_castling) |  |
+| [Move::get_promotion](#Moveget_promotion) |  |
+| [Move::get_check_mate](#Moveget_check_mate) |  |
+| [Move::get_annotation](#Moveget_annotation) |  |
 | [**NotImplementedException**](#NotImplementedException) |  |
 | [**ParseException**](#ParseException) |  |
 | [**RulesException**](#RulesException) |  |
@@ -72,7 +72,7 @@
 | [Square::is_file](#Squareis_file) | Check wether square is file. |
 | [Square::has_file](#Squarehas_file) | Check wether square has file. |
 | [Square::is_regular](#Squareis_regular) | Check wether square is regular square. |
-| [Square::relative](#Squarerelative) | Get square with relative position to this square. |
+| [Square::get_relative_square](#Squareget_relative_square) | Get square with relative position to this square. |
 | [Square::push_to_array](#Squarepush_to_array) | Add square to the end of array. |
 
 ## Board
@@ -1096,12 +1096,12 @@ Move::export(  ): string
 
 
 ---
-### Move::capture
+### Move::get_capture
 
 
 
 ```php
-Move::capture(  ): bool
+Move::get_capture(  ): bool
 ```
 
 
@@ -1115,37 +1115,12 @@ Move::capture(  ): bool
 
 
 ---
-### Move::target
+### Move::get_target
 
 
 
 ```php
-Move::target( bool as_object = false ): mixed
-```
-
-
-
-
-**Parameters:**
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `as_object` | **bool** |  |
-
-
-**Return Value:**
-
-
-
-
-
----
-### Move::origin
-
-
-
-```php
-Move::origin( bool as_object = false ): mixed
+Move::get_target( bool as_object = false ): mixed
 ```
 
 
@@ -1165,12 +1140,37 @@ Move::origin( bool as_object = false ): mixed
 
 
 ---
-### Move::piece
+### Move::get_origin
 
 
 
 ```php
-Move::piece(  ): string
+Move::get_origin( bool as_object = false ): mixed
+```
+
+
+
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `as_object` | **bool** |  |
+
+
+**Return Value:**
+
+
+
+
+
+---
+### Move::get_piece
+
+
+
+```php
+Move::get_piece(  ): string
 ```
 
 
@@ -1184,12 +1184,12 @@ Move::piece(  ): string
 
 
 ---
-### Move::castling
+### Move::get_castling
 
 
 
 ```php
-Move::castling(  ): string
+Move::get_castling(  ): string
 ```
 
 
@@ -1203,12 +1203,12 @@ Move::castling(  ): string
 
 
 ---
-### Move::promotion
+### Move::get_promotion
 
 
 
 ```php
-Move::promotion(  ): string
+Move::get_promotion(  ): string
 ```
 
 
@@ -1222,12 +1222,12 @@ Move::promotion(  ): string
 
 
 ---
-### Move::check_mate
+### Move::get_check_mate
 
 
 
 ```php
-Move::check_mate(  ): string
+Move::get_check_mate(  ): string
 ```
 
 
@@ -1241,12 +1241,12 @@ Move::check_mate(  ): string
 
 
 ---
-### Move::annotation
+### Move::get_annotation
 
 
 
 ```php
-Move::annotation(  ): string
+Move::get_annotation(  ): string
 ```
 
 
@@ -1554,12 +1554,12 @@ Square::is_regular(  ): bool
 
 
 ---
-### Square::relative
+### Square::get_relative_square
 
 Get square with relative position to this square.
 
 ```php
-Square::relative( int east, int north ): mixed
+Square::get_relative_square( int east, int north ): mixed
 ```
 
 Throws `\OutOfBoundsException` when trying to get relative square of a non

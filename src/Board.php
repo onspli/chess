@@ -107,29 +107,29 @@ class Board
     };
 
     if ($defender == 'P') {
-      $defender_square->relative(-1,1)->push_to_array($arr, $as_object);
-      $defender_square->relative(1,1)->push_to_array($arr, $as_object);
+      $defender_square->get_relative_square(-1,1)->push_to_array($arr, $as_object);
+      $defender_square->get_relative_square(1,1)->push_to_array($arr, $as_object);
     } else if ($defender == 'p') {
-      $defender_square->relative(-1,-1)->push_to_array($arr, $as_object);
-      $defender_square->relative(1,-1)->push_to_array($arr, $as_object);
+      $defender_square->get_relative_square(-1,-1)->push_to_array($arr, $as_object);
+      $defender_square->get_relative_square(1,-1)->push_to_array($arr, $as_object);
     } else if ($defender == 'K' || $defender == 'k') {
-      $defender_square->relative(0,1)->push_to_array($arr, $as_object);
-      $defender_square->relative(-1,1)->push_to_array($arr, $as_object);
-      $defender_square->relative(-1,0)->push_to_array($arr, $as_object);
-      $defender_square->relative(-1,-1)->push_to_array($arr, $as_object);
-      $defender_square->relative(0,-1)->push_to_array($arr, $as_object);
-      $defender_square->relative(1,-1)->push_to_array($arr, $as_object);
-      $defender_square->relative(1,0)->push_to_array($arr, $as_object);
-      $defender_square->relative(1,1)->push_to_array($arr, $as_object);
+      $defender_square->get_relative_square(0,1)->push_to_array($arr, $as_object);
+      $defender_square->get_relative_square(-1,1)->push_to_array($arr, $as_object);
+      $defender_square->get_relative_square(-1,0)->push_to_array($arr, $as_object);
+      $defender_square->get_relative_square(-1,-1)->push_to_array($arr, $as_object);
+      $defender_square->get_relative_square(0,-1)->push_to_array($arr, $as_object);
+      $defender_square->get_relative_square(1,-1)->push_to_array($arr, $as_object);
+      $defender_square->get_relative_square(1,0)->push_to_array($arr, $as_object);
+      $defender_square->get_relative_square(1,1)->push_to_array($arr, $as_object);
     } else if ($defender == 'N' || $defender == 'n') {
-      $defender_square->relative(2, 1)->push_to_array($arr, $as_object);
-      $defender_square->relative(2, -1)->push_to_array($arr, $as_object);
-      $defender_square->relative(-2, 1)->push_to_array($arr, $as_object);
-      $defender_square->relative(-2, -1)->push_to_array($arr, $as_object);
-      $defender_square->relative(1, 2)->push_to_array($arr, $as_object);
-      $defender_square->relative(1, -2)->push_to_array($arr, $as_object);
-      $defender_square->relative(-1, 2)->push_to_array($arr, $as_object);
-      $defender_square->relative(-1, -2)->push_to_array($arr, $as_object);
+      $defender_square->get_relative_square(2, 1)->push_to_array($arr, $as_object);
+      $defender_square->get_relative_square(2, -1)->push_to_array($arr, $as_object);
+      $defender_square->get_relative_square(-2, 1)->push_to_array($arr, $as_object);
+      $defender_square->get_relative_square(-2, -1)->push_to_array($arr, $as_object);
+      $defender_square->get_relative_square(1, 2)->push_to_array($arr, $as_object);
+      $defender_square->get_relative_square(1, -2)->push_to_array($arr, $as_object);
+      $defender_square->get_relative_square(-1, 2)->push_to_array($arr, $as_object);
+      $defender_square->get_relative_square(-1, -2)->push_to_array($arr, $as_object);
     } else {
       if ($defender == 'B' || $defender == 'b'  || $defender == 'Q'  || $defender == 'q') {
         $add_direction(1, 1);
@@ -150,7 +150,7 @@ class Board
 
   private function push_squares_in_direction_to_array(array &$arr, $origin_square, int $north, int $east, bool $as_object, string $moving_piece = '') {
       $square = $origin_square;
-      while ($square = $square->relative($north, $east)) {
+      while ($square = $square->get_relative_square($north, $east)) {
         if (!$this->push_square_to_array($arr, $square, $as_object, $moving_piece)) {
           break;
         }
@@ -216,37 +216,37 @@ class Board
     };
 
     if ($moving_piece == 'P') {
-      if ($origin_square->get_rank_index() == 1 && $this->get_square($origin_square->relative(0,1)) == '') {
-        $add_target_square($origin_square->relative(0, 2));
+      if ($origin_square->get_rank_index() == 1 && $this->get_square($origin_square->get_relative_square(0,1)) == '') {
+        $add_target_square($origin_square->get_relative_square(0, 2));
       }
-      $add_target_square($origin_square->relative(0,1));
-      $add_pawn_capture($origin_square->relative(-1,1));
-      $add_pawn_capture($origin_square->relative(1,1));
+      $add_target_square($origin_square->get_relative_square(0,1));
+      $add_pawn_capture($origin_square->get_relative_square(-1,1));
+      $add_pawn_capture($origin_square->get_relative_square(1,1));
     } else if ($moving_piece == 'p') {
-      if ($origin_square->get_rank_index() == 6 && $this->get_square($origin_square->relative(0,-1)) == '') {
-        $add_target_square($origin_square->relative(0, -2));
+      if ($origin_square->get_rank_index() == 6 && $this->get_square($origin_square->get_relative_square(0,-1)) == '') {
+        $add_target_square($origin_square->get_relative_square(0, -2));
       }
-      $add_target_square($origin_square->relative(0,-1));
-      $add_pawn_capture($origin_square->relative(-1,-1));
-      $add_pawn_capture($origin_square->relative(1,-1));
+      $add_target_square($origin_square->get_relative_square(0,-1));
+      $add_pawn_capture($origin_square->get_relative_square(-1,-1));
+      $add_pawn_capture($origin_square->get_relative_square(1,-1));
     } else if ($moving_piece == 'K' || $moving_piece == 'k') {
-      $add_target_square($origin_square->relative(0,1));
-      $add_target_square($origin_square->relative(-1,1));
-      $add_target_square($origin_square->relative(-1,0));
-      $add_target_square($origin_square->relative(-1,-1));
-      $add_target_square($origin_square->relative(0,-1));
-      $add_target_square($origin_square->relative(1,-1));
-      $add_target_square($origin_square->relative(1,0));
-      $add_target_square($origin_square->relative(1,1));
+      $add_target_square($origin_square->get_relative_square(0,1));
+      $add_target_square($origin_square->get_relative_square(-1,1));
+      $add_target_square($origin_square->get_relative_square(-1,0));
+      $add_target_square($origin_square->get_relative_square(-1,-1));
+      $add_target_square($origin_square->get_relative_square(0,-1));
+      $add_target_square($origin_square->get_relative_square(1,-1));
+      $add_target_square($origin_square->get_relative_square(1,0));
+      $add_target_square($origin_square->get_relative_square(1,1));
     } else if ($moving_piece == 'N' || $moving_piece == 'n') {
-      $add_target_square($origin_square->relative(2, 1));
-      $add_target_square($origin_square->relative(2, -1));
-      $add_target_square($origin_square->relative(-2, 1));
-      $add_target_square($origin_square->relative(-2, -1));
-      $add_target_square($origin_square->relative(1, 2));
-      $add_target_square($origin_square->relative(1, -2));
-      $add_target_square($origin_square->relative(-1, 2));
-      $add_target_square($origin_square->relative(-1, -2));
+      $add_target_square($origin_square->get_relative_square(2, 1));
+      $add_target_square($origin_square->get_relative_square(2, -1));
+      $add_target_square($origin_square->get_relative_square(-2, 1));
+      $add_target_square($origin_square->get_relative_square(-2, -1));
+      $add_target_square($origin_square->get_relative_square(1, 2));
+      $add_target_square($origin_square->get_relative_square(1, -2));
+      $add_target_square($origin_square->get_relative_square(-1, 2));
+      $add_target_square($origin_square->get_relative_square(-1, -2));
     } else {
       if ($moving_piece == 'B' || $moving_piece == 'b'  || $moving_piece == 'Q'  || $moving_piece == 'q') {
         $add_direction(1, 1);
