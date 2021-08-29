@@ -90,20 +90,25 @@ class Board
   */
   public function preview() : string
   {
+    $ranks = [];
     $preview = '';
-    for ($rank = 7; $rank >= 0; $rank --) {
-      for ($file = 0; $file <= 7; $file ++) {
-        $piece = $this->get_square(new Square($file, $rank));
-        if (!$piece) {
-          $piece = '.';
-        }
-        $preview .= $piece;
-      }
-      if ($rank != 0) {
-        $preview .= "\n";
-      }
+    for ($rank_index = 7; $rank_index >= 0; $rank_index --) {
+      $ranks[] = $this->preview_rank($rank_index);
     }
-    return $preview;
+    return implode(PHP_EOL, $ranks);
+  }
+
+  private function preview_rank(int $rank_index) : string
+  {
+    $preview_rank = '';
+    for ($file_index = 0; $file_index <= 7; $file_index ++) {
+      $piece = $this->get_square(new Square($file_index, $rank_index));
+      if (!$piece) {
+        $piece = '.';
+      }
+      $preview_rank .= $piece;
+    }
+    return $preview_rank;
   }
 
   public function get_square($square) : string
