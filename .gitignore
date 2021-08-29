@@ -5,3 +5,4 @@ tmp
 build
 phpDocumentor*
 .phpdoc*
+.phpbench

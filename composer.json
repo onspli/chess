@@ -38,6 +38,12 @@
         ],
         "benchmark": [
           "phpbench run tests/benchmark --report=default"
+        ],
+        "benchmark-base": [
+          "phpbench run tests/benchmark --report=default --tag=base"
+        ],
+        "benchmark-ref": [
+          "phpbench run tests/benchmark --report=default --ref=base"
         ]
     },
     "archive": {
