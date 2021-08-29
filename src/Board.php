@@ -19,62 +19,70 @@ class Board
   function __construct(string $pieces = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR')
   {
     $this->board = array_fill(0, 64, '');
-
-    $pieces = trim($pieces);
-    $pieces = preg_replace('/\s+/', '', $pieces);
-    $ranks = explode('/', $pieces);
-    if (sizeof($ranks) != 8) {
-      throw new ParseException("Wrong number of ranks " . sizeof($ranks) . ".");
-    }
-
-    $rank = 7;
-    foreach ($ranks as $rank_pieces)
+    $ranks_array = $this->split_to_ranks($pieces);
+    foreach ($ranks_array as $index => $rank_pieces)
     {
-      $file = 0;
-      foreach (str_split($rank_pieces) as $piece)
+      $this->fill_rank($rank_pieces, 7 - $index);
+    }
+  }
+
+  private function split_to_ranks(string $pieces) : array
+  {
+    $pieces = preg_replace('/\s+/', '', $pieces);
+    $ranks_array = explode('/', $pieces);
+    if (sizeof($ranks_array) != 8) {
+      throw new ParseException("Wrong number of ranks " . sizeof($ranks_array) . ".");
+    }
+    return $ranks_array;
+  }
+
+  private function fill_rank(string $rank_pieces, int $rank_index) : void
+  {
+    $file_index = 0;
+    $rank_pieces_array = str_split($rank_pieces);
+    foreach ($rank_pieces_array as $piece)
+    {
+      if (is_numeric($piece))
       {
-        if (is_numeric($piece))
-        {
-          $file += intval($piece);
-        }
-        else
-        {
-          $this->set_square(new Square($file, $rank), $piece);
-          $file += 1;
-        }
-        if ($file > 8) {
-          throw new ParseException("Too many pieces on rank.");
-        }
+        $file_index += intval($piece);
       }
-      $rank -= 1;
+      else
+      {
+        $this->set_square(new Square($file_index, $rank_index), $piece);
+        $file_index += 1;
+      }
+      if ($file_index > 8) {
+        throw new ParseException("Too many pieces on rank.");
+      }
     }
   }
 
   public function export() : string
   {
-    $pieces = '';
-    for ($rank = 7; $rank >= 0; $rank --) {
-      $space = 0;
-      for ($file = 0; $file < 8; $file ++) {
-        $piece = $this->get_square(new Square($file, $rank));
-        if (!$piece) {
-          $space++;
-        } else {
-          if ($space > 0) {
-            $pieces .= $space;
-          }
-          $pieces .= $piece;
-          $space = 0;
-        }
+    $rank_pieces_array = [];
+    for ($rank_index = 7; $rank_index >= 0; $rank_index --) {
+      $rank_pieces_array[] = $this->export_rank($rank_index);
+    }
+    return implode('/', $rank_pieces_array);
+  }
+
+  private function export_rank(int $rank_index) : string
+  {
+    $rank_pieces = '';
+    $space_count = '';
+    for ($file_index = 0; $file_index < 8; $file_index ++) {
+      $piece = $this->get_square(new Square($file_index, $rank_index));
+      if (!$piece)
+      {
+        $space_count++;
       }
-      if ($space > 0) {
-        $pieces .= $space;
-      }
-      if ($rank > 0) {
-        $pieces .= '/';
+      if ($piece || $file_index == 7)
+      {
+        $rank_pieces .= $space_count . $piece;
+        $space_count = '';
       }
     }
-    return $pieces;
+    return $rank_pieces;
   }
 
   /**
