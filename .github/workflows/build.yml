@@ -33,6 +33,9 @@ jobs:
       env:
         XDEBUG_MODE: coverage
       run: composer test
+    
+    - name: Run benchmark
+      run: composer benchmark
       
     - name: Upload coverage results to Coveralls
       env:
