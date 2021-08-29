@@ -124,63 +124,6 @@ class Board
     $this->board[$square->get_rank_index() * 8 + $square->get_file_index()] = $piece;
   }
 
-  /**
-  * Get array of all squares attacked (or defended) by $defender being on $defender_square.
-  */
-  public function get_defended_squares($defender_square, $defender, bool $as_object = false) : array
-  {
-    self::validate_square($defender_square);
-    self::validate_piece($defender);
-    $arr = [];
-
-    /**
-    * Add square in the direction specified up to the first piece or the end of the board
-    */
-    $add_direction = function ($north, $east) use (&$arr, $defender_square, $as_object) {
-      $this->push_squares_in_direction_to_array($arr, $defender_square, $north, $east, $as_object);
-    };
-
-    if ($defender == 'P') {
-      $defender_square->get_relative_square(-1,1)->push_to_array($arr, $as_object);
-      $defender_square->get_relative_square(1,1)->push_to_array($arr, $as_object);
-    } else if ($defender == 'p') {
-      $defender_square->get_relative_square(-1,-1)->push_to_array($arr, $as_object);
-      $defender_square->get_relative_square(1,-1)->push_to_array($arr, $as_object);
-    } else if ($defender == 'K' || $defender == 'k') {
-      $defender_square->get_relative_square(0,1)->push_to_array($arr, $as_object);
-      $defender_square->get_relative_square(-1,1)->push_to_array($arr, $as_object);
-      $defender_square->get_relative_square(-1,0)->push_to_array($arr, $as_object);
-      $defender_square->get_relative_square(-1,-1)->push_to_array($arr, $as_object);
-      $defender_square->get_relative_square(0,-1)->push_to_array($arr, $as_object);
-      $defender_square->get_relative_square(1,-1)->push_to_array($arr, $as_object);
-      $defender_square->get_relative_square(1,0)->push_to_array($arr, $as_object);
-      $defender_square->get_relative_square(1,1)->push_to_array($arr, $as_object);
-    } else if ($defender == 'N' || $defender == 'n') {
-      $defender_square->get_relative_square(2, 1)->push_to_array($arr, $as_object);
-      $defender_square->get_relative_square(2, -1)->push_to_array($arr, $as_object);
-      $defender_square->get_relative_square(-2, 1)->push_to_array($arr, $as_object);
-      $defender_square->get_relative_square(-2, -1)->push_to_array($arr, $as_object);
-      $defender_square->get_relative_square(1, 2)->push_to_array($arr, $as_object);
-      $defender_square->get_relative_square(1, -2)->push_to_array($arr, $as_object);
-      $defender_square->get_relative_square(-1, 2)->push_to_array($arr, $as_object);
-      $defender_square->get_relative_square(-1, -2)->push_to_array($arr, $as_object);
-    } else {
-      if ($defender == 'B' || $defender == 'b'  || $defender == 'Q'  || $defender == 'q') {
-        $add_direction(1, 1);
-        $add_direction(1, -1);
-        $add_direction(-1, 1);
-        $add_direction(-1, -1);
-      }
-      if ($defender == 'R' || $defender == 'r'  || $defender == 'Q'  || $defender == 'q') {
-        $add_direction(1, 0);
-        $add_direction(-1, 0);
-        $add_direction(0, 1);
-        $add_direction(0, -1);
-      }
-    }
-
-    return $arr;
-  }
 
   private function push_squares_in_direction_to_array(array &$arr, $origin_square, int $north, int $east, bool $as_object, string $moving_piece = '') {
       $square = $origin_square;
@@ -205,6 +148,68 @@ class Board
       return false;
     }
     return true;
+  }
+
+  /**
+  * Get array of all squares attacked (or defended) by $defender being on $defender_square.
+  */
+  public function get_defended_squares($defender_square, $defender, bool $as_object = false) : array
+  {
+    self::validate_square($defender_square);
+    self::validate_piece($defender);
+    $arr = [];
+
+    /**
+    * Add square in the direction specified up to the first piece or the end of the board
+    */
+    $add_direction = function ($north, $east) use (&$arr, $defender_square, $as_object) {
+      $this->push_squares_in_direction_to_array($arr, $defender_square, $north, $east, $as_object);
+    };
+
+    $add_target_square = function($target_square) use (&$arr, $as_object) {
+      $this->push_square_to_array($arr, $target_square, $as_object);
+    };
+
+    if ($defender == 'P') {
+      $add_target_square($defender_square->get_relative_square(-1,1));
+      $add_target_square($defender_square->get_relative_square(1,1));
+    } else if ($defender == 'p') {
+      $add_target_square($defender_square->get_relative_square(-1,-1));
+      $add_target_square($defender_square->get_relative_square(1,-1));
+    } else if ($defender == 'K' || $defender == 'k') {
+      $add_target_square($defender_square->get_relative_square(0,1));
+      $add_target_square($defender_square->get_relative_square(-1,1));
+      $add_target_square($defender_square->get_relative_square(-1,0));
+      $add_target_square($defender_square->get_relative_square(-1,-1));
+      $add_target_square($defender_square->get_relative_square(0,-1));
+      $add_target_square($defender_square->get_relative_square(1,-1));
+      $add_target_square($defender_square->get_relative_square(1,0));
+      $add_target_square($defender_square->get_relative_square(1,1));
+    } else if ($defender == 'N' || $defender == 'n') {
+      $add_target_square($defender_square->get_relative_square(2, 1));
+      $add_target_square($defender_square->get_relative_square(2, -1));
+      $add_target_square($defender_square->get_relative_square(-2, 1));
+      $add_target_square($defender_square->get_relative_square(-2, -1));
+      $add_target_square($defender_square->get_relative_square(1, 2));
+      $add_target_square($defender_square->get_relative_square(1, -2));
+      $add_target_square($defender_square->get_relative_square(-1, 2));
+      $add_target_square($defender_square->get_relative_square(-1, -2));
+    } else {
+      if ($defender == 'B' || $defender == 'b'  || $defender == 'Q'  || $defender == 'q') {
+        $add_direction(1, 1);
+        $add_direction(1, -1);
+        $add_direction(-1, 1);
+        $add_direction(-1, -1);
+      }
+      if ($defender == 'R' || $defender == 'r'  || $defender == 'Q'  || $defender == 'q') {
+        $add_direction(1, 0);
+        $add_direction(-1, 0);
+        $add_direction(0, 1);
+        $add_direction(0, -1);
+      }
+    }
+
+    return $arr;
   }
 
   /**

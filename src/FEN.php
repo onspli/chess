@@ -415,11 +415,11 @@ class FEN
             $candidate_moves[] = strtoupper($moving_piece) . $capture . $reachable_square;
           } else if (sizeof($origins) == 2) {
             if ($origins[0]->get_file_index() != $origins[1]->get_file_index()) {
-              $candidate_moves[] = strtoupper($moving_piece) . chr(ord('a') + $origins[0]->get_file_index()) . $capture . $reachable_square;
-              $candidate_moves[] = strtoupper($moving_piece) . chr(ord('a') + $origins[1]->get_file_index()) . $capture . $reachable_square;
+              $candidate_moves[] = strtoupper($moving_piece) . $origins[0]->get_file() . $capture . $reachable_square;
+              $candidate_moves[] = strtoupper($moving_piece) . $origins[1]->get_file() . $capture . $reachable_square;
             } else {
-              $candidate_moves[] = strtoupper($moving_piece) . ($origins[0]->get_rank_index() + 1) . $capture . $reachable_square;
-              $candidate_moves[] = strtoupper($moving_piece) . ($origins[1]->get_rank_index() + 1) . $capture . $reachable_square;
+              $candidate_moves[] = strtoupper($moving_piece) . $origins[0]->get_rank() . $capture . $reachable_square;
+              $candidate_moves[] = strtoupper($moving_piece) . $origins[1]->get_rank() . $capture . $reachable_square;
             }
           } else {
             foreach ($origins as $origin) {
@@ -449,7 +449,7 @@ class FEN
               }
               foreach ($promotions as $promotion) {
                 if ($this->get_square($reachable_square)) {
-                  $candidate_moves[] = chr(ord('a') + $origin_square->get_file_index()) . 'x' . $reachable_square . $promotion;
+                  $candidate_moves[] = $origin_square->get_file() . 'x' . $reachable_square . $promotion;
                 } else {
                   $candidate_moves[] = $reachable_square . $promotion;
                 }
