@@ -77,6 +77,27 @@ class Board
     return $pieces;
   }
 
+  /**
+  * Preview of the board in ASCII graphics.
+  */
+  public function preview() : string
+  {
+    $preview = '';
+    for ($rank = 7; $rank >= 0; $rank --) {
+      for ($file = 0; $file <= 7; $file ++) {
+        $piece = $this->get_square(new Square($file, $rank));
+        if (!$piece) {
+          $piece = '.';
+        }
+        $preview .= $piece;
+      }
+      if ($rank != 0) {
+        $preview .= "\n";
+      }
+    }
+    return $preview;
+  }
+
   public function get_square($square) : string
   {
     self::validate_square($square);
@@ -93,7 +114,7 @@ class Board
   /**
   * Get array of all squares attacked (or defended) by $defender being on $defender_square.
   */
-  public function defended_squares($defender_square, $defender, bool $as_object = false) : array
+  public function get_defended_squares($defender_square, $defender, bool $as_object = false) : array
   {
     self::validate_square($defender_square);
     self::validate_piece($defender);
@@ -163,7 +184,7 @@ class Board
       return false;
     }
     $target_piece = $this->get_square($square);
-    if ($target_piece && $moving_piece && self::piece_color($target_piece) == self::piece_color($moving_piece)) {
+    if ($target_piece && $moving_piece && self::get_piece_color($target_piece) == self::get_piece_color($moving_piece)) {
       return false;
     }
     $square->push_to_array($arr, $as_object);
@@ -176,7 +197,7 @@ class Board
   /**
   * Get array of all squares reachable from $origin_square by $moving_piece.
   */
-  public function reachable_squares($origin_square, $moving_piece, $en_passant_square = '-', bool $as_object = false) : array
+  public function get_reachable_squares($origin_square, $moving_piece, $en_passant_square = '-', bool $as_object = false) : array
   {
     self::validate_square($origin_square);
     self::validate_piece($moving_piece);
@@ -205,7 +226,7 @@ class Board
       if (!$target_piece) {
         return;
       }
-      if (self::piece_color($target_piece) == self::piece_color($moving_piece)) {
+      if (self::get_piece_color($target_piece) == self::get_piece_color($moving_piece)) {
         return;
       }
       $target_square->push_to_array($arr, $as_object);
@@ -268,7 +289,7 @@ class Board
   /**
   * Get list of pieces on squares (including multiplicities, excluding blank squares).
   */
-  public function pieces_on_squares(array $squares) : array
+  public function get_pieces_on_squares(array $squares) : array
   {
     $arr = [];
     foreach ($squares as $square) {
@@ -303,7 +324,7 @@ class Board
     return new self($this->export());
   }
 
-  public static function active_piece(string $piece, string $active) : string
+  public static function get_active_piece(string $piece, string $active) : string
   {
     self::validate_active($active);
     self::validate_piece($piece);
@@ -314,7 +335,7 @@ class Board
     }
   }
 
-  public static function opponents_piece(string $piece, string $active) : string
+  public static function get_opponents_piece(string $piece, string $active) : string
   {
     self::validate_active($active);
     self::validate_piece($piece);
@@ -325,10 +346,10 @@ class Board
     }
   }
 
-  public static function piece_color(string $piece) : string
+  public static function get_piece_color(string $piece) : string
   {
     self::validate_piece($piece);
-    if ($piece == self::active_piece($piece, 'w')) {
+    if ($piece == self::get_active_piece($piece, 'w')) {
       return 'w';
     } else {
       return 'b';
@@ -341,16 +362,16 @@ class Board
   public function is_check(string $active) : bool
   {
     self::validate_active($active);
-    $king_squares = $this->find(self::active_piece('K', $active), true);
+    $king_squares = $this->find(self::get_active_piece('K', $active), true);
     if (sizeof($king_squares) != 1) {
       throw new RulesException("There are " . sizeof($king_squares) . " kings on the board.");
     }
     $king_square = $king_squares[0];
 
     $check_check_from = function ($piece) use ($king_square, $active) {
-      $attacker_squares = $this->defended_squares($king_square, self::active_piece($piece, $active));
-      $attackers = $this->pieces_on_squares($attacker_squares);
-      return in_array(self::opponents_piece($piece, $active), $attackers);
+      $attacker_squares = $this->get_defended_squares($king_square, self::get_active_piece($piece, $active));
+      $attackers = $this->get_pieces_on_squares($attacker_squares);
+      return in_array(self::get_opponents_piece($piece, $active), $attackers);
     };
 
     if ($check_check_from('K')) {
@@ -402,27 +423,6 @@ class Board
     if ($square->is_null()) {
       throw new \OutOfBoundsException;
     }
-  }
-
-  /**
-  * Preview of the board in ASCII graphics.
-  */
-  public function preview() : string
-  {
-    $preview = '';
-    for ($rank = 7; $rank >= 0; $rank --) {
-      for ($file = 0; $file <= 7; $file ++) {
-        $piece = $this->get_square(new Square($file, $rank));
-        if (!$piece) {
-          $piece = '.';
-        }
-        $preview .= $piece;
-      }
-      if ($rank != 0) {
-        $preview .= "\n";
-      }
-    }
-    return $preview;
   }
 
 }

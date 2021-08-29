@@ -45,21 +45,21 @@ final class BoardTest extends TestCase
   public function testAttackedSquaresByPawns() : void
   {
     $board = new Board;
-    $res = $board->defended_squares('e4', 'P');
+    $res = $board->get_defended_squares('e4', 'P');
     $this->assertEqualsCanonicalizing(['f5', 'd5'], $res);
-    $res = $board->defended_squares('e5', 'p');
+    $res = $board->get_defended_squares('e5', 'p');
     $this->assertEqualsCanonicalizing(['d4', 'f4'], $res);
 
-    $res = $board->defended_squares('a2', 'P');
+    $res = $board->get_defended_squares('a2', 'P');
     $this->assertEqualsCanonicalizing(['b3'], $res);
 
-    $res = $board->defended_squares('h2', 'P');
+    $res = $board->get_defended_squares('h2', 'P');
     $this->assertEqualsCanonicalizing(['g3'], $res);
 
-    $res = $board->defended_squares('a2', 'p');
+    $res = $board->get_defended_squares('a2', 'p');
     $this->assertEqualsCanonicalizing(['b1'], $res);
 
-    $res = $board->defended_squares('h2', 'p');
+    $res = $board->get_defended_squares('h2', 'p');
     $this->assertEqualsCanonicalizing(['g1'], $res);
   }
 
@@ -67,14 +67,14 @@ final class BoardTest extends TestCase
   {
     $board = new Board;
     $ref = ['a1', 'b1', 'c1', 'c2', 'c3', 'b3', 'a3', 'a2'];
-    $res = $board->defended_squares('b2', 'k');
+    $res = $board->get_defended_squares('b2', 'k');
     $this->assertEqualsCanonicalizing($ref, $res);
 
-    $res = $board->defended_squares('b2', 'K');
+    $res = $board->get_defended_squares('b2', 'K');
     $this->assertEqualsCanonicalizing($ref, $res);
 
     $ref = ['a2', 'b1', 'b2'];
-    $res = $board->defended_squares('a1', 'k');
+    $res = $board->get_defended_squares('a1', 'k');
     $this->assertEqualsCanonicalizing($ref, $res);
   }
 
@@ -82,10 +82,10 @@ final class BoardTest extends TestCase
   {
     $board = new Board;
     $ref = ['d2', 'c3', 'c5', 'd6', 'f6', 'g5', 'g3', 'f2'];
-    $res = $board->defended_squares('e4', 'n');
+    $res = $board->get_defended_squares('e4', 'n');
     $this->assertEqualsCanonicalizing($ref, $res);
 
-    $res = $board->defended_squares('e4', 'N');
+    $res = $board->get_defended_squares('e4', 'N');
     $this->assertEqualsCanonicalizing($ref, $res);
   }
 
@@ -93,10 +93,10 @@ final class BoardTest extends TestCase
   {
     $board = new Board;
     $ref = ['f5', 'g6', 'h7', 'd3', 'c2', 'f3', 'g2', 'd5', 'c6', 'b7'];
-    $res = $board->defended_squares('e4', 'b');
+    $res = $board->get_defended_squares('e4', 'b');
     $this->assertEqualsCanonicalizing($ref, $res);
 
-    $res = $board->defended_squares('e4', 'B');
+    $res = $board->get_defended_squares('e4', 'B');
     $this->assertEqualsCanonicalizing($ref, $res);
   }
 
@@ -104,10 +104,10 @@ final class BoardTest extends TestCase
   {
     $board = new Board;
     $ref = ['e5', 'e6', 'e7', 'e3', 'e2', 'f4', 'g4', 'h4', 'd4', 'c4', 'b4', 'a4'];
-    $res = $board->defended_squares('e4', 'r');
+    $res = $board->get_defended_squares('e4', 'r');
     $this->assertEqualsCanonicalizing($ref, $res);
 
-    $res = $board->defended_squares('e4', 'R');
+    $res = $board->get_defended_squares('e4', 'R');
     $this->assertEqualsCanonicalizing($ref, $res);
   }
 
@@ -115,10 +115,10 @@ final class BoardTest extends TestCase
   {
     $board = new Board;
     $ref = ['f5', 'g6', 'h7', 'd3', 'c2', 'f3', 'g2', 'd5', 'c6', 'b7', 'e5', 'e6', 'e7', 'e3', 'e2', 'f4', 'g4', 'h4', 'd4', 'c4', 'b4', 'a4'];
-    $res = $board->defended_squares('e4', 'q');
+    $res = $board->get_defended_squares('e4', 'q');
     $this->assertEqualsCanonicalizing($ref, $res);
 
-    $res = $board->defended_squares('e4', 'Q');
+    $res = $board->get_defended_squares('e4', 'Q');
     $this->assertEqualsCanonicalizing($ref, $res);
   }
 
@@ -152,7 +152,7 @@ final class BoardTest extends TestCase
   {
     $board = new Board;
     $ref = ['R', 'N', 'N', 'r', 'r', 'K', 'P', 'P'];
-    $res = $board->pieces_on_squares(['a1', 'e4', 'b1', 'g1', 'a8', 'h8', 'e1', 'b2', 'c2']);
+    $res = $board->get_pieces_on_squares(['a1', 'e4', 'b1', 'g1', 'a8', 'h8', 'e1', 'b2', 'c2']);
     $this->assertEqualsCanonicalizing($ref, $res);
   }
 
@@ -240,19 +240,19 @@ final class BoardTest extends TestCase
   public function testReachableSquares() : void
   {
     $board = new Board();
-    $this->assertEqualsCanonicalizing(['e3', 'e4'], $board->reachable_squares('e2', 'P'));
-    $this->assertEqualsCanonicalizing(['e5', 'e6'], $board->reachable_squares('e7', 'p'));
-    $this->assertEqualsCanonicalizing(['f3', 'h3'], $board->reachable_squares('g1', 'N'));
+    $this->assertEqualsCanonicalizing(['e3', 'e4'], $board->get_reachable_squares('e2', 'P'));
+    $this->assertEqualsCanonicalizing(['e5', 'e6'], $board->get_reachable_squares('e7', 'p'));
+    $this->assertEqualsCanonicalizing(['f3', 'h3'], $board->get_reachable_squares('g1', 'N'));
 
     $board->set_square('e2', '');
     $board->set_square('a2', '');
-    $this->assertEqualsCanonicalizing(['e2', 'd3', 'c4', 'b5', 'a6'], $board->reachable_squares('f1', 'B'));
-    $this->assertEqualsCanonicalizing(['e2', 'f3', 'g4', 'h5'], $board->reachable_squares('d1', 'Q'));
-    $this->assertEqualsCanonicalizing(['e2'], $board->reachable_squares('e1', 'K'));
-    $this->assertEqualsCanonicalizing(['a2', 'a3', 'a4', 'a5', 'a6', 'a7'], $board->reachable_squares('a1', 'R'));
+    $this->assertEqualsCanonicalizing(['e2', 'd3', 'c4', 'b5', 'a6'], $board->get_reachable_squares('f1', 'B'));
+    $this->assertEqualsCanonicalizing(['e2', 'f3', 'g4', 'h5'], $board->get_reachable_squares('d1', 'Q'));
+    $this->assertEqualsCanonicalizing(['e2'], $board->get_reachable_squares('e1', 'K'));
+    $this->assertEqualsCanonicalizing(['a2', 'a3', 'a4', 'a5', 'a6', 'a7'], $board->get_reachable_squares('a1', 'R'));
 
     $board->set_square('c4', 'b');
-    $this->assertEqualsCanonicalizing(['e2', 'd3', 'c4'], $board->reachable_squares('f1', 'B'));
+    $this->assertEqualsCanonicalizing(['e2', 'd3', 'c4'], $board->get_reachable_squares('f1', 'B'));
   }
 
   public function testReachableSquaresPawnCapture() : void
@@ -261,7 +261,7 @@ final class BoardTest extends TestCase
     $board->set_square('e2', '');
     $board->set_square('e3', 'P');
     $board->set_square('c3', 'q');
-    $this->assertEqualsCanonicalizing(['d3', 'd4', 'c3'], $board->reachable_squares('d2', 'P'));
+    $this->assertEqualsCanonicalizing(['d3', 'd4', 'c3'], $board->get_reachable_squares('d2', 'P'));
   }
 
   public function testReachableSquaresEnPassant() : void
@@ -271,18 +271,18 @@ final class BoardTest extends TestCase
     $board->set_square('e4', 'P');
     $board->set_square('d7', '');
     $board->set_square('d4', 'p');
-    $this->assertEqualsCanonicalizing(['d3', 'e3'], $board->reachable_squares('d4', 'p', 'e3'));
+    $this->assertEqualsCanonicalizing(['d3', 'e3'], $board->get_reachable_squares('d4', 'p', 'e3'));
     $board->set_square('a2', '');
     $board->set_square('a5', 'P');
     $board->set_square('b7', '');
     $board->set_square('b5', 'p');
-    $this->assertEqualsCanonicalizing(['a6', 'b6'], $board->reachable_squares('a5', 'P', 'b6'));
+    $this->assertEqualsCanonicalizing(['a6', 'b6'], $board->get_reachable_squares('a5', 'P', 'b6'));
   }
 
   public function testPieceColor() : void
   {
-    $this->assertEquals('w', Board::piece_color('K'));
-    $this->assertEquals('b', Board::piece_color('k'));
+    $this->assertEquals('w', Board::get_piece_color('K'));
+    $this->assertEquals('b', Board::get_piece_color('k'));
   }
 
 }
