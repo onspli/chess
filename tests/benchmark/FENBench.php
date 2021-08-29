@@ -23,6 +23,6 @@ class FENBench
   */
   public function benchPossibleMovesInitialPosition()
   {
-    $this->initial_pos->possible_moves();
+    $this->initial_pos->get_possible_moves();
   }
 }

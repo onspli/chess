@@ -18,17 +18,17 @@ Setup chess board to starting position and read FEN fields.
 $fen = new Onspli\Chess\FEN;
 echo($fen->export());
 // rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
-echo($fen->board());
+echo($fen->get_board());
 // rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR
-echo($fen->active());
+echo($fen->get_active_color());
 // w
-echo($fen->castling());
+echo($fen->get_castling());
 // KQkq
-echo($fen->en_passant());
+echo($fen->get_en_passant());
 // -
-echo($fen->halfmove());
+echo($fen->get_halfmove());
 // 0
-echo($fen->fullmove());
+echo($fen->get_fullmove());
 // 1
 echo($fen->preview());
 /*
@@ -48,17 +48,17 @@ Initialize custom position and read FEN fields.
 $fen = new Onspli\Chess\FEN('rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR b KQq c6 1 2');
 echo($fen->export());
 // rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR b KQq c6 1 2
-echo($fen->board());
+echo($fen->get_board());
 // rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR
-echo($fen->active());
+echo($fen->get_active_color());
 // b
-echo($fen->castling());
+echo($fen->get_castling());
 // KQq
-echo($fen->en_passant());
+echo($fen->get_en_passant());
 // c6
-echo($fen->halfmove());
+echo($fen->get_halfmove());
 // 1
-echo($fen->fullmove());
+echo($fen->get_fullmove());
 // 2
 echo($fen->preview());
 /*
@@ -80,7 +80,7 @@ echo($fen->export());
 // rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
 
 $fen->set_board('rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR');
-$fen->set_active('b');
+$fen->set_active_color('b');
 $fen->set_castling('KQq');
 $fen->set_en_passant('c6');
 $fen->set_halfmove(1);
@@ -140,7 +140,7 @@ echo($fen->export());
 Test check, mate, stalemate:
 ``` php
 $fen = new Onspli\Chess\FEN;
-$fen->set_active('w');
+$fen->set_active_color('w');
 $fen->set_board('1q5k/8/8/8/8/8/8/K7');
 echo($fen->preview());
 /*
@@ -192,7 +192,7 @@ pppppp.p
 PPPP.PPP
 RNBQKBNR
 */
-print_r($fen->possible_moves());
+print_r($fen->get_possible_moves());
 /*
 Array
 (

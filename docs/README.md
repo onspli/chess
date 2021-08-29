@@ -7,10 +7,8 @@
 | [**Board**](#Board) |  |
 | [Board::__construct](#Board__construct) | Piece placement (from White&#039;s perspective). Each rank is described,starting with rank 8 and ending with rank 1; within each rank,the contents of each square are described from file &quot;a&quot; through file &quot;h&quot;. |
 | [Board::export](#Boardexport) |  |
-| [Board::square](#Boardsquare) |  |
-| [Board::square_nothrow](#Boardsquare_nothrow) |  |
+| [Board::get_square](#Boardget_square) |  |
 | [Board::set_square](#Boardset_square) |  |
-| [Board::set_square_nothrow](#Boardset_square_nothrow) |  |
 | [Board::defended_squares](#Boarddefended_squares) | Get array of all squares attacked (or defended) by $defender being on $defender_square. |
 | [Board::reachable_squares](#Boardreachable_squares) | Get array of all squares reachable from $origin_square by $moving_piece. |
 | [Board::pieces_on_squares](#Boardpieces_on_squares) | Get list of pieces on squares (including multiplicities, excluding blank squares). |
@@ -25,27 +23,27 @@
 | [FEN::__construct](#FEN__construct) | Load FEN or setup starting position. |
 | [FEN::export](#FENexport) | Export whole FEN string. |
 | [FEN::preview](#FENpreview) | Preview of the board in ASCII graphics. |
-| [FEN::board](#FENboard) | Get piece placement. |
+| [FEN::get_board](#FENget_board) | Get piece placement. |
 | [FEN::set_board](#FENset_board) | Setup piece placement. |
-| [FEN::square](#FENsquare) | Get piece on a particular square. |
+| [FEN::get_square](#FENget_square) | Get piece on a particular square. |
 | [FEN::set_square](#FENset_square) | Set piece on a particular square. |
-| [FEN::active](#FENactive) | Active color. |
-| [FEN::set_active](#FENset_active) | Set active color. |
-| [FEN::castling](#FENcastling) | Castling availability. |
+| [FEN::get_active_color](#FENget_active_color) | Active color. |
+| [FEN::set_active_color](#FENset_active_color) | Set active color. |
+| [FEN::get_castling](#FENget_castling) | Castling availability. |
 | [FEN::set_castling](#FENset_castling) | Set castling availability. |
-| [FEN::castling_availability](#FENcastling_availability) |  |
+| [FEN::get_castling_availability](#FENget_castling_availability) |  |
 | [FEN::set_castling_availability](#FENset_castling_availability) |  |
-| [FEN::en_passant](#FENen_passant) | Get En Passant target square. |
+| [FEN::get_en_passant](#FENget_en_passant) | Get En Passant target square. |
 | [FEN::set_en_passant](#FENset_en_passant) | Set En Passant target square. |
-| [FEN::halfmove](#FENhalfmove) | Get Halfmove clock |
+| [FEN::get_halfmove](#FENget_halfmove) | Get Halfmove clock |
 | [FEN::set_halfmove](#FENset_halfmove) | Set Halfmove clock |
-| [FEN::fullmove](#FENfullmove) | Get Fullmove number |
+| [FEN::get_fullmove](#FENget_fullmove) | Get Fullmove number |
 | [FEN::set_fullmove](#FENset_fullmove) | Set Fullmove number |
 | [FEN::is_mate](#FENis_mate) | Returns true if king of active color is in mate. |
 | [FEN::is_stalemate](#FENis_stalemate) | Returns true if king of active color is in stalemate. |
 | [FEN::is_fifty_move](#FENis_fifty_move) | Returns true if fifty move rule draw can be claimed by active color. |
 | [FEN::is_check](#FENis_check) | Returns true if king of active color is in check. |
-| [FEN::possible_moves](#FENpossible_moves) | Array of all possible moves in current position. |
+| [FEN::get_possible_moves](#FENget_possible_moves) | Array of all possible moves in current position. |
 | [FEN::move](#FENmove) | Perform a move. |
 | [**Move**](#Move) | Class for parsing moves in SAN (standard algebraic notation). |
 | [Move::__construct](#Move__construct) |  |
@@ -137,37 +135,12 @@ Board::export(  ): string
 
 
 ---
-### Board::square
+### Board::get_square
 
 
 
 ```php
-Board::square( mixed square ): string
-```
-
-
-
-
-**Parameters:**
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `square` | **mixed** |  |
-
-
-**Return Value:**
-
-
-
-
-
----
-### Board::square_nothrow
-
-
-
-```php
-Board::square_nothrow( mixed square ): string
+Board::get_square( mixed square ): string
 ```
 
 
@@ -193,32 +166,6 @@ Board::square_nothrow( mixed square ): string
 
 ```php
 Board::set_square( mixed square, string piece ): void
-```
-
-
-
-
-**Parameters:**
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `square` | **mixed** |  |
-| `piece` | **string** |  |
-
-
-**Return Value:**
-
-
-
-
-
----
-### Board::set_square_nothrow
-
-
-
-```php
-Board::set_square_nothrow( mixed square, string piece ): void
 ```
 
 
@@ -564,12 +511,12 @@ ascii preview of the board
 
 
 ---
-### FEN::board
+### FEN::get_board
 
 Get piece placement.
 
 ```php
-FEN::board( bool as_object = false ): string|\Onspli\Chess\Board
+FEN::get_board( bool as_object = false ): string|\Onspli\Chess\Board
 ```
 
 Piece placement (from White's perspective). Each rank is described,
@@ -630,12 +577,12 @@ digits 1 through 8 (the number of empty squares), and "/" separates ranks.
 
 
 ---
-### FEN::square
+### FEN::get_square
 
 Get piece on a particular square.
 
 ```php
-FEN::square( mixed square ): string
+FEN::get_square( mixed square ): string
 ```
 
 
@@ -681,12 +628,12 @@ FEN::set_square( mixed square, string piece ): void
 
 
 ---
-### FEN::active
+### FEN::get_active_color
 
 Active color.
 
 ```php
-FEN::active(  ): string
+FEN::get_active_color(  ): string
 ```
 
 "w" means White moves next, "b" means Black moves next.
@@ -700,12 +647,12 @@ w|b
 
 
 ---
-### FEN::set_active
+### FEN::set_active_color
 
 Set active color.
 
 ```php
-FEN::set_active( string color ): void
+FEN::set_active_color( string color ): void
 ```
 
 "w" means White moves next, "b" means Black moves next.
@@ -725,12 +672,12 @@ FEN::set_active( string color ): void
 
 
 ---
-### FEN::castling
+### FEN::get_castling
 
 Castling availability.
 
 ```php
-FEN::castling(  ): string
+FEN::get_castling(  ): string
 ```
 
 If neither side can castle, this is "-".
@@ -777,12 +724,12 @@ does not negate this notation.
 
 
 ---
-### FEN::castling_availability
+### FEN::get_castling_availability
 
 
 
 ```php
-FEN::castling_availability( string type ): bool
+FEN::get_castling_availability( string type ): bool
 ```
 
 
@@ -828,12 +775,12 @@ FEN::set_castling_availability( string type, bool avalability ): void
 
 
 ---
-### FEN::en_passant
+### FEN::get_en_passant
 
 Get En Passant target square.
 
 ```php
-FEN::en_passant( bool as_object = false ): string|\Onspli\Chess\Square
+FEN::get_en_passant( bool as_object = false ): string|\Onspli\Chess\Square
 ```
 
 En passant target square in algebraic notation. If there's no en passant
@@ -884,12 +831,12 @@ whether there is a pawn in position to make an en passant capture.
 
 
 ---
-### FEN::halfmove
+### FEN::get_halfmove
 
 Get Halfmove clock
 
 ```php
-FEN::halfmove(  ): int
+FEN::get_halfmove(  ): int
 ```
 
 The number of halfmoves since the last capture or pawn
@@ -930,12 +877,12 @@ advance, used for the fifty-move rule.
 
 
 ---
-### FEN::fullmove
+### FEN::get_fullmove
 
 Get Fullmove number
 
 ```php
-FEN::fullmove(  ): int
+FEN::get_fullmove(  ): int
 ```
 
 The number of the full move. It starts at 1, and is
@@ -1052,12 +999,12 @@ FEN::is_check(  ): bool
 
 
 ---
-### FEN::possible_moves
+### FEN::get_possible_moves
 
 Array of all possible moves in current position.
 
 ```php
-FEN::possible_moves(  ): array
+FEN::get_possible_moves(  ): array
 ```
 
 

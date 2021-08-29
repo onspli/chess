@@ -56,7 +56,7 @@ class Board
     for ($rank = 7; $rank >= 0; $rank --) {
       $space = 0;
       for ($file = 0; $file < 8; $file ++) {
-        $piece = $this->square(new Square($file, $rank));
+        $piece = $this->get_square(new Square($file, $rank));
         if (!$piece) {
           $space++;
         } else {
@@ -77,20 +77,10 @@ class Board
     return $pieces;
   }
 
-  public function square($square) : string
+  public function get_square($square) : string
   {
     self::validate_square($square);
     return $this->board[$square->rank_index() * 8 + $square->file_index()];
-  }
-
-  public function square_nothrow($square) : string
-  {
-    try
-    {
-      return $this->square($square);
-    }
-    catch(\Exception $e) {};
-    return '';
   }
 
   public function set_square($square, string $piece) : void
@@ -98,15 +88,6 @@ class Board
     self::validate_square($square);
     self::validate_piece($piece);
     $this->board[$square->rank_index() * 8 + $square->file_index()] = $piece;
-  }
-
-  public function set_square_nothrow($square, string $piece) : void
-  {
-    try
-    {
-      $this->set_square($square, $piece);
-    }
-    catch(\Exception $e) {};
   }
 
   /**
@@ -181,7 +162,7 @@ class Board
     if ($square->is_null()) {
       return false;
     }
-    $target_piece = $this->square($square);
+    $target_piece = $this->get_square($square);
     if ($target_piece && $moving_piece && self::piece_color($target_piece) == self::piece_color($moving_piece)) {
       return false;
     }
@@ -220,7 +201,7 @@ class Board
         $target_square->push_to_array($arr, $as_object);
         return;
       }
-      $target_piece = $this->square($target_square);
+      $target_piece = $this->get_square($target_square);
       if (!$target_piece) {
         return;
       }
@@ -235,14 +216,14 @@ class Board
     };
 
     if ($moving_piece == 'P') {
-      if ($origin_square->rank_index() == 1 && $this->square($origin_square->relative(0,1)) == '') {
+      if ($origin_square->rank_index() == 1 && $this->get_square($origin_square->relative(0,1)) == '') {
         $add_target_square($origin_square->relative(0, 2));
       }
       $add_target_square($origin_square->relative(0,1));
       $add_pawn_capture($origin_square->relative(-1,1));
       $add_pawn_capture($origin_square->relative(1,1));
     } else if ($moving_piece == 'p') {
-      if ($origin_square->rank_index() == 6 && $this->square($origin_square->relative(0,-1)) == '') {
+      if ($origin_square->rank_index() == 6 && $this->get_square($origin_square->relative(0,-1)) == '') {
         $add_target_square($origin_square->relative(0, -2));
       }
       $add_target_square($origin_square->relative(0,-1));
@@ -291,7 +272,7 @@ class Board
   {
     $arr = [];
     foreach ($squares as $square) {
-      $piece = $this->square($square);
+      $piece = $this->get_square($square);
       if ($piece) {
         $arr[] = $piece;
       }
@@ -308,7 +289,7 @@ class Board
     for ($rank = 0; $rank < 8; $rank ++) {
       for ($file = 0; $file < 8; $file ++) {
         $square = new Square($file, $rank);
-        $p = $this->square($square);
+        $p = $this->get_square($square);
         if ($p == $piece) {
           $square->push_to_array($arr, $as_object);
         }
@@ -431,7 +412,7 @@ class Board
     $preview = '';
     for ($rank = 7; $rank >= 0; $rank --) {
       for ($file = 0; $file <= 7; $file ++) {
-        $piece = $this->square(new Square($file, $rank));
+        $piece = $this->get_square(new Square($file, $rank));
         if (!$piece) {
           $piece = '.';
         }
