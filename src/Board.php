@@ -106,7 +106,7 @@ class Board
       if (!$piece) {
         $piece = '.';
       }
-      $preview_rank .= $piece;
+      $preview_rank .= $piece; 
     }
     return $preview_rank;
   }
