@@ -41,7 +41,7 @@ class FEN
 
         $this->set_board($parts[0]);
         $this->set_active_color($parts[1]);
-        $this->set_castling($parts[2]);
+        $this->set_castling_string($parts[2]);
         $this->set_en_passant($parts[3]);
         $this->set_halfmove($parts[4]);
         $this->set_fullmove($parts[5]);
@@ -59,7 +59,7 @@ class FEN
     */
     public function export() : string
     {
-      return implode(' ', [$this->get_board(), $this->get_active_color(), $this->get_castling(), $this->get_en_passant(), $this->get_halfmove(), $this->get_fullmove()]);
+      return implode(' ', [$this->get_board(), $this->get_active_color(), $this->get_castling_string(), $this->get_en_passant(), $this->get_halfmove(), $this->get_fullmove()]);
     }
 
     /**
@@ -178,7 +178,7 @@ class FEN
     *
     * @return string castling availability string
     */
-    public function get_castling() : string
+    public function get_castling_string() : string
     {
       return $this->castling;
     }
@@ -194,7 +194,7 @@ class FEN
     *
     * @param string castling availability string
     */
-    public function set_castling(string $castling) : void
+    public function set_castling_string(string $castling) : void
     {
       if (!in_array($castling, ['-', 'KQkq', 'KQk', 'KQq', 'KQ', 'Kkq', 'Kk', 'Kq', 'K', 'Qkq', 'Qk', 'Qq', 'Q', 'kq', 'k', 'q'])) {
         throw new ParseException("Invalid castling string '$castling'.");
@@ -240,7 +240,7 @@ class FEN
       sort($castling);
       $castling = sizeof($castling) ? implode('', $castling) : '-';
 
-      $this->set_castling($castling);
+      $this->set_castling_string($castling);
     }
 
     /**

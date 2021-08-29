@@ -29,8 +29,8 @@
 | [FEN::set_square](#FENset_square) | Set piece on a particular square. |
 | [FEN::get_active_color](#FENget_active_color) | Active color. |
 | [FEN::set_active_color](#FENset_active_color) | Set active color. |
-| [FEN::get_castling](#FENget_castling) | Castling availability. |
-| [FEN::set_castling](#FENset_castling) | Set castling availability. |
+| [FEN::get_castling_string](#FENget_castling_string) | Castling availability. |
+| [FEN::set_castling_string](#FENset_castling_string) | Set castling availability. |
 | [FEN::get_castling_availability](#FENget_castling_availability) |  |
 | [FEN::set_castling_availability](#FENset_castling_availability) |  |
 | [FEN::get_en_passant](#FENget_en_passant) | Get En Passant target square. |
@@ -66,12 +66,12 @@
 | [Square::get_file_index](#Squareget_file_index) | Get file index of the square. |
 | [Square::get_file](#Squareget_file) | Get file of the square. |
 | [Square::export](#Squareexport) | Returns SAN (standard algebraic notation) string. |
+| [Square::is_regular](#Squareis_regular) | Check wether square is regular square. |
 | [Square::is_null](#Squareis_null) | Check wether square is null. |
 | [Square::is_rank](#Squareis_rank) | Check wether square is rank. |
-| [Square::has_rank](#Squarehas_rank) | Check wether square has rank. |
 | [Square::is_file](#Squareis_file) | Check wether square is file. |
+| [Square::has_rank](#Squarehas_rank) | Check wether square has rank. |
 | [Square::has_file](#Squarehas_file) | Check wether square has file. |
-| [Square::is_regular](#Squareis_regular) | Check wether square is regular square. |
 | [Square::get_relative_square](#Squareget_relative_square) | Get square with relative position to this square. |
 | [Square::push_to_array](#Squarepush_to_array) | Add square to the end of array. |
 
@@ -672,12 +672,12 @@ FEN::set_active_color( string color ): void
 
 
 ---
-### FEN::get_castling
+### FEN::get_castling_string
 
 Castling availability.
 
 ```php
-FEN::get_castling(  ): string
+FEN::get_castling_string(  ): string
 ```
 
 If neither side can castle, this is "-".
@@ -695,12 +695,12 @@ castling availability string
 
 
 ---
-### FEN::set_castling
+### FEN::set_castling_string
 
 Set castling availability.
 
 ```php
-FEN::set_castling( string castling ): void
+FEN::set_castling_string( string castling ): void
 ```
 
 If neither side can castle, this is "-".
@@ -1440,6 +1440,25 @@ For
 
 
 ---
+### Square::is_regular
+
+Check wether square is regular square.
+
+```php
+Square::is_regular(  ): bool
+```
+
+
+
+
+
+**Return Value:**
+
+
+
+
+
+---
 ### Square::is_null
 
 Check wether square is null.
@@ -1478,25 +1497,6 @@ Square::is_rank(  ): bool
 
 
 ---
-### Square::has_rank
-
-Check wether square has rank.
-
-```php
-Square::has_rank(  ): bool
-```
-
-Regular squares and ranks has rank.
-
-
-
-**Return Value:**
-
-
-
-
-
----
 ### Square::is_file
 
 Check wether square is file.
@@ -1516,15 +1516,15 @@ Square::is_file(  ): bool
 
 
 ---
-### Square::has_file
+### Square::has_rank
 
-Check wether square has file.
+Check wether square has rank.
 
 ```php
-Square::has_file(  ): bool
+Square::has_rank(  ): bool
 ```
 
-Regular squares and files has file.
+Regular squares and ranks has rank.
 
 
 
@@ -1535,15 +1535,15 @@ Regular squares and files has file.
 
 
 ---
-### Square::is_regular
+### Square::has_file
 
-Check wether square is regular square.
+Check wether square has file.
 
 ```php
-Square::is_regular(  ): bool
+Square::has_file(  ): bool
 ```
 
-
+Regular squares and files has file.
 
 
 

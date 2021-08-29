@@ -101,20 +101,20 @@ final class FENTest extends TestCase
   public function testCastling() : void
   {
     $fen = new FEN;
-    $this->assertEquals('KQkq', $fen->get_castling());
-    $fen->set_castling('-');
-    $this->assertEquals('-', $fen->get_castling());
-    $fen->set_castling('KQkq');
-    $this->assertEquals('KQkq', $fen->get_castling());
-    $fen->set_castling('k');
-    $this->assertEquals('k', $fen->get_castling());
+    $this->assertEquals('KQkq', $fen->get_castling_string());
+    $fen->set_castling_string('-');
+    $this->assertEquals('-', $fen->get_castling_string());
+    $fen->set_castling_string('KQkq');
+    $this->assertEquals('KQkq', $fen->get_castling_string());
+    $fen->set_castling_string('k');
+    $this->assertEquals('k', $fen->get_castling_string());
   }
 
   public function testSetCastlingInvalid() : void
   {
     $fen = new FEN;
     $this->expectException(ParseException::class);
-    $fen->set_castling('KQxq');
+    $fen->set_castling_string('KQxq');
   }
 
   public function testSetCastlingAvailibilityInvalid1() : void
@@ -138,21 +138,21 @@ final class FENTest extends TestCase
     $this->assertEquals(true, $fen->get_castling_availability('Q'));
     $this->assertEquals(true, $fen->get_castling_availability('k'));
     $this->assertEquals(true, $fen->get_castling_availability('q'));
-    $this->assertEquals('KQkq', $fen->get_castling());
+    $this->assertEquals('KQkq', $fen->get_castling_string());
 
     $fen->set_castling_availability('k', false);
     $this->assertEquals(true, $fen->get_castling_availability('K'));
     $this->assertEquals(true, $fen->get_castling_availability('Q'));
     $this->assertEquals(false, $fen->get_castling_availability('k'));
     $this->assertEquals(true, $fen->get_castling_availability('q'));
-    $this->assertEquals('KQq', $fen->get_castling());
+    $this->assertEquals('KQq', $fen->get_castling_string());
 
     $fen->set_castling_availability('Q', false);
     $this->assertEquals(true, $fen->get_castling_availability('K'));
     $this->assertEquals(false, $fen->get_castling_availability('Q'));
     $this->assertEquals(false, $fen->get_castling_availability('k'));
     $this->assertEquals(true, $fen->get_castling_availability('q'));
-    $this->assertEquals('Kq', $fen->get_castling());
+    $this->assertEquals('Kq', $fen->get_castling_string());
 
 
     $fen->set_castling_availability('k', true);
@@ -160,7 +160,7 @@ final class FENTest extends TestCase
     $this->assertEquals(false, $fen->get_castling_availability('Q'));
     $this->assertEquals(true, $fen->get_castling_availability('k'));
     $this->assertEquals(true, $fen->get_castling_availability('q'));
-    $this->assertEquals('Kkq', $fen->get_castling());
+    $this->assertEquals('Kkq', $fen->get_castling_string());
 
     $fen->set_castling_availability('K', false);
     $fen->set_castling_availability('Q', false);
@@ -170,7 +170,7 @@ final class FENTest extends TestCase
     $this->assertEquals(false, $fen->get_castling_availability('Q'));
     $this->assertEquals(false, $fen->get_castling_availability('k'));
     $this->assertEquals(false, $fen->get_castling_availability('q'));
-    $this->assertEquals('-', $fen->get_castling());
+    $this->assertEquals('-', $fen->get_castling_string());
 
     $fen->set_castling_availability('k', true);
     $fen->set_castling_availability('K', true);
@@ -178,7 +178,7 @@ final class FENTest extends TestCase
     $this->assertEquals(false, $fen->get_castling_availability('Q'));
     $this->assertEquals(true, $fen->get_castling_availability('k'));
     $this->assertEquals(false, $fen->get_castling_availability('q'));
-    $this->assertEquals('Kk', $fen->get_castling());
+    $this->assertEquals('Kk', $fen->get_castling_string());
   }
 
   public function testFiftyMove() : void
@@ -222,7 +222,7 @@ final class FENTest extends TestCase
     $this->assertEquals('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', $fen->export());
     $this->assertEquals('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR', $fen->get_board());
     $this->assertEquals('w', $fen->get_active_color());
-    $this->assertEquals('KQkq', $fen->get_castling());
+    $this->assertEquals('KQkq', $fen->get_castling_string());
     $this->assertEquals('-', $fen->get_en_passant());
     $this->assertEquals(0, $fen->get_halfmove());
     $this->assertEquals(1, $fen->get_fullmove());
@@ -231,7 +231,7 @@ final class FENTest extends TestCase
     $this->assertEquals('rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR b KQq c6 1 2', $fen->export());
     $this->assertEquals('rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR', $fen->get_board());
     $this->assertEquals('b', $fen->get_active_color());
-    $this->assertEquals('KQq', $fen->get_castling());
+    $this->assertEquals('KQq', $fen->get_castling_string());
     $this->assertEquals('c6', $fen->get_en_passant());
     $this->assertEquals(1, $fen->get_halfmove());
     $this->assertEquals(2, $fen->get_fullmove());
@@ -372,17 +372,17 @@ final class FENTest extends TestCase
     $fen = new FEN;
     $fen->move('a4');
     $fen->move('a5');
-    $this->assertEquals('KQkq', $fen->get_castling());
+    $this->assertEquals('KQkq', $fen->get_castling_string());
     $fen->move('Ra3');
-    $this->assertEquals('Kkq', $fen->get_castling());
+    $this->assertEquals('Kkq', $fen->get_castling_string());
     $fen->move('Ra7');
-    $this->assertEquals('Kk', $fen->get_castling());
+    $this->assertEquals('Kk', $fen->get_castling_string());
     $fen->move('h4');
     $fen->move('h5');
     $fen->move('Rh2');
-    $this->assertEquals('k', $fen->get_castling());
+    $this->assertEquals('k', $fen->get_castling_string());
     $fen->move('Rh6');
-    $this->assertEquals('-', $fen->get_castling());
+    $this->assertEquals('-', $fen->get_castling_string());
   }
 
   public function testBongcloud() : void
@@ -390,11 +390,11 @@ final class FENTest extends TestCase
     $fen = new FEN;
     $fen->move('e4');
     $fen->move('e5');
-    $this->assertEquals('KQkq', $fen->get_castling());
+    $this->assertEquals('KQkq', $fen->get_castling_string());
     $fen->move('Ke2');
-    $this->assertEquals('kq', $fen->get_castling());
+    $this->assertEquals('kq', $fen->get_castling_string());
     $fen->move('Ke7');
-    $this->assertEquals('-', $fen->get_castling());
+    $this->assertEquals('-', $fen->get_castling_string());
   }
 
   public function testCastlingKingside() : void
@@ -408,7 +408,7 @@ final class FENTest extends TestCase
     $fen->move('Bg7');
     $fen->move('O-O');
     $fen->move('O-O');
-    $this->assertEquals('-', $fen->get_castling());
+    $this->assertEquals('-', $fen->get_castling_string());
     $this->assertEquals('rnbq1rk1/ppppppbp/5np1/8/8/5NP1/PPPPPPBP/RNBQ1RK1', $fen->get_board());
   }
 
@@ -427,7 +427,7 @@ final class FENTest extends TestCase
     $fen->move('Qd7');
     $fen->move('O-O-O');
     $fen->move('O-O-O');
-    $this->assertEquals('-', $fen->get_castling());
+    $this->assertEquals('-', $fen->get_castling_string());
     $this->assertEquals('2kr1bnr/pbpqpppp/1pn5/3p4/3P4/1PN5/PBPQPPPP/2KR1BNR', $fen->get_board());
   }
 
@@ -435,7 +435,7 @@ final class FENTest extends TestCase
   {
     $fen = new FEN;
     $fen->set_active_color('w');
-    $fen->set_castling('Qkq');
+    $fen->set_castling_string('Qkq');
     $fen->set_board('r3k2r/8/8/8/8/8/8/R3K2R');
     $this->expectException(RulesException::class);
     $fen->move('O-O');
@@ -445,7 +445,7 @@ final class FENTest extends TestCase
   {
     $fen = new FEN;
     $fen->set_active_color('b');
-    $fen->set_castling('KQq');
+    $fen->set_castling_string('KQq');
     $fen->set_board('r3k2r/8/8/8/8/8/8/R3K2R');
     $this->expectException(RulesException::class);
     $fen->move('O-O');
@@ -455,7 +455,7 @@ final class FENTest extends TestCase
   {
     $fen = new FEN;
     $fen->set_active_color('w');
-    $fen->set_castling('Kkq');
+    $fen->set_castling_string('Kkq');
     $fen->set_board('r3k2r/8/8/8/8/8/8/R3K2R');
     $this->expectException(RulesException::class);
     $fen->move('O-O-O');
@@ -465,7 +465,7 @@ final class FENTest extends TestCase
   {
     $fen = new FEN;
     $fen->set_active_color('b');
-    $fen->set_castling('KQk');
+    $fen->set_castling_string('KQk');
     $fen->set_board('r3k2r/8/8/8/8/8/8/R3K2R');
     $this->expectException(RulesException::class);
     $fen->move('O-O-O');
@@ -475,7 +475,7 @@ final class FENTest extends TestCase
   {
     $fen = new FEN;
     $fen->set_active_color('w');
-    $fen->set_castling('KQkq');
+    $fen->set_castling_string('KQkq');
     $fen->set_board('r4k1r/8/8/8/8/8/8/R4K1R');
     $this->expectException(RulesException::class);
     $fen->move('O-O');
@@ -485,7 +485,7 @@ final class FENTest extends TestCase
   {
     $fen = new FEN;
     $fen->set_active_color('b');
-    $fen->set_castling('KQkq');
+    $fen->set_castling_string('KQkq');
     $fen->set_board('r4k1r/8/8/8/8/8/8/R4K1R');
     $this->expectException(RulesException::class);
     $fen->move('O-O');
@@ -495,7 +495,7 @@ final class FENTest extends TestCase
   {
     $fen = new FEN;
     $fen->set_active_color('w');
-    $fen->set_castling('KQkq');
+    $fen->set_castling_string('KQkq');
     $fen->set_board('r4k1r/8/8/8/8/8/8/R4K1R');
     $this->expectException(RulesException::class);
     $fen->move('O-O-O');
@@ -505,7 +505,7 @@ final class FENTest extends TestCase
   {
     $fen = new FEN;
     $fen->set_active_color('b');
-    $fen->set_castling('KQkq');
+    $fen->set_castling_string('KQkq');
     $fen->set_board('r4k1r/8/8/8/8/8/8/R4K1R');
     $this->expectException(RulesException::class);
     $fen->move('O-O-O');
@@ -515,7 +515,7 @@ final class FENTest extends TestCase
   {
     $fen = new FEN;
     $fen->set_active_color('w');
-    $fen->set_castling('KQkq');
+    $fen->set_castling_string('KQkq');
     $fen->set_board('r3k3/8/8/7r/7R/8/8/R3K3');
     $this->expectException(RulesException::class);
     $fen->move('O-O');
@@ -525,7 +525,7 @@ final class FENTest extends TestCase
   {
     $fen = new FEN;
     $fen->set_active_color('b');
-    $fen->set_castling('KQkq');
+    $fen->set_castling_string('KQkq');
     $fen->set_board('r3k3/8/8/7r/7R/8/8/R3K3');
     $this->expectException(RulesException::class);
     $fen->move('O-O');
@@ -535,7 +535,7 @@ final class FENTest extends TestCase
   {
     $fen = new FEN;
     $fen->set_active_color('w');
-    $fen->set_castling('KQkq');
+    $fen->set_castling_string('KQkq');
     $fen->set_board('4k2r/r7/8/8/8/8/R7/4K2R');
     $this->expectException(RulesException::class);
     $fen->move('O-O-O');
@@ -545,7 +545,7 @@ final class FENTest extends TestCase
   {
     $fen = new FEN;
     $fen->set_active_color('b');
-    $fen->set_castling('KQkq');
+    $fen->set_castling_string('KQkq');
     $fen->set_board('4k2r/r7/8/8/8/8/R7/4K2R');
     $this->expectException(RulesException::class);
     $fen->move('O-O-O');
@@ -555,7 +555,7 @@ final class FENTest extends TestCase
   {
     $fen = new FEN;
     $fen->set_active_color('w');
-    $fen->set_castling('KQkq');
+    $fen->set_castling_string('KQkq');
     $fen->set_board('rn2kb2/8/8/7r/7R/8/8/RN2KB2');
     $this->expectException(RulesException::class);
     $fen->move('O-O');
@@ -565,7 +565,7 @@ final class FENTest extends TestCase
   {
     $fen = new FEN;
     $fen->set_active_color('w');
-    $fen->set_castling('KQkq');
+    $fen->set_castling_string('KQkq');
     $fen->set_board('rn2kb2/8/8/7r/7R/8/8/RN2KB2');
     $this->expectException(RulesException::class);
     $fen->move('O-O-O');
@@ -575,7 +575,7 @@ final class FENTest extends TestCase
   {
     $fen = new FEN;
     $fen->set_active_color('w');
-    $fen->set_castling('KQkq');
+    $fen->set_castling_string('KQkq');
     $fen->set_board('r3k2r/4q3/8/8/8/8/8/R3K2R');
     $this->expectException(RulesException::class);
     $fen->move('O-O');
@@ -585,7 +585,7 @@ final class FENTest extends TestCase
   {
     $fen = new FEN;
     $fen->set_active_color('w');
-    $fen->set_castling('KQkq');
+    $fen->set_castling_string('KQkq');
     $fen->set_board('r3k2r/4q3/8/8/8/8/8/R3K2R');
     $this->expectException(RulesException::class);
     $fen->move('O-O-O');
@@ -595,7 +595,7 @@ final class FENTest extends TestCase
   {
     $fen = new FEN;
     $fen->set_active_color('w');
-    $fen->set_castling('KQkq');
+    $fen->set_castling_string('KQkq');
     $fen->set_board('r3k2r/5q2/8/8/8/8/8/R3K2R');
     $this->expectException(RulesException::class);
     $fen->move('O-O');
@@ -605,7 +605,7 @@ final class FENTest extends TestCase
   {
     $fen = new FEN;
     $fen->set_active_color('w');
-    $fen->set_castling('KQkq');
+    $fen->set_castling_string('KQkq');
     $fen->set_board('r3k2r/3q4/8/8/8/8/8/R3K2R');
     $this->expectException(RulesException::class);
     $fen->move('O-O-O');
@@ -615,7 +615,7 @@ final class FENTest extends TestCase
   {
     $fen = new FEN;
     $fen->set_active_color('w');
-    $fen->set_castling('KQkq');
+    $fen->set_castling_string('KQkq');
     $fen->set_board('r3k2r/6q1/8/8/8/8/8/R3K2R');
     $this->expectException(RulesException::class);
     $fen->move('O-O');
@@ -625,7 +625,7 @@ final class FENTest extends TestCase
   {
     $fen = new FEN;
     $fen->set_active_color('w');
-    $fen->set_castling('KQkq');
+    $fen->set_castling_string('KQkq');
     $fen->set_board('r3k2r/2q5/8/8/8/8/8/R3K2R');
     $this->expectException(RulesException::class);
     $fen->move('O-O-O');

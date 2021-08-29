@@ -19,7 +19,7 @@ $fen = new Onspli\Chess\FEN;
 echo($fen->export());
 echo($fen->get_board());
 echo($fen->get_active_color());
-echo($fen->get_castling());
+echo($fen->get_castling_string());
 echo($fen->get_en_passant());
 echo($fen->get_halfmove());
 echo($fen->get_fullmove());
@@ -32,7 +32,7 @@ $fen = new Onspli\Chess\FEN('rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR b K
 echo($fen->export());
 echo($fen->get_board());
 echo($fen->get_active_color());
-echo($fen->get_castling());
+echo($fen->get_castling_string());
 echo($fen->get_en_passant());
 echo($fen->get_halfmove());
 echo($fen->get_fullmove());
@@ -46,7 +46,7 @@ echo($fen->export());
 
 $fen->set_board('rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR');
 $fen->set_active_color('b');
-$fen->set_castling('KQq');
+$fen->set_castling_string('KQq');
 $fen->set_en_passant('c6');
 $fen->set_halfmove(1);
 $fen->set_fullmove(2);

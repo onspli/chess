@@ -22,7 +22,7 @@ echo($fen->get_board());
 // rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR
 echo($fen->get_active_color());
 // w
-echo($fen->get_castling());
+echo($fen->get_castling_string());
 // KQkq
 echo($fen->get_en_passant());
 // -
@@ -52,7 +52,7 @@ echo($fen->get_board());
 // rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR
 echo($fen->get_active_color());
 // b
-echo($fen->get_castling());
+echo($fen->get_castling_string());
 // KQq
 echo($fen->get_en_passant());
 // c6
@@ -81,7 +81,7 @@ echo($fen->export());
 
 $fen->set_board('rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR');
 $fen->set_active_color('b');
-$fen->set_castling('KQq');
+$fen->set_castling_string('KQq');
 $fen->set_en_passant('c6');
 $fen->set_halfmove(1);
 $fen->set_fullmove(2);

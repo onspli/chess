@@ -123,6 +123,14 @@ class Square
   }
 
   /**
+  * Check wether square is regular square.
+  */
+  public function is_regular() : bool
+  {
+    return $this->has_rank() && $this->has_file();
+  }
+
+  /**
   * Check wether square is null.
   */
   public function is_null() : bool
@@ -139,6 +147,14 @@ class Square
   }
 
   /**
+  * Check wether square is file.
+  */
+  public function is_file() : bool
+  {
+    return $this->rank_index === null && $this->file_index !== null;
+  }
+
+  /**
   * Check wether square has rank.
   *
   * Regular squares and ranks has rank.
@@ -148,13 +164,6 @@ class Square
     return $this->rank_index !== null;
   }
 
-  /**
-  * Check wether square is file.
-  */
-  public function is_file() : bool
-  {
-    return $this->rank_index === null && $this->file_index !== null;
-  }
 
   /**
   * Check wether square has file.
@@ -164,14 +173,6 @@ class Square
   public function has_file() : bool
   {
     return $this->file_index !== null;
-  }
-
-  /**
-  * Check wether square is regular square.
-  */
-  public function is_regular() : bool
-  {
-    return $this->has_rank() && $this->has_file();
   }
 
   /**
