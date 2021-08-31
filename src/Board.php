@@ -113,19 +113,20 @@ class Board
 
   public function get_square($square) : string
   {
-    self::validate_square($square);
+    self::validate_regular_square($square);
     return $this->board[$square->get_rank_index() * 8 + $square->get_file_index()];
   }
 
   public function set_square($square, string $piece) : void
   {
-    self::validate_square($square);
+    self::validate_regular_square($square);
     self::validate_piece($piece);
     $this->board[$square->get_rank_index() * 8 + $square->get_file_index()] = $piece;
   }
 
 
-  private function push_squares_in_direction_to_array(array &$arr, $origin_square, int $north, int $east, bool $as_object, string $excluded_color = '') {
+  private function push_squares_in_direction_to_array(array &$arr, Square $origin_square, int $north, int $east, bool $as_object, string $excluded_color = '') : void
+  {
       $square = $origin_square;
       while ($square = $square->get_relative_square($north, $east)) {
         if (!$this->push_square_to_array($arr, $square, $as_object, $excluded_color)) {
@@ -139,9 +140,9 @@ class Board
   *
   * Only pushes regular squares, non-regular squares are ignored.
   * @param string $excluded_color If there is a piece of $excluded_color on the square, the square is NOT pushed to the array.
-  * @return bool Returns true if the square was pushed to the array, false otherwise.
+  * @return bool Returns false if the square is not regular or if it contains a piece.
   */
-  private function push_square_to_array(array &$arr, $square, bool $as_object, string $excluded_color = '') : bool
+  private function push_square_to_array(array &$arr, Square $square, bool $as_object, string $excluded_color = '') : bool
   {
     if (!$square->is_regular()) {
       return false;
@@ -157,7 +158,7 @@ class Board
     return true;
   }
 
-  private function push_squares_defended_by_king_to_array(array &$arr, $king_square, bool $as_object, string $excluded_color = '')
+  private function push_squares_defended_by_king_to_array(array &$arr, Square $king_square, bool $as_object, string $excluded_color = '') : void
   {
     $this->push_square_to_array($arr, $king_square->get_relative_square(0,1), $as_object, $excluded_color);
     $this->push_square_to_array($arr, $king_square->get_relative_square(-1,1), $as_object, $excluded_color);
@@ -169,7 +170,7 @@ class Board
     $this->push_square_to_array($arr, $king_square->get_relative_square(1,1), $as_object, $excluded_color);
   }
 
-  private function push_squares_defended_by_knight_to_array(array &$arr, $knight_square, bool $as_object, string $excluded_color = '')
+  private function push_squares_defended_by_knight_to_array(array &$arr, Square $knight_square, bool $as_object, string $excluded_color = '') : void
   {
     $this->push_square_to_array($arr, $knight_square->get_relative_square(2, 1), $as_object, $excluded_color);
     $this->push_square_to_array($arr, $knight_square->get_relative_square(2, -1), $as_object, $excluded_color);
@@ -181,7 +182,7 @@ class Board
     $this->push_square_to_array($arr, $knight_square->get_relative_square(-1, -2), $as_object, $excluded_color);
   }
 
-  private function push_squares_defended_by_bishop_to_array(array &$arr, $bishop_square, bool $as_object, string $excluded_color = '')
+  private function push_squares_defended_by_bishop_to_array(array &$arr, Square $bishop_square, bool $as_object, string $excluded_color = '') : void
   {
     $this->push_squares_in_direction_to_array($arr, $bishop_square, 1, 1, $as_object, $excluded_color);
     $this->push_squares_in_direction_to_array($arr, $bishop_square, -1, 1, $as_object, $excluded_color);
@@ -189,7 +190,7 @@ class Board
     $this->push_squares_in_direction_to_array($arr, $bishop_square, -1, -1, $as_object, $excluded_color);
   }
 
-  private function push_squares_defended_by_rook_to_array(array &$arr, $rook_square, bool $as_object, string $excluded_color = '')
+  private function push_squares_defended_by_rook_to_array(array &$arr, Square $rook_square, bool $as_object, string $excluded_color = '') : void
   {
     $this->push_squares_in_direction_to_array($arr, $rook_square, 1, 0, $as_object, $excluded_color);
     $this->push_squares_in_direction_to_array($arr, $rook_square, -1, 0, $as_object, $excluded_color);
@@ -197,13 +198,13 @@ class Board
     $this->push_squares_in_direction_to_array($arr, $rook_square, 0, -1, $as_object, $excluded_color);
   }
 
-  private function push_squares_defended_by_queen_to_array(array &$arr, $queen_square, bool $as_object, string $excluded_color = '')
+  private function push_squares_defended_by_queen_to_array(array &$arr, Square $queen_square, bool $as_object, string $excluded_color = '') : void
   {
     $this->push_squares_defended_by_rook_to_array($arr, $queen_square, $as_object, $excluded_color);
     $this->push_squares_defended_by_bishop_to_array($arr, $queen_square, $as_object, $excluded_color);
   }
 
-  private function push_squares_defended_by_not_a_pawn_to_array(array &$arr, string $piece, $piece_square, bool $as_object, string $excluded_color = '')
+  private function push_squares_defended_by_not_a_pawn_to_array(array &$arr, string $piece, Square $piece_square, bool $as_object, string $excluded_color = '') : void
   {
     switch ($piece) {
       case 'K':
@@ -229,29 +230,69 @@ class Board
     }
   }
 
+  private function push_square_with_pawn_capture_to_array(array &$arr, Square $target_square, Square $en_passant_square, bool $as_object, string $excluded_color) : void
+  {
+    if (!$target_square->is_regular()) {
+      return;
+    }
+
+    if ($target_square->export() == $en_passant_square->export()) {
+      $target_square->push_to_array($arr, $as_object);
+      return;
+    }
+
+    $target_piece = $this->get_square($target_square);
+    if (!$target_piece) {
+      return;
+    }
+
+    if ($excluded_color && self::get_piece_color($target_piece) == $excluded_color) {
+      return;
+    }
+    $target_square->push_to_array($arr, $as_object);
+  }
+
+  private function push_squares_reachable_by_white_pawn_to_array(array &$arr, Square $pawn_square, Square $en_passant_square, bool $as_object) : void
+  {
+    if ($pawn_square->get_rank_index() == 1 && $this->get_square($pawn_square->get_relative_square(0,1)) == '') {
+      $this->push_square_to_array($arr, $pawn_square->get_relative_square(0, 2), $as_object, 'w');
+    }
+    $this->push_square_to_array($arr, $pawn_square->get_relative_square(0, 1), $as_object, 'w');
+    $this->push_square_with_pawn_capture_to_array($arr, $pawn_square->get_relative_square(-1, 1), $en_passant_square, $as_object, 'w');
+    $this->push_square_with_pawn_capture_to_array($arr, $pawn_square->get_relative_square(1, 1), $en_passant_square, $as_object, 'w');
+  }
+
+  private function push_squares_reachable_by_black_pawn_to_array(array &$arr, Square $pawn_square, Square $en_passant_square, bool $as_object) : void
+  {
+    if ($pawn_square->get_rank_index() == 6 && $this->get_square($pawn_square->get_relative_square(0,-1)) == '') {
+      $this->push_square_to_array($arr, $pawn_square->get_relative_square(0, -2), $as_object, 'b');
+    }
+    $this->push_square_to_array($arr, $pawn_square->get_relative_square(0, -1), $as_object, 'b');
+    $this->push_square_with_pawn_capture_to_array($arr, $pawn_square->get_relative_square(-1, -1), $en_passant_square, $as_object, 'b');
+    $this->push_square_with_pawn_capture_to_array($arr, $pawn_square->get_relative_square(1, -1), $en_passant_square, $as_object, 'b');
+  }
+
   /**
   * Get array of all squares defended (or attacked) by $defender being on $defender_square.
   */
-  public function get_defended_squares($defender_square, $defender, bool $as_object = false) : array
+  public function get_defended_squares($defender_square, string $defender, bool $as_object = false) : array
   {
-    self::validate_square($defender_square);
+    self::validate_regular_square($defender_square);
     self::validate_piece($defender);
     $arr = [];
 
-    $add_target_square = function($target_square) use (&$arr, $as_object) {
-      $this->push_square_to_array($arr, $target_square, $as_object);
-    };
-
-    if ($defender == 'P') {
-      $add_target_square($defender_square->get_relative_square(-1,1));
-      $add_target_square($defender_square->get_relative_square(1,1));
-    } else if ($defender == 'p') {
-      $add_target_square($defender_square->get_relative_square(-1,-1));
-      $add_target_square($defender_square->get_relative_square(1,-1));
-    } else {
-      $this->push_squares_defended_by_not_a_pawn_to_array($arr, $defender, $defender_square, $as_object);
+    switch ($defender) {
+      case 'P':
+        $this->push_square_to_array($arr, $defender_square->get_relative_square(-1, 1), $as_object);
+        $this->push_square_to_array($arr, $defender_square->get_relative_square(1, 1), $as_object);
+        break;
+      case 'p':
+        $this->push_square_to_array($arr, $defender_square->get_relative_square(-1, -1), $as_object);
+        $this->push_square_to_array($arr, $defender_square->get_relative_square(1, -1), $as_object);
+        break;
+      default:
+        $this->push_squares_defended_by_not_a_pawn_to_array($arr, $defender, $defender_square, $as_object);
     }
-
     return $arr;
   }
 
@@ -260,52 +301,20 @@ class Board
   */
   public function get_reachable_squares($origin_square, $moving_piece, $en_passant_square = '-', bool $as_object = false) : array
   {
-    self::validate_square($origin_square);
+    self::validate_regular_square($origin_square);
     self::validate_piece($moving_piece);
-
-    if (is_string($en_passant_square)) {
-      $en_passant_square = new Square($en_passant_square);
-    }
+    self::validate_square($en_passant_square);
     $arr = [];
 
-    $add_pawn_capture = function($target_square) use (&$arr, $moving_piece, $en_passant_square, $as_object) {
-      if ($target_square->is_null()) {
-        return;
-      }
-      if ($target_square->export() == $en_passant_square->export()) {
-        $target_square->push_to_array($arr, $as_object);
-        return;
-      }
-      $target_piece = $this->get_square($target_square);
-      if (!$target_piece) {
-        return;
-      }
-      if (self::get_piece_color($target_piece) == self::get_piece_color($moving_piece)) {
-        return;
-      }
-      $target_square->push_to_array($arr, $as_object);
-    };
-
-    $add_target_square = function($target_square) use (&$arr, $moving_piece, $as_object) {
-      $this->push_square_to_array($arr, $target_square, $as_object, self::get_piece_color($moving_piece));
-    };
-
-    if ($moving_piece == 'P') {
-      if ($origin_square->get_rank_index() == 1 && $this->get_square($origin_square->get_relative_square(0,1)) == '') {
-        $add_target_square($origin_square->get_relative_square(0, 2));
-      }
-      $add_target_square($origin_square->get_relative_square(0,1));
-      $add_pawn_capture($origin_square->get_relative_square(-1,1));
-      $add_pawn_capture($origin_square->get_relative_square(1,1));
-    } else if ($moving_piece == 'p') {
-      if ($origin_square->get_rank_index() == 6 && $this->get_square($origin_square->get_relative_square(0,-1)) == '') {
-        $add_target_square($origin_square->get_relative_square(0, -2));
-      }
-      $add_target_square($origin_square->get_relative_square(0,-1));
-      $add_pawn_capture($origin_square->get_relative_square(-1,-1));
-      $add_pawn_capture($origin_square->get_relative_square(1,-1));
-    } else {
-      $this->push_squares_defended_by_not_a_pawn_to_array($arr, $moving_piece, $origin_square, $as_object, self::get_piece_color($moving_piece));
+    switch ($moving_piece) {
+      case 'P':
+        $this->push_squares_reachable_by_white_pawn_to_array($arr, $origin_square, $en_passant_square, $as_object);
+        break;
+      case 'p':
+        $this->push_squares_reachable_by_black_pawn_to_array($arr, $origin_square, $en_passant_square, $as_object);
+        break;
+      default:
+        $this->push_squares_defended_by_not_a_pawn_to_array($arr, $moving_piece, $origin_square, $as_object, self::get_piece_color($moving_piece));
     }
 
     return $arr;
@@ -440,13 +449,18 @@ class Board
     }
   }
 
+  private static function validate_regular_square(&$square) : void
+  {
+    self::validate_square($square);
+    if (!$square->is_regular()) {
+      throw new \OutOfBoundsException;
+    }
+  }
+
   private static function validate_square(&$square) : void
   {
     if (is_string($square)) {
       $square = new Square($square);
-    }
-    if (!$square->is_regular()) {
-      throw new \OutOfBoundsException;
     }
   }
 

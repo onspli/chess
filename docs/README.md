@@ -210,7 +210,7 @@ Board::set_square( mixed square, string piece ): void
 Get array of all squares defended (or attacked) by $defender being on $defender_square.
 
 ```php
-Board::get_defended_squares( mixed defender_square, mixed defender, bool as_object = false ): array
+Board::get_defended_squares( mixed defender_square, string defender, bool as_object = false ): array
 ```
 
 
@@ -221,7 +221,7 @@ Board::get_defended_squares( mixed defender_square, mixed defender, bool as_obje
 | Parameter | Type | Description |
 |-----------|------|-------------|
 | `defender_square` | **mixed** |  |
-| `defender` | **mixed** |  |
+| `defender` | **string** |  |
 | `as_object` | **bool** |  |
 
 
