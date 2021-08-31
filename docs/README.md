@@ -13,7 +13,7 @@
 | [Board::get_defended_squares](#Boardget_defended_squares) | Get array of all squares defended (or attacked) by $defender being on $defender_square. |
 | [Board::get_reachable_squares](#Boardget_reachable_squares) | Get array of all squares reachable from $origin_square by $moving_piece. |
 | [Board::get_pieces_on_squares](#Boardget_pieces_on_squares) | Get list of pieces on squares (including multiplicities, excluding blank squares). |
-| [Board::find](#Boardfind) | Returns array of squares containing piece. |
+| [Board::find_squares_with_piece](#Boardfind_squares_with_piece) | Returns array of squares containing piece. |
 | [Board::copy](#Boardcopy) |  |
 | [Board::get_active_piece](#Boardget_active_piece) |  |
 | [Board::get_opponents_piece](#Boardget_opponents_piece) |  |
@@ -285,12 +285,12 @@ Board::get_pieces_on_squares( array squares ): array
 
 
 ---
-### Board::find
+### Board::find_squares_with_piece
 
 Returns array of squares containing piece.
 
 ```php
-Board::find( string piece, bool as_object = false ): array
+Board::find_squares_with_piece( string piece, bool as_object = false ): array
 ```
 
 
@@ -335,7 +335,7 @@ Board::copy(  ): mixed
 
 
 ```php
-Board::get_active_piece( string piece, string active ): string
+Board::get_active_piece( string piece, string active_color ): string
 ```
 
 
@@ -346,7 +346,7 @@ Board::get_active_piece( string piece, string active ): string
 | Parameter | Type | Description |
 |-----------|------|-------------|
 | `piece` | **string** |  |
-| `active` | **string** |  |
+| `active_color` | **string** |  |
 
 
 **Return Value:**
@@ -361,7 +361,7 @@ Board::get_active_piece( string piece, string active ): string
 
 
 ```php
-Board::get_opponents_piece( string piece, string active ): string
+Board::get_opponents_piece( string piece, string active_color ): string
 ```
 
 
@@ -372,7 +372,7 @@ Board::get_opponents_piece( string piece, string active ): string
 | Parameter | Type | Description |
 |-----------|------|-------------|
 | `piece` | **string** |  |
-| `active` | **string** |  |
+| `active_color` | **string** |  |
 
 
 **Return Value:**

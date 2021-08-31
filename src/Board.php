@@ -338,7 +338,7 @@ class Board
   /**
   * Returns array of squares containing piece.
   */
-  public function find(string $piece, bool $as_object = false) : array
+  public function find_squares_with_piece(string $piece, bool $as_object = false) : array
   {
     $arr = [];
     for ($rank = 0; $rank < 8; $rank ++) {
@@ -358,22 +358,22 @@ class Board
     return new self($this->export());
   }
 
-  public static function get_active_piece(string $piece, string $active) : string
+  public static function get_active_piece(string $piece, string $active_color) : string
   {
-    self::validate_active($active);
+    self::validate_active($active_color);
     self::validate_piece($piece);
-    if ($active == 'w') {
+    if ($active_color == 'w') {
       return strtoupper($piece);
     } else {
       return strtolower($piece);
     }
   }
 
-  public static function get_opponents_piece(string $piece, string $active) : string
+  public static function get_opponents_piece(string $piece, string $active_color) : string
   {
-    self::validate_active($active);
+    self::validate_active($active_color);
     self::validate_piece($piece);
-    if ($active == 'b') {
+    if ($active_color == 'b') {
       return strtoupper($piece);
     } else {
       return strtolower($piece);
@@ -396,7 +396,7 @@ class Board
   public function is_check(string $active) : bool
   {
     self::validate_active($active);
-    $king_squares = $this->find(self::get_active_piece('K', $active), true);
+    $king_squares = $this->find_squares_with_piece(self::get_active_piece('K', $active), true);
     if (sizeof($king_squares) != 1) {
       throw new RulesException("There are " . sizeof($king_squares) . " kings on the board.");
     }

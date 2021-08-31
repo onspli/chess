@@ -29,16 +29,16 @@ final class BoardTest extends TestCase
     $board->set_square('a2', 'P');
     $board->set_square('e4', 'P');
 
-    $res = $board->find('P');
+    $res = $board->find_squares_with_piece('P');
     $this->assertEqualsCanonicalizing(['a2', 'e4'], $res);
 
-    $res = $board->find('N');
+    $res = $board->find_squares_with_piece('N');
     $this->assertEqualsCanonicalizing(['e5'], $res);
 
-    $res = $board->find('Q');
+    $res = $board->find_squares_with_piece('Q');
     $this->assertEquals([], $res);
 
-    $res = $board->find('');
+    $res = $board->find_squares_with_piece('');
     $this->assertEquals(61, sizeof($res));
   }
 
