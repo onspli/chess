@@ -205,16 +205,27 @@ class Board
 
   private function push_squares_defended_by_not_a_pawn_to_array(array &$arr, string $piece, $piece_square, bool $as_object, string $excluded_color = '')
   {
-    if ($piece == 'K' || $piece == 'k') {
-      $this->push_squares_defended_by_king_to_array($arr, $piece_square, $as_object, $excluded_color);
-    } else if ($piece == 'N' || $piece == 'n') {
-      $this->push_squares_defended_by_knight_to_array($arr, $piece_square, $as_object, $excluded_color);
-    } else if ($piece == 'B' || $piece == 'b') {
-      $this->push_squares_defended_by_bishop_to_array($arr, $piece_square, $as_object, $excluded_color);
-    } else if ($piece == 'R' || $piece == 'r') {
-      $this->push_squares_defended_by_rook_to_array($arr, $piece_square, $as_object, $excluded_color);
-    } else if ($piece == 'Q'  || $piece == 'q') {
-      $this->push_squares_defended_by_queen_to_array($arr, $piece_square, $as_object, $excluded_color);
+    switch ($piece) {
+      case 'K':
+      case 'k':
+        $this->push_squares_defended_by_king_to_array($arr, $piece_square, $as_object, $excluded_color);
+        break;
+      case 'N':
+      case 'n':
+        $this->push_squares_defended_by_knight_to_array($arr, $piece_square, $as_object, $excluded_color);
+        break;
+      case 'B':
+      case 'b':
+        $this->push_squares_defended_by_bishop_to_array($arr, $piece_square, $as_object, $excluded_color);
+        break;
+      case 'R':
+      case 'r':
+        $this->push_squares_defended_by_rook_to_array($arr, $piece_square, $as_object, $excluded_color);
+        break;
+      case 'Q':
+      case 'q':
+        $this->push_squares_defended_by_queen_to_array($arr, $piece_square, $as_object, $excluded_color);
+        break;
     }
   }
 
