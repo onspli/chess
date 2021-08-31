@@ -10,7 +10,7 @@
 | [Board::preview](#Boardpreview) | Preview of the board in ASCII graphics. |
 | [Board::get_square](#Boardget_square) |  |
 | [Board::set_square](#Boardset_square) |  |
-| [Board::get_defended_squares](#Boardget_defended_squares) | Get array of all squares attacked (or defended) by $defender being on $defender_square. |
+| [Board::get_defended_squares](#Boardget_defended_squares) | Get array of all squares defended (or attacked) by $defender being on $defender_square. |
 | [Board::get_reachable_squares](#Boardget_reachable_squares) | Get array of all squares reachable from $origin_square by $moving_piece. |
 | [Board::get_pieces_on_squares](#Boardget_pieces_on_squares) | Get list of pieces on squares (including multiplicities, excluding blank squares). |
 | [Board::find](#Boardfind) | Returns array of squares containing piece. |
@@ -207,7 +207,7 @@ Board::set_square( mixed square, string piece ): void
 ---
 ### Board::get_defended_squares
 
-Get array of all squares attacked (or defended) by $defender being on $defender_square.
+Get array of all squares defended (or attacked) by $defender being on $defender_square.
 
 ```php
 Board::get_defended_squares( mixed defender_square, mixed defender, bool as_object = false ): array

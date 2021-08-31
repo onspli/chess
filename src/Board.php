@@ -106,7 +106,7 @@ class Board
       if (!$piece) {
         $piece = '.';
       }
-      $preview_rank .= $piece; 
+      $preview_rank .= $piece;
     }
     return $preview_rank;
   }
@@ -125,22 +125,29 @@ class Board
   }
 
 
-  private function push_squares_in_direction_to_array(array &$arr, $origin_square, int $north, int $east, bool $as_object, string $moving_piece = '') {
+  private function push_squares_in_direction_to_array(array &$arr, $origin_square, int $north, int $east, bool $as_object, string $excluded_color = '') {
       $square = $origin_square;
       while ($square = $square->get_relative_square($north, $east)) {
-        if (!$this->push_square_to_array($arr, $square, $as_object, $moving_piece)) {
+        if (!$this->push_square_to_array($arr, $square, $as_object, $excluded_color)) {
           break;
         }
       }
   }
 
-  private function push_square_to_array(array &$arr, $square, bool $as_object, string $moving_piece = '') : bool
+  /**
+  * Push square to the end of the array.
+  *
+  * Only pushes regular squares, non-regular squares are ignored.
+  * @param string $excluded_color If there is a piece of $excluded_color on the square, the square is NOT pushed to the array.
+  * @return bool Returns true if the square was pushed to the array, false otherwise.
+  */
+  private function push_square_to_array(array &$arr, $square, bool $as_object, string $excluded_color = '') : bool
   {
-    if ($square->is_null()) {
+    if (!$square->is_regular()) {
       return false;
     }
     $target_piece = $this->get_square($square);
-    if ($target_piece && $moving_piece && self::get_piece_color($target_piece) == self::get_piece_color($moving_piece)) {
+    if ($target_piece && $excluded_color && self::get_piece_color($target_piece) == $excluded_color) {
       return false;
     }
     $square->push_to_array($arr, $as_object);
@@ -150,21 +157,75 @@ class Board
     return true;
   }
 
+  private function push_squares_defended_by_king_to_array(array &$arr, $king_square, bool $as_object, string $excluded_color = '')
+  {
+    $this->push_square_to_array($arr, $king_square->get_relative_square(0,1), $as_object, $excluded_color);
+    $this->push_square_to_array($arr, $king_square->get_relative_square(-1,1), $as_object, $excluded_color);
+    $this->push_square_to_array($arr, $king_square->get_relative_square(-1,0), $as_object, $excluded_color);
+    $this->push_square_to_array($arr, $king_square->get_relative_square(-1,-1), $as_object, $excluded_color);
+    $this->push_square_to_array($arr, $king_square->get_relative_square(0,-1), $as_object, $excluded_color);
+    $this->push_square_to_array($arr, $king_square->get_relative_square(1,-1), $as_object, $excluded_color);
+    $this->push_square_to_array($arr, $king_square->get_relative_square(1,0), $as_object, $excluded_color);
+    $this->push_square_to_array($arr, $king_square->get_relative_square(1,1), $as_object, $excluded_color);
+  }
+
+  private function push_squares_defended_by_knight_to_array(array &$arr, $knight_square, bool $as_object, string $excluded_color = '')
+  {
+    $this->push_square_to_array($arr, $knight_square->get_relative_square(2, 1), $as_object, $excluded_color);
+    $this->push_square_to_array($arr, $knight_square->get_relative_square(2, -1), $as_object, $excluded_color);
+    $this->push_square_to_array($arr, $knight_square->get_relative_square(-2, 1), $as_object, $excluded_color);
+    $this->push_square_to_array($arr, $knight_square->get_relative_square(-2, -1), $as_object, $excluded_color);
+    $this->push_square_to_array($arr, $knight_square->get_relative_square(1, 2), $as_object, $excluded_color);
+    $this->push_square_to_array($arr, $knight_square->get_relative_square(1, -2), $as_object, $excluded_color);
+    $this->push_square_to_array($arr, $knight_square->get_relative_square(-1, 2), $as_object, $excluded_color);
+    $this->push_square_to_array($arr, $knight_square->get_relative_square(-1, -2), $as_object, $excluded_color);
+  }
+
+  private function push_squares_defended_by_bishop_to_array(array &$arr, $bishop_square, bool $as_object, string $excluded_color = '')
+  {
+    $this->push_squares_in_direction_to_array($arr, $bishop_square, 1, 1, $as_object, $excluded_color);
+    $this->push_squares_in_direction_to_array($arr, $bishop_square, -1, 1, $as_object, $excluded_color);
+    $this->push_squares_in_direction_to_array($arr, $bishop_square, 1, -1, $as_object, $excluded_color);
+    $this->push_squares_in_direction_to_array($arr, $bishop_square, -1, -1, $as_object, $excluded_color);
+  }
+
+  private function push_squares_defended_by_rook_to_array(array &$arr, $rook_square, bool $as_object, string $excluded_color = '')
+  {
+    $this->push_squares_in_direction_to_array($arr, $rook_square, 1, 0, $as_object, $excluded_color);
+    $this->push_squares_in_direction_to_array($arr, $rook_square, -1, 0, $as_object, $excluded_color);
+    $this->push_squares_in_direction_to_array($arr, $rook_square, 0, 1, $as_object, $excluded_color);
+    $this->push_squares_in_direction_to_array($arr, $rook_square, 0, -1, $as_object, $excluded_color);
+  }
+
+  private function push_squares_defended_by_queen_to_array(array &$arr, $queen_square, bool $as_object, string $excluded_color = '')
+  {
+    $this->push_squares_defended_by_rook_to_array($arr, $queen_square, $as_object, $excluded_color);
+    $this->push_squares_defended_by_bishop_to_array($arr, $queen_square, $as_object, $excluded_color);
+  }
+
+  private function push_squares_defended_by_not_a_pawn_to_array(array &$arr, string $piece, $piece_square, bool $as_object, string $excluded_color = '')
+  {
+    if ($piece == 'K' || $piece == 'k') {
+      $this->push_squares_defended_by_king_to_array($arr, $piece_square, $as_object, $excluded_color);
+    } else if ($piece == 'N' || $piece == 'n') {
+      $this->push_squares_defended_by_knight_to_array($arr, $piece_square, $as_object, $excluded_color);
+    } else if ($piece == 'B' || $piece == 'b') {
+      $this->push_squares_defended_by_bishop_to_array($arr, $piece_square, $as_object, $excluded_color);
+    } else if ($piece == 'R' || $piece == 'r') {
+      $this->push_squares_defended_by_rook_to_array($arr, $piece_square, $as_object, $excluded_color);
+    } else if ($piece == 'Q'  || $piece == 'q') {
+      $this->push_squares_defended_by_queen_to_array($arr, $piece_square, $as_object, $excluded_color);
+    }
+  }
+
   /**
-  * Get array of all squares attacked (or defended) by $defender being on $defender_square.
+  * Get array of all squares defended (or attacked) by $defender being on $defender_square.
   */
   public function get_defended_squares($defender_square, $defender, bool $as_object = false) : array
   {
     self::validate_square($defender_square);
     self::validate_piece($defender);
     $arr = [];
-
-    /**
-    * Add square in the direction specified up to the first piece or the end of the board
-    */
-    $add_direction = function ($north, $east) use (&$arr, $defender_square, $as_object) {
-      $this->push_squares_in_direction_to_array($arr, $defender_square, $north, $east, $as_object);
-    };
 
     $add_target_square = function($target_square) use (&$arr, $as_object) {
       $this->push_square_to_array($arr, $target_square, $as_object);
@@ -176,37 +237,8 @@ class Board
     } else if ($defender == 'p') {
       $add_target_square($defender_square->get_relative_square(-1,-1));
       $add_target_square($defender_square->get_relative_square(1,-1));
-    } else if ($defender == 'K' || $defender == 'k') {
-      $add_target_square($defender_square->get_relative_square(0,1));
-      $add_target_square($defender_square->get_relative_square(-1,1));
-      $add_target_square($defender_square->get_relative_square(-1,0));
-      $add_target_square($defender_square->get_relative_square(-1,-1));
-      $add_target_square($defender_square->get_relative_square(0,-1));
-      $add_target_square($defender_square->get_relative_square(1,-1));
-      $add_target_square($defender_square->get_relative_square(1,0));
-      $add_target_square($defender_square->get_relative_square(1,1));
-    } else if ($defender == 'N' || $defender == 'n') {
-      $add_target_square($defender_square->get_relative_square(2, 1));
-      $add_target_square($defender_square->get_relative_square(2, -1));
-      $add_target_square($defender_square->get_relative_square(-2, 1));
-      $add_target_square($defender_square->get_relative_square(-2, -1));
-      $add_target_square($defender_square->get_relative_square(1, 2));
-      $add_target_square($defender_square->get_relative_square(1, -2));
-      $add_target_square($defender_square->get_relative_square(-1, 2));
-      $add_target_square($defender_square->get_relative_square(-1, -2));
     } else {
-      if ($defender == 'B' || $defender == 'b'  || $defender == 'Q'  || $defender == 'q') {
-        $add_direction(1, 1);
-        $add_direction(1, -1);
-        $add_direction(-1, 1);
-        $add_direction(-1, -1);
-      }
-      if ($defender == 'R' || $defender == 'r'  || $defender == 'Q'  || $defender == 'q') {
-        $add_direction(1, 0);
-        $add_direction(-1, 0);
-        $add_direction(0, 1);
-        $add_direction(0, -1);
-      }
+      $this->push_squares_defended_by_not_a_pawn_to_array($arr, $defender, $defender_square, $as_object);
     }
 
     return $arr;
@@ -224,13 +256,6 @@ class Board
       $en_passant_square = new Square($en_passant_square);
     }
     $arr = [];
-
-    /**
-    * Add square in the direction specified up to the first piece or the end of the board
-    */
-    $add_direction = function ($north, $east) use (&$arr, $origin_square, $moving_piece, $as_object) {
-      $this->push_squares_in_direction_to_array($arr, $origin_square, $north, $east, $as_object, $moving_piece);
-    };
 
     $add_pawn_capture = function($target_square) use (&$arr, $moving_piece, $en_passant_square, $as_object) {
       if ($target_square->is_null()) {
@@ -251,7 +276,7 @@ class Board
     };
 
     $add_target_square = function($target_square) use (&$arr, $moving_piece, $as_object) {
-      $this->push_square_to_array($arr, $target_square, $as_object, $moving_piece);
+      $this->push_square_to_array($arr, $target_square, $as_object, self::get_piece_color($moving_piece));
     };
 
     if ($moving_piece == 'P') {
@@ -268,37 +293,8 @@ class Board
       $add_target_square($origin_square->get_relative_square(0,-1));
       $add_pawn_capture($origin_square->get_relative_square(-1,-1));
       $add_pawn_capture($origin_square->get_relative_square(1,-1));
-    } else if ($moving_piece == 'K' || $moving_piece == 'k') {
-      $add_target_square($origin_square->get_relative_square(0,1));
-      $add_target_square($origin_square->get_relative_square(-1,1));
-      $add_target_square($origin_square->get_relative_square(-1,0));
-      $add_target_square($origin_square->get_relative_square(-1,-1));
-      $add_target_square($origin_square->get_relative_square(0,-1));
-      $add_target_square($origin_square->get_relative_square(1,-1));
-      $add_target_square($origin_square->get_relative_square(1,0));
-      $add_target_square($origin_square->get_relative_square(1,1));
-    } else if ($moving_piece == 'N' || $moving_piece == 'n') {
-      $add_target_square($origin_square->get_relative_square(2, 1));
-      $add_target_square($origin_square->get_relative_square(2, -1));
-      $add_target_square($origin_square->get_relative_square(-2, 1));
-      $add_target_square($origin_square->get_relative_square(-2, -1));
-      $add_target_square($origin_square->get_relative_square(1, 2));
-      $add_target_square($origin_square->get_relative_square(1, -2));
-      $add_target_square($origin_square->get_relative_square(-1, 2));
-      $add_target_square($origin_square->get_relative_square(-1, -2));
     } else {
-      if ($moving_piece == 'B' || $moving_piece == 'b'  || $moving_piece == 'Q'  || $moving_piece == 'q') {
-        $add_direction(1, 1);
-        $add_direction(1, -1);
-        $add_direction(-1, 1);
-        $add_direction(-1, -1);
-      }
-      if ($moving_piece == 'R' || $moving_piece == 'r'  || $moving_piece == 'Q'  || $moving_piece == 'q') {
-        $add_direction(1, 0);
-        $add_direction(-1, 0);
-        $add_direction(0, 1);
-        $add_direction(0, -1);
-      }
+      $this->push_squares_defended_by_not_a_pawn_to_array($arr, $moving_piece, $origin_square, $as_object, self::get_piece_color($moving_piece));
     }
 
     return $arr;
@@ -438,7 +434,7 @@ class Board
     if (is_string($square)) {
       $square = new Square($square);
     }
-    if ($square->is_null()) {
+    if (!$square->is_regular()) {
       throw new \OutOfBoundsException;
     }
   }
