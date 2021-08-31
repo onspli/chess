@@ -12,13 +12,13 @@
 | [Board::set_square](#Boardset_square) |  |
 | [Board::get_defended_squares](#Boardget_defended_squares) | Get array of all squares defended (or attacked) by $defender being on $defender_square. |
 | [Board::get_reachable_squares](#Boardget_reachable_squares) | Get array of all squares reachable from $origin_square by $moving_piece. |
-| [Board::get_pieces_on_squares](#Boardget_pieces_on_squares) | Get list of pieces on squares (including multiplicities, excluding blank squares). |
-| [Board::find_squares_with_piece](#Boardfind_squares_with_piece) | Returns array of squares containing piece. |
 | [Board::copy](#Boardcopy) |  |
 | [Board::get_active_piece](#Boardget_active_piece) |  |
 | [Board::get_opponents_piece](#Boardget_opponents_piece) |  |
 | [Board::get_piece_color](#Boardget_piece_color) |  |
-| [Board::is_check](#Boardis_check) | Returns true if king of active color is in check. |
+| [Board::is_square_attacked_by_piece](#Boardis_square_attacked_by_piece) |  |
+| [Board::is_square_attacked](#Boardis_square_attacked) |  |
+| [Board::is_check](#Boardis_check) |  |
 | [**FEN**](#FEN) | FEN is a standard notation for describing a particular board position of a chess game |
 | [FEN::__construct](#FEN__construct) | Load FEN or setup starting position. |
 | [FEN::export](#FENexport) | Export whole FEN string. |
@@ -260,57 +260,6 @@ Board::get_reachable_squares( mixed origin_square, mixed moving_piece, mixed en_
 
 
 ---
-### Board::get_pieces_on_squares
-
-Get list of pieces on squares (including multiplicities, excluding blank squares).
-
-```php
-Board::get_pieces_on_squares( array squares ): array
-```
-
-
-
-
-**Parameters:**
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `squares` | **array** |  |
-
-
-**Return Value:**
-
-
-
-
-
----
-### Board::find_squares_with_piece
-
-Returns array of squares containing piece.
-
-```php
-Board::find_squares_with_piece( string piece, bool as_object = false ): array
-```
-
-
-
-
-**Parameters:**
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `piece` | **string** |  |
-| `as_object` | **bool** |  |
-
-
-**Return Value:**
-
-
-
-
-
----
 ### Board::copy
 
 
@@ -407,12 +356,12 @@ Board::get_piece_color( string piece ): string
 
 
 ---
-### Board::is_check
+### Board::is_square_attacked_by_piece
 
-Returns true if king of active color is in check.
+
 
 ```php
-Board::is_check( string active ): bool
+Board::is_square_attacked_by_piece( mixed square, string piece ): bool
 ```
 
 
@@ -422,7 +371,59 @@ Board::is_check( string active ): bool
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `active` | **string** |  |
+| `square` | **mixed** |  |
+| `piece` | **string** |  |
+
+
+**Return Value:**
+
+
+
+
+
+---
+### Board::is_square_attacked
+
+
+
+```php
+Board::is_square_attacked( mixed square, string attacking_color ): bool
+```
+
+
+
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `square` | **mixed** |  |
+| `attacking_color` | **string** |  |
+
+
+**Return Value:**
+
+
+
+
+
+---
+### Board::is_check
+
+
+
+```php
+Board::is_check( string active_color ): bool
+```
+
+
+
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `active_color` | **string** |  |
 
 
 **Return Value:**

@@ -22,7 +22,8 @@ final class BoardTest extends TestCase
     $this->assertEquals('rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR', $board->export());
   }
 
-  public function testFind() : void
+  /*
+  public function testFindSquaresWithPiece() : void
   {
     $board = new Board('8/8/8/8/8/8/8/8');
     $board->set_square('e5', 'N');
@@ -41,8 +42,9 @@ final class BoardTest extends TestCase
     $res = $board->find_squares_with_piece('');
     $this->assertEquals(61, sizeof($res));
   }
+  */
 
-  public function testAttackedSquaresByPawns() : void
+  public function testDedendedSquaresByPawns() : void
   {
     $board = new Board;
     $res = $board->get_defended_squares('e4', 'P');
@@ -63,7 +65,7 @@ final class BoardTest extends TestCase
     $this->assertEqualsCanonicalizing(['g1'], $res);
   }
 
-  public function testAttackedSquaresByKings() : void
+  public function testDedendedSquaresByKings() : void
   {
     $board = new Board;
     $ref = ['a1', 'b1', 'c1', 'c2', 'c3', 'b3', 'a3', 'a2'];
@@ -78,7 +80,7 @@ final class BoardTest extends TestCase
     $this->assertEqualsCanonicalizing($ref, $res);
   }
 
-  public function testAttackedSquaresByKnights() : void
+  public function testDedendedSquaresByKnights() : void
   {
     $board = new Board;
     $ref = ['d2', 'c3', 'c5', 'd6', 'f6', 'g5', 'g3', 'f2'];
@@ -89,7 +91,7 @@ final class BoardTest extends TestCase
     $this->assertEqualsCanonicalizing($ref, $res);
   }
 
-  public function testAttackedSquaresByBishops() : void
+  public function testDedendedSquaresByBishops() : void
   {
     $board = new Board;
     $ref = ['f5', 'g6', 'h7', 'd3', 'c2', 'f3', 'g2', 'd5', 'c6', 'b7'];
@@ -100,7 +102,7 @@ final class BoardTest extends TestCase
     $this->assertEqualsCanonicalizing($ref, $res);
   }
 
-  public function testAttackedSquaresByRooks() : void
+  public function testDedendedSquaresByRooks() : void
   {
     $board = new Board;
     $ref = ['e5', 'e6', 'e7', 'e3', 'e2', 'f4', 'g4', 'h4', 'd4', 'c4', 'b4', 'a4'];
@@ -111,7 +113,7 @@ final class BoardTest extends TestCase
     $this->assertEqualsCanonicalizing($ref, $res);
   }
 
-  public function testAttackedSquaresByQueens() : void
+  public function testDedendedSquaresByQueens() : void
   {
     $board = new Board;
     $ref = ['f5', 'g6', 'h7', 'd3', 'c2', 'f3', 'g2', 'd5', 'c6', 'b7', 'e5', 'e6', 'e7', 'e3', 'e2', 'f4', 'g4', 'h4', 'd4', 'c4', 'b4', 'a4'];
@@ -148,6 +150,7 @@ final class BoardTest extends TestCase
     $board->set_square('-', 'p');
   }
 
+  /*
   public function testPiecesOnSquares() : void
   {
     $board = new Board;
@@ -155,6 +158,7 @@ final class BoardTest extends TestCase
     $res = $board->get_pieces_on_squares(['a1', 'e4', 'b1', 'g1', 'a8', 'h8', 'e1', 'b2', 'c2']);
     $this->assertEqualsCanonicalizing($ref, $res);
   }
+  */
 
   public function testCopy() : void
   {
@@ -219,14 +223,13 @@ final class BoardTest extends TestCase
   {
     $this->expectException(RulesException::class);
     $board = new Board('8/8/8/8/8/8/8/KK4kk');
-    $board->is_check('w');
+    $board->is_check('b');
   }
 
-  public function testCheckAdjacentKings() : void
+  public function testSquareAttackedByKing() : void
   {
-    $this->expectException(RulesException::class);
-    $board = new Board('8/8/8/8/8/8/8/Kk6');
-    $board->is_check('w');
+    $board = new Board('8/8/8/8/8/8/8/4K3');
+    $this->assertTrue($board->is_square_attacked('d1', 'w'));
   }
 
   public function testPreviewDoesNotThrow() : void
@@ -283,6 +286,13 @@ final class BoardTest extends TestCase
   {
     $this->assertEquals('w', Board::get_piece_color('K'));
     $this->assertEquals('b', Board::get_piece_color('k'));
+  }
+
+  public function testInvalidRegularPiece() : void
+  {
+    $board = new Board();
+    $this->expectException(ParseException::class);
+    $board->get_defended_squares('e4', 'A');
   }
 
 }

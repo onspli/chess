@@ -278,7 +278,7 @@ class Board
   public function get_defended_squares($defender_square, string $defender, bool $as_object = false) : array
   {
     self::validate_regular_square($defender_square);
-    self::validate_piece($defender);
+    self::validate_regular_piece($defender);
     $arr = [];
 
     switch ($defender) {
@@ -302,7 +302,7 @@ class Board
   public function get_reachable_squares($origin_square, $moving_piece, $en_passant_square = '-', bool $as_object = false) : array
   {
     self::validate_regular_square($origin_square);
-    self::validate_piece($moving_piece);
+    self::validate_regular_piece($moving_piece);
     self::validate_square($en_passant_square);
     $arr = [];
 
@@ -323,7 +323,7 @@ class Board
   /**
   * Get list of pieces on squares (including multiplicities, excluding blank squares).
   */
-  public function get_pieces_on_squares(array $squares) : array
+  private function get_pieces_on_squares(array $squares) : array
   {
     $arr = [];
     foreach ($squares as $square) {
@@ -338,12 +338,13 @@ class Board
   /**
   * Returns array of squares containing piece.
   */
-  public function find_squares_with_piece(string $piece, bool $as_object = false) : array
+  private function find_squares_with_piece(string $piece, bool $as_object = false) : array
   {
+    self::validate_piece($piece);
     $arr = [];
-    for ($rank = 0; $rank < 8; $rank ++) {
-      for ($file = 0; $file < 8; $file ++) {
-        $square = new Square($file, $rank);
+    for ($rank_index = 0; $rank_index < 8; $rank_index ++) {
+      for ($file_index = 0; $file_index < 8; $file_index ++) {
+        $square = new Square($file_index, $rank_index);
         $p = $this->get_square($square);
         if ($p == $piece) {
           $square->push_to_array($arr, $as_object);
@@ -360,7 +361,7 @@ class Board
 
   public static function get_active_piece(string $piece, string $active_color) : string
   {
-    self::validate_active($active_color);
+    self::validate_color($active_color);
     self::validate_piece($piece);
     if ($active_color == 'w') {
       return strtoupper($piece);
@@ -371,7 +372,7 @@ class Board
 
   public static function get_opponents_piece(string $piece, string $active_color) : string
   {
-    self::validate_active($active_color);
+    self::validate_color($active_color);
     self::validate_piece($piece);
     if ($active_color == 'b') {
       return strtoupper($piece);
@@ -390,54 +391,77 @@ class Board
     }
   }
 
-  /**
-  * Returns true if king of active color is in check.
-  */
-  public function is_check(string $active) : bool
+  private static function get_opponents_color(string $color) : string
   {
-    self::validate_active($active);
-    $king_squares = $this->find_squares_with_piece(self::get_active_piece('K', $active), true);
-    if (sizeof($king_squares) != 1) {
-      throw new RulesException("There are " . sizeof($king_squares) . " kings on the board.");
+    if ($color == 'b') {
+      return 'w';
+    } else {
+      return 'b';
     }
-    $king_square = $king_squares[0];
-
-    $check_check_from = function ($piece) use ($king_square, $active) {
-      $attacker_squares = $this->get_defended_squares($king_square, self::get_active_piece($piece, $active));
-      $attackers = $this->get_pieces_on_squares($attacker_squares);
-      return in_array(self::get_opponents_piece($piece, $active), $attackers);
-    };
-
-    if ($check_check_from('K')) {
-      throw new RulesException("Kings are on adjacent squares.");
-    }
-
-    if ($check_check_from('P')) {
-      return true;
-    }
-
-    if ($check_check_from('N')) {
-      return true;
-    }
-
-    if ($check_check_from('B')) {
-      return true;
-    }
-
-    if ($check_check_from('R')) {
-      return true;
-    }
-
-    if ($check_check_from('Q')) {
-      return true;
-    }
-    return false;
-
   }
 
-  private static function validate_active(string $active) : void
+  public function is_square_attacked_by_piece($square, string $piece) : bool
   {
-    if (!in_array($active, ['w', 'b'])) {
+    self::validate_regular_square($square);
+    self::validate_regular_piece($piece);
+
+    $shadow_piece = $piece;
+    if ($piece == 'p' || $piece == 'P') {
+      $shadow_piece = self::get_opponents_piece($piece, self::get_piece_color($piece));
+    }
+
+    $candidate_squares = $this->get_defended_squares($square, $shadow_piece);
+    $attackers = $this->get_pieces_on_squares($candidate_squares);
+    return in_array($piece, $attackers);
+  }
+
+  public function is_square_attacked($square, string $attacking_color) : bool
+  {
+    self::validate_regular_square($square);
+    self::validate_color($attacking_color);
+
+    if ($this->is_square_attacked_by_piece($square, self::get_active_piece('P', $attacking_color))) {
+      return true;
+    }
+
+    if ($this->is_square_attacked_by_piece($square, self::get_active_piece('N', $attacking_color))) {
+      return true;
+    }
+
+    if ($this->is_square_attacked_by_piece($square, self::get_active_piece('B', $attacking_color))) {
+      return true;
+    }
+
+    if ($this->is_square_attacked_by_piece($square, self::get_active_piece('R', $attacking_color))) {
+      return true;
+    }
+
+    if ($this->is_square_attacked_by_piece($square, self::get_active_piece('Q', $attacking_color))) {
+      return true;
+    }
+
+    if ($this->is_square_attacked_by_piece($square, self::get_active_piece('K', $attacking_color))) {
+      return true;
+    }
+
+    return false;
+  }
+
+  public function is_check(string $active_color) : bool
+  {
+    self::validate_color($active_color);
+
+    $king_squares = $this->find_squares_with_piece(self::get_active_piece('K', $active_color), true);
+    if (sizeof($king_squares) != 1) {
+      throw new RulesException("There are " . sizeof($king_squares) . " kings of active color on the board.");
+    }
+
+    return $this->is_square_attacked($king_squares[0], self::get_opponents_color($active_color));
+  }
+
+  private static function validate_color(string $color) : void
+  {
+    if (!in_array($color, ['w', 'b'])) {
       throw new ParseException;
     }
   }
@@ -449,11 +473,10 @@ class Board
     }
   }
 
-  private static function validate_regular_square(&$square) : void
+  private static function validate_regular_piece(string $piece) : void
   {
-    self::validate_square($square);
-    if (!$square->is_regular()) {
-      throw new \OutOfBoundsException;
+    if (!in_array($piece, ['P', 'N', 'B', 'R', 'Q', 'K', 'p', 'n', 'b', 'r', 'q', 'k'])) {
+      throw new ParseException("Invalid piece '$piece'.");
     }
   }
 
@@ -461,6 +484,14 @@ class Board
   {
     if (is_string($square)) {
       $square = new Square($square);
+    }
+  }
+
+  private static function validate_regular_square(&$square) : void
+  {
+    self::validate_square($square);
+    if (!$square->is_regular()) {
+      throw new \OutOfBoundsException;
     }
   }
 
