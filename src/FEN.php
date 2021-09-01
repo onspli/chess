@@ -202,6 +202,16 @@ class FEN
       $this->castling = $castling;
     }
 
+    /**
+    * Get castling availability of particular type.
+    *
+    * Possible castling types: "K" (White can castle kingside),
+    * "Q" (White can castle queenside), "k" (Black can castle kingside), and/or
+    * "q" (Black can castle queenside). A move that temporarily prevents castling
+    * does not negate this notation.
+    *
+    * @param string castling type
+    */
     public function get_castling_availability(string $type) : bool
     {
       self::validate_castling_type($type);
@@ -209,6 +219,17 @@ class FEN
       return in_array($type, $castling);
     }
 
+    /**
+    * Set castling availability of particular type.
+    *
+    * Possible castling types: "K" (White can castle kingside),
+    * "Q" (White can castle queenside), "k" (Black can castle kingside), and/or
+    * "q" (Black can castle queenside). A move that temporarily prevents castling
+    * does not negate this notation.
+    *
+    * @param string castling type
+    * @param bool set availability
+    */
     public function set_castling_availability(string $type, bool $avalability) : void
     {
       self::validate_castling_type($type);

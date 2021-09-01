@@ -5,20 +5,20 @@
 | Method | Description |
 |--------|-------------|
 | [**Board**](#Board) |  |
-| [Board::__construct](#Board__construct) | Piece placement (from White&#039;s perspective). Each rank is described,starting with rank 8 and ending with rank 1; within each rank,the contents of each square are described from file &quot;a&quot; through file &quot;h&quot;. |
-| [Board::export](#Boardexport) |  |
+| [Board::__construct](#Board__construct) | Load piece placement or setup initial position. |
+| [Board::export](#Boardexport) | Export piece placement string. |
 | [Board::preview](#Boardpreview) | Preview of the board in ASCII graphics. |
-| [Board::get_square](#Boardget_square) |  |
-| [Board::set_square](#Boardset_square) |  |
+| [Board::get_square](#Boardget_square) | Get piece on a particular square. |
+| [Board::set_square](#Boardset_square) | Set piece on a particular square. |
 | [Board::get_defended_squares](#Boardget_defended_squares) | Get array of all squares defended (or attacked) by $defender being on $defender_square. |
 | [Board::get_reachable_squares](#Boardget_reachable_squares) | Get array of all squares reachable from $origin_square by $moving_piece. |
-| [Board::copy](#Boardcopy) |  |
+| [Board::copy](#Boardcopy) | Creates deep copy of the board instance. |
 | [Board::get_active_piece](#Boardget_active_piece) |  |
 | [Board::get_opponents_piece](#Boardget_opponents_piece) |  |
-| [Board::get_piece_color](#Boardget_piece_color) |  |
-| [Board::is_square_attacked_by_piece](#Boardis_square_attacked_by_piece) |  |
-| [Board::is_square_attacked](#Boardis_square_attacked) |  |
-| [Board::is_check](#Boardis_check) |  |
+| [Board::get_piece_color](#Boardget_piece_color) | Returns the color of the piece. |
+| [Board::is_square_attacked_by_piece](#Boardis_square_attacked_by_piece) | Tells whether the square is attacked by particular piece |
+| [Board::is_square_attacked](#Boardis_square_attacked) | Tells whether the square is attacked by the color specified. |
+| [Board::is_check](#Boardis_check) | Tells whether the king of color specified is in check. |
 | [**FEN**](#FEN) | FEN is a standard notation for describing a particular board position of a chess game |
 | [FEN::__construct](#FEN__construct) | Load FEN or setup starting position. |
 | [FEN::export](#FENexport) | Export whole FEN string. |
@@ -31,8 +31,8 @@
 | [FEN::set_active_color](#FENset_active_color) | Set active color. |
 | [FEN::get_castling_string](#FENget_castling_string) | Castling availability. |
 | [FEN::set_castling_string](#FENset_castling_string) | Set castling availability. |
-| [FEN::get_castling_availability](#FENget_castling_availability) |  |
-| [FEN::set_castling_availability](#FENset_castling_availability) |  |
+| [FEN::get_castling_availability](#FENget_castling_availability) | Get castling availability of particular type. |
+| [FEN::set_castling_availability](#FENset_castling_availability) | Set castling availability of particular type. |
 | [FEN::get_en_passant](#FENget_en_passant) | Get En Passant target square. |
 | [FEN::set_en_passant](#FENset_en_passant) | Set En Passant target square. |
 | [FEN::get_halfmove](#FENget_halfmove) | Get Halfmove clock |
@@ -86,14 +86,15 @@
 
 ### Board::__construct
 
-Piece placement (from White's perspective). Each rank is described,
-starting with rank 8 and ending with rank 1; within each rank,
-the contents of each square are described from file "a" through file "h".
+Load piece placement or setup initial position.
 
 ```php
 Board::__construct( string pieces = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR' ): mixed
 ```
 
+Piece placement (from White's perspective). Each rank is described,
+starting with rank 8 and ending with rank 1; within each rank,
+the contents of each square are described from file "a" through file "h".
 Following the Standard Algebraic Notation (SAN), each piece is identified
 by a single letter taken from the standard English names (pawn = "P",
 knight = "N", bishop = "B", rook = "R", queen = "Q" and king = "K").
@@ -118,13 +119,21 @@ digits 1 through 8 (the number of empty squares), and "/" separates ranks.
 ---
 ### Board::export
 
-
+Export piece placement string.
 
 ```php
 Board::export(  ): string
 ```
 
-
+Piece placement (from White's perspective). Each rank is described,
+starting with rank 8 and ending with rank 1; within each rank,
+the contents of each square are described from file "a" through file "h".
+Following the Standard Algebraic Notation (SAN), each piece is identified
+by a single letter taken from the standard English names (pawn = "P",
+knight = "N", bishop = "B", rook = "R", queen = "Q" and king = "K").
+White pieces are designated using upper-case letters ("PNBRQK") while
+black pieces use lowercase ("pnbrqk"). Empty squares are noted using
+digits 1 through 8 (the number of empty squares), and "/" separates ranks.
 
 
 
@@ -156,7 +165,7 @@ Board::preview(  ): string
 ---
 ### Board::get_square
 
-
+Get piece on a particular square.
 
 ```php
 Board::get_square( mixed square ): string
@@ -174,14 +183,14 @@ Board::get_square( mixed square ): string
 
 **Return Value:**
 
-
+piece - one of PNBRQKpnbrqk or empty string for empty square
 
 
 
 ---
 ### Board::set_square
 
-
+Set piece on a particular square.
 
 ```php
 Board::set_square( mixed square, string piece ): void
@@ -262,7 +271,7 @@ Board::get_reachable_squares( mixed origin_square, mixed moving_piece, mixed en_
 ---
 ### Board::copy
 
-
+Creates deep copy of the board instance.
 
 ```php
 Board::copy(  ): mixed
@@ -333,7 +342,7 @@ Board::get_opponents_piece( string piece, string active_color ): string
 ---
 ### Board::get_piece_color
 
-
+Returns the color of the piece.
 
 ```php
 Board::get_piece_color( string piece ): string
@@ -351,20 +360,20 @@ Board::get_piece_color( string piece ): string
 
 **Return Value:**
 
-
+w|b
 
 
 
 ---
 ### Board::is_square_attacked_by_piece
 
-
+Tells whether the square is attacked by particular piece
 
 ```php
 Board::is_square_attacked_by_piece( mixed square, string piece ): bool
 ```
 
-
+The method also distinguishes the color of the piece.
 
 
 **Parameters:**
@@ -384,7 +393,7 @@ Board::is_square_attacked_by_piece( mixed square, string piece ): bool
 ---
 ### Board::is_square_attacked
 
-
+Tells whether the square is attacked by the color specified.
 
 ```php
 Board::is_square_attacked( mixed square, string attacking_color ): bool
@@ -410,10 +419,10 @@ Board::is_square_attacked( mixed square, string attacking_color ): bool
 ---
 ### Board::is_check
 
-
+Tells whether the king of color specified is in check.
 
 ```php
-Board::is_check( string active_color ): bool
+Board::is_check( string color ): bool
 ```
 
 
@@ -423,7 +432,7 @@ Board::is_check( string active_color ): bool
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `active_color` | **string** |  |
+| `color` | **string** |  |
 
 
 **Return Value:**
@@ -727,13 +736,16 @@ does not negate this notation.
 ---
 ### FEN::get_castling_availability
 
-
+Get castling availability of particular type.
 
 ```php
 FEN::get_castling_availability( string type ): bool
 ```
 
-
+Possible castling types: "K" (White can castle kingside),
+"Q" (White can castle queenside), "k" (Black can castle kingside), and/or
+"q" (Black can castle queenside). A move that temporarily prevents castling
+does not negate this notation.
 
 
 **Parameters:**
@@ -752,13 +764,16 @@ FEN::get_castling_availability( string type ): bool
 ---
 ### FEN::set_castling_availability
 
-
+Set castling availability of particular type.
 
 ```php
 FEN::set_castling_availability( string type, bool avalability ): void
 ```
 
-
+Possible castling types: "K" (White can castle kingside),
+"Q" (White can castle queenside), "k" (Black can castle kingside), and/or
+"q" (Black can castle queenside). A move that temporarily prevents castling
+does not negate this notation.
 
 
 **Parameters:**

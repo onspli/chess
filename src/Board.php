@@ -6,6 +6,8 @@ class Board
   private $board = [];
 
   /**
+  * Load piece placement or setup initial position.
+  *
   * Piece placement (from White's perspective). Each rank is described,
   * starting with rank 8 and ending with rank 1; within each rank,
   * the contents of each square are described from file "a" through file "h".
@@ -57,6 +59,19 @@ class Board
     }
   }
 
+  /**
+  * Export piece placement string.
+  *
+  * Piece placement (from White's perspective). Each rank is described,
+  * starting with rank 8 and ending with rank 1; within each rank,
+  * the contents of each square are described from file "a" through file "h".
+  * Following the Standard Algebraic Notation (SAN), each piece is identified
+  * by a single letter taken from the standard English names (pawn = "P",
+  * knight = "N", bishop = "B", rook = "R", queen = "Q" and king = "K").
+  * White pieces are designated using upper-case letters ("PNBRQK") while
+  * black pieces use lowercase ("pnbrqk"). Empty squares are noted using
+  * digits 1 through 8 (the number of empty squares), and "/" separates ranks.
+  */
   public function export() : string
   {
     $rank_pieces_array = [];
@@ -111,12 +126,24 @@ class Board
     return $preview_rank;
   }
 
+  /**
+  * Get piece on a particular square.
+  *
+  * @param string|Square square on the board.
+  * @return string piece - one of PNBRQKpnbrqk or empty string for empty square
+  */
   public function get_square($square) : string
   {
     self::validate_regular_square($square);
     return $this->board[$square->get_rank_index() * 8 + $square->get_file_index()];
   }
 
+  /**
+  * Set piece on a particular square.
+  *
+  * @param string|Square square on the board.
+  * @param string piece - one of PNBRQKpnbrqk or empty string for empty square
+  */
   public function set_square($square, string $piece) : void
   {
     self::validate_regular_square($square);
@@ -354,6 +381,9 @@ class Board
     return $arr;
   }
 
+  /**
+  * Creates deep copy of the board instance.
+  */
   public function copy()
   {
     return new self($this->export());
@@ -381,6 +411,10 @@ class Board
     }
   }
 
+  /**
+  * Returns the color of the piece.
+  * @return string w|b
+  */
   public static function get_piece_color(string $piece) : string
   {
     self::validate_piece($piece);
@@ -400,6 +434,11 @@ class Board
     }
   }
 
+  /**
+  * Tells whether the square is attacked by particular piece
+  *
+  * The method also distinguishes the color of the piece.
+  */
   public function is_square_attacked_by_piece($square, string $piece) : bool
   {
     self::validate_regular_square($square);
@@ -415,6 +454,9 @@ class Board
     return in_array($piece, $attackers);
   }
 
+  /**
+  * Tells whether the square is attacked by the color specified.
+  */
   public function is_square_attacked($square, string $attacking_color) : bool
   {
     self::validate_regular_square($square);
@@ -447,16 +489,20 @@ class Board
     return false;
   }
 
-  public function is_check(string $active_color) : bool
-  {
-    self::validate_color($active_color);
 
-    $king_squares = $this->find_squares_with_piece(self::get_active_piece('K', $active_color), true);
+  /**
+  * Tells whether the king of color specified is in check.
+  */
+  public function is_check(string $color) : bool
+  {
+    self::validate_color($color);
+
+    $king_squares = $this->find_squares_with_piece(self::get_active_piece('K', $color), true);
     if (sizeof($king_squares) != 1) {
       throw new RulesException("There are " . sizeof($king_squares) . " kings of active color on the board.");
     }
 
-    return $this->is_square_attacked($king_squares[0], self::get_opponents_color($active_color));
+    return $this->is_square_attacked($king_squares[0], self::get_opponents_color($color));
   }
 
   private static function validate_color(string $color) : void

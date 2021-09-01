@@ -1,6 +1,6 @@
 {
     "name": "onspli/chess",
-    "description": "PHP library for parsing chess games in PGN and FEN formats",
+    "description": "PHP library for reading and editing FEN and PGN chess formats.",
     "license": "MIT",
     "authors": [
         {
