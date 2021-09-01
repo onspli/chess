@@ -451,6 +451,7 @@ class FEN
             }
           }
         }
+        
       };
 
       $candidate_moves_for_pawn = function($moving_piece) use (&$candidate_moves) {
