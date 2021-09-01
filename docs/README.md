@@ -51,6 +51,7 @@
 | [Move::get_capture](#Moveget_capture) |  |
 | [Move::get_target](#Moveget_target) |  |
 | [Move::get_origin](#Moveget_origin) |  |
+| [Move::set_origin](#Moveset_origin) |  |
 | [Move::get_piece](#Moveget_piece) |  |
 | [Move::get_castling](#Moveget_castling) |  |
 | [Move::get_promotion](#Moveget_promotion) |  |
@@ -1172,6 +1173,31 @@ Move::get_origin( bool as_object = false ): mixed
 | Parameter | Type | Description |
 |-----------|------|-------------|
 | `as_object` | **bool** |  |
+
+
+**Return Value:**
+
+
+
+
+
+---
+### Move::set_origin
+
+
+
+```php
+Move::set_origin( mixed square ): void
+```
+
+
+
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `square` | **mixed** |  |
 
 
 **Return Value:**

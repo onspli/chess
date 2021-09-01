@@ -134,6 +134,14 @@ class Move
     }
   }
 
+  public function set_origin($square) : void
+  {
+    if (is_string($square)) {
+      $square = new Square($square);
+    }
+    $this->origin = $square;
+  }
+
   public function get_piece() : string
   {
     if ($this->piece == '') {
