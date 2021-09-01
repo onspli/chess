@@ -664,23 +664,16 @@ class FEN
       if ($new_board->is_check($this->get_active_color())) {
         throw new RulesException('King is in check.');
       }
-
       $this->set_board($new_board);
 
-      if ($move->get_piece() == 'P' || $move->get_capture()) {
-        $this->set_halfmove(0);
-      } else {
-        $this->set_halfmove($this->get_halfmove() + 1);
-      }
+      $this->after_move_update_halfmove($move);
+      $this->after_move_set_en_passant($move, $origin);
+      $this->after_move_update_castling_availability($move, $origin);
+      $this->after_move_change_active_color();
+    }
 
-      if ($move_piece == 'P' && $origin->get_rank_index() == 1 && $target->get_rank_index() == 3) {
-        $this->set_en_passant($target->get_relative_square(0, -1));
-      } else if ($move_piece == 'p' && $origin->get_rank_index() == 6 && $target->get_rank_index() == 4) {
-        $this->set_en_passant($target->get_relative_square(0, 1));
-      } else {
-        $this->set_en_passant('-');
-      }
-
+    private function after_move_update_castling_availability(Move $move, Square $origin) : void
+    {
       if ($move->get_piece() == 'R') {
         switch ($origin->export()) {
           case 'a1':
@@ -708,15 +701,39 @@ class FEN
             break;
         }
       }
+    }
 
+    private function after_move_change_active_color() : void
+    {
       if ($this->get_active_color() == 'b') {
         $this->set_fullmove($this->get_fullmove() + 1);
         $this->set_active_color('w');
       } else {
         $this->set_active_color('b');
       }
+    }
 
+    private function after_move_set_en_passant(Move $move, Square $origin) : void
+    {
+      $move_piece = $this->get_active_piece($move->get_piece());
+      $target = $move->get_target(true);
 
+      if ($move_piece == 'P' && $origin->get_rank_index() == 1 && $target->get_rank_index() == 3) {
+        $this->set_en_passant($target->get_relative_square(0, -1));
+      } else if ($move_piece == 'p' && $origin->get_rank_index() == 6 && $target->get_rank_index() == 4) {
+        $this->set_en_passant($target->get_relative_square(0, 1));
+      } else {
+        $this->set_en_passant('-');
+      }
+    }
+
+    private function after_move_update_halfmove(Move $move) : void
+    {
+      if ($move->get_piece() == 'P' || $move->get_capture()) {
+        $this->set_halfmove(0);
+      } else {
+        $this->set_halfmove($this->get_halfmove() + 1);
+      }
     }
 
 }
