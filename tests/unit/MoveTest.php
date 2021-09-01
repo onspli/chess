@@ -121,6 +121,13 @@ final class MoveTest extends TestCase
     new Move('O--O');
   }
 
+  public function testSetOrigin() : void
+  {
+    $move = new Move('e4');
+    $this->assertEquals('-', $move->get_origin());
+    $move->set_origin('e2');
+    $this->assertEquals('e2', $move->get_origin());
+  }
 
 
 }
