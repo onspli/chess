@@ -45,6 +45,8 @@
 | [FEN::is_fifty_move](#FENis_fifty_move) | Returns true if fifty move rule draw can be claimed by active color. |
 | [FEN::is_check](#FENis_check) | Returns true if king of active color is in check. |
 | [FEN::get_possible_moves](#FENget_possible_moves) | Array of all possible moves in current position. |
+| [FEN::copy](#FENcopy) | Creates deep copy of the FEN instance. |
+| [FEN::is_legal_move](#FENis_legal_move) | Tests if move is legal. |
 | [FEN::move](#FENmove) | Perform a move. |
 | [**Move**](#Move) | Class for parsing moves in SAN (standard algebraic notation). |
 | [Move::__construct](#Move__construct) |  |
@@ -1053,6 +1055,50 @@ FEN::get_possible_moves(  ): array
 
 
 
+
+
+**Return Value:**
+
+
+
+
+
+---
+### FEN::copy
+
+Creates deep copy of the FEN instance.
+
+```php
+FEN::copy(  ): mixed
+```
+
+
+
+
+
+**Return Value:**
+
+
+
+
+
+---
+### FEN::is_legal_move
+
+Tests if move is legal.
+
+```php
+FEN::is_legal_move( string move ): bool
+```
+
+
+
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `move` | **string** |  |
 
 
 **Return Value:**

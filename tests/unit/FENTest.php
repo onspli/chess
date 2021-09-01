@@ -635,6 +635,16 @@ final class FENTest extends TestCase
   {
     $fen = new FEN;
     $this->assertEqualsCanonicalizing(['Nf3', 'Nh3', 'Na3', 'Nc3', 'a3', 'a4', 'b3', 'b4', 'c3', 'c4', 'd3', 'd4', 'e3', 'e4', 'f3', 'f4', 'g3', 'g4', 'h3', 'h4'], $fen->get_possible_moves());
+
+    $fen = new FEN;
+    $fen->set_active_color('w');
+    $fen->set_board('7k/8/8/8/2n5/1P1P4/8/K7');
+    $this->assertEqualsCanonicalizing(['Ka2', 'Kb1', 'bxc4', 'dxc4', 'b4', 'd4'], $fen->get_possible_moves());
+
+    $fen = new FEN;
+    $fen->set_active_color('w');
+    $fen->set_board('7k/8/8/8/2n5/1P6/8/K7');
+    $this->assertEqualsCanonicalizing(['Ka2', 'Kb1', 'bxc4', 'b4'], $fen->get_possible_moves());
   }
 
   public function testPossibleMovesAbiguious() : void
