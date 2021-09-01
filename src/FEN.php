@@ -204,18 +204,14 @@ class FEN
 
     public function get_castling_availability(string $type) : bool
     {
-      if (!in_array($type, ['K', 'Q', 'k', 'q'])) {
-        throw new ParseException("Invalid castling type '$type'.");
-      }
+      self::validate_castling_type($type);
       $castling = str_split($this->castling);
       return in_array($type, $castling);
     }
 
     public function set_castling_availability(string $type, bool $avalability) : void
     {
-      if (!in_array($type, ['K', 'Q', 'k', 'q'])) {
-        throw new ParseException("Invalid castling type '$type'.");
-      }
+      self::validate_castling_type($type);
       if ($this->get_castling_availability($type) === $avalability) {
         return;
       }
@@ -241,6 +237,13 @@ class FEN
       $castling = sizeof($castling) ? implode('', $castling) : '-';
 
       $this->set_castling_string($castling);
+    }
+
+    private static function validate_castling_type(string $type) : void
+    {
+      if (!in_array($type, ['K', 'Q', 'k', 'q'])) {
+        throw new ParseException("Invalid castling type '$type'.");
+      }
     }
 
     /**
