@@ -413,21 +413,14 @@ class FEN
 
       $candidate_moves_for_piece = function($moving_piece) use (&$candidate_moves) {
         $reachable_squares_origins = [];
-        for ($rank = 0; $rank < 8; $rank ++) {
-          for ($file = 0; $file < 8; $file ++) {
-            $origin_square = new Square($file, $rank);
-            $piece = $this->get_square($origin_square);
-            if ($piece != $moving_piece) {
-              continue;
+        $origin_candidates = $this->board->find_squares_with_piece($moving_piece, true);
+        foreach ($origin_candidates as $origin_square) {
+          $reachable_squares = $this->board->get_reachable_squares($origin_square, $moving_piece);
+          foreach ($reachable_squares as $reachable_square) {
+            if (!array_key_exists($reachable_square, $reachable_squares_origins)) {
+              $reachable_squares_origins[$reachable_square] = [];
             }
-
-            $reachable_squares = $this->board->get_reachable_squares($origin_square, $moving_piece);
-            foreach ($reachable_squares as $reachable_square) {
-              if (!array_key_exists($reachable_square, $reachable_squares_origins)) {
-                $reachable_squares_origins[$reachable_square] = [];
-              }
-              $reachable_squares_origins[$reachable_square][] = $origin_square;
-            }
+            $reachable_squares_origins[$reachable_square][] = $origin_square;
           }
         }
         foreach ($reachable_squares_origins as $reachable_square => $origins) {
@@ -451,33 +444,26 @@ class FEN
             }
           }
         }
-        
+
       };
 
       $candidate_moves_for_pawn = function($moving_piece) use (&$candidate_moves) {
-        for ($rank = 0; $rank < 8; $rank ++) {
-          for ($file = 0; $file < 8; $file ++) {
-            $origin_square = new Square($file, $rank);
-            $piece = $this->get_square($origin_square);
-            if ($piece != $moving_piece) {
-              continue;
+        $origin_candidates = $this->board->find_squares_with_piece($moving_piece, true);
+        foreach ($origin_candidates as $origin_square) {
+          $reachable_squares = $this->board->get_reachable_squares($origin_square, $moving_piece, $this->get_en_passant());
+          foreach ($reachable_squares as $reachable_square) {
+
+            if (($this->get_active_color() == 'w' && $origin_square->get_rank_index() == 6) ||
+                ($this->get_active_color() == 'b' && $origin_square->get_rank_index() == 1)) {
+                  $promotions = ['=N', '=B', '=R', '=Q'];
+            } else {
+              $promotions = [''];
             }
-
-            $reachable_squares = $this->board->get_reachable_squares($origin_square, $moving_piece, $this->get_en_passant());
-            foreach ($reachable_squares as $reachable_square) {
-
-              if (($this->get_active_color() == 'w' && $origin_square->get_rank_index() == 6) ||
-                  ($this->get_active_color() == 'b' && $origin_square->get_rank_index() == 1)) {
-                    $promotions = ['=N', '=B', '=R', '=Q'];
+            foreach ($promotions as $promotion) {
+              if ($this->get_square($reachable_square)) {
+                $candidate_moves[] = $origin_square->get_file() . 'x' . $reachable_square . $promotion;
               } else {
-                $promotions = [''];
-              }
-              foreach ($promotions as $promotion) {
-                if ($this->get_square($reachable_square)) {
-                  $candidate_moves[] = $origin_square->get_file() . 'x' . $reachable_square . $promotion;
-                } else {
-                  $candidate_moves[] = $reachable_square . $promotion;
-                }
+                $candidate_moves[] = $reachable_square . $promotion;
               }
             }
           }

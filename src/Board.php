@@ -365,7 +365,7 @@ class Board
   /**
   * Returns array of squares containing piece.
   */
-  private function find_squares_with_piece(string $piece, bool $as_object = false) : array
+  public function find_squares_with_piece(string $piece, bool $as_object = false) : array
   {
     self::validate_piece($piece);
     $arr = [];

@@ -12,6 +12,7 @@
 | [Board::set_square](#Boardset_square) | Set piece on a particular square. |
 | [Board::get_defended_squares](#Boardget_defended_squares) | Get array of all squares defended (or attacked) by $defender being on $defender_square. |
 | [Board::get_reachable_squares](#Boardget_reachable_squares) | Get array of all squares reachable from $origin_square by $moving_piece. |
+| [Board::find_squares_with_piece](#Boardfind_squares_with_piece) | Returns array of squares containing piece. |
 | [Board::copy](#Boardcopy) | Creates deep copy of the board instance. |
 | [Board::get_active_piece](#Boardget_active_piece) |  |
 | [Board::get_opponents_piece](#Boardget_opponents_piece) |  |
@@ -260,6 +261,32 @@ Board::get_reachable_squares( mixed origin_square, mixed moving_piece, mixed en_
 | `origin_square` | **mixed** |  |
 | `moving_piece` | **mixed** |  |
 | `en_passant_square` | **mixed** |  |
+| `as_object` | **bool** |  |
+
+
+**Return Value:**
+
+
+
+
+
+---
+### Board::find_squares_with_piece
+
+Returns array of squares containing piece.
+
+```php
+Board::find_squares_with_piece( string piece, bool as_object = false ): array
+```
+
+
+
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `piece` | **string** |  |
 | `as_object` | **bool** |  |
 
 
