@@ -13,7 +13,7 @@ final class MoveTest extends TestCase
 
     $move = new Move('e4');
     $this->assertEquals('', $move->get_castling());
-    $this->assertEquals('P', $move->get_piece());
+    $this->assertEquals('P', $move->get_piece_type());
     $this->assertEquals('e4', $move->get_target());
     $this->assertEquals('e4', $move->get_target(true)->export());
     $this->assertEquals('-', $move->get_origin());
@@ -23,25 +23,25 @@ final class MoveTest extends TestCase
     $this->assertFalse($move->get_capture());
 
     $move = new Move('Nxe4');
-    $this->assertEquals('N', $move->get_piece());
+    $this->assertEquals('N', $move->get_piece_type());
     $this->assertEquals('e4', $move->get_target());
     $this->assertEquals('-', $move->get_origin());
     $this->assertTrue($move->get_capture());
 
     $move = new Move('Rae1');
-    $this->assertEquals('R', $move->get_piece());
+    $this->assertEquals('R', $move->get_piece_type());
     $this->assertEquals('e1', $move->get_target());
     $this->assertEquals('a', $move->get_origin());
     $this->assertFalse($move->get_capture());
 
     $move = new Move('N3e1');
-    $this->assertEquals('N', $move->get_piece());
+    $this->assertEquals('N', $move->get_piece_type());
     $this->assertEquals('e1', $move->get_target());
     $this->assertEquals('3', $move->get_origin());
     $this->assertFalse($move->get_capture());
 
     $move = new Move('Qa3xe1');
-    $this->assertEquals('Q', $move->get_piece());
+    $this->assertEquals('Q', $move->get_piece_type());
     $this->assertEquals('e1', $move->get_target());
     $this->assertEquals('a3', $move->get_origin());
     $this->assertTrue($move->get_capture());
@@ -52,14 +52,14 @@ final class MoveTest extends TestCase
 
     $move = new Move('O-O');
     $this->assertEquals('O-O', $move->get_castling());
-    $this->assertEquals('K', $move->get_piece());
+    $this->assertEquals('K', $move->get_piece_type());
     $this->assertEquals('-', $move->get_target());
     $this->assertEquals('-', $move->get_origin());
     $this->assertFalse($move->get_capture());
 
     $move = new Move('O-O-O');
     $this->assertEquals('O-O-O', $move->get_castling());
-    $this->assertEquals('K', $move->get_piece());
+    $this->assertEquals('K', $move->get_piece_type());
     $this->assertEquals('-', $move->get_target());
     $this->assertEquals('-', $move->get_origin());
     $this->assertFalse($move->get_capture());

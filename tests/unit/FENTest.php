@@ -357,6 +357,15 @@ final class FENTest extends TestCase
     $fen = new FEN('rnbqkbnr/pppp1ppp/8/3Pp3/8/8/PPP1PPPP/RNBQKBNR w KQkq e6 0 1');
     $fen->move('dxe6');
     $this->assertEquals('rnbqkbnr/pppp1ppp/4P3/8/8/8/PPP1PPPP/RNBQKBNR', $fen->get_board());
+
+    $fen = new FEN('rnbqkbnr/pppp1ppp/8/3Pp3/8/8/PPP1PPPP/RNBQKBNR w KQkq e6 0 1');
+    $fen->move('dxe6');
+    $this->assertEquals('rnbqkbnr/pppp1ppp/4P3/8/8/8/PPP1PPPP/RNBQKBNR', $fen->get_board());
+
+    // capture on en passant square by another piece
+    $fen = new FEN('rnbqkbnr/pppp1ppp/8/3PpB2/8/8/PPP1PPPP/RNBQKBNR w KQkq e6 0 1');
+    $fen->move('Be6');
+    $this->assertEquals('rnbqkbnr/pppp1ppp/4B3/3Pp3/8/8/PPP1PPPP/RNBQKBNR', $fen->get_board());
   }
 
   public function testTargetSquareOccupied() : void

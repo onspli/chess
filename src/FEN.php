@@ -622,7 +622,7 @@ class FEN
 
     private function get_move_origin_candidates(Move $move) : array
     {
-      $move_piece = $this->get_active_piece($move->get_piece());
+      $move_piece = $this->get_active_piece($move->get_piece_type());
       $target = $move->get_target(true);
       $target_piece = $this->get_square($target);
 
@@ -642,12 +642,13 @@ class FEN
       return $origin_candidates;
     }
 
-    private function get_move_origin(Move $move, array $origin_candidates) : Square
+    private function get_move_origin(Move $move) : Square
     {
-      $move_piece = $this->get_active_piece($move->get_piece());
+      $origin_candidates = $this->get_move_origin_candidates($move);
+      $piece = $this->get_active_piece($move->get_piece_type());
       $filtered_origin_candidates = [];
       foreach ($origin_candidates as $origin_candidate) {
-        if ($this->get_square($origin_candidate) == $move_piece) {
+        if ($this->get_square($origin_candidate) == $piece) {
           if ($move->get_origin(true)->has_file() && $origin_candidate->get_file() != $move->get_origin(true)->get_file()) {
             continue;
           }
@@ -671,11 +672,11 @@ class FEN
 
     private function validate_capture_move(Move $move) : void
     {
-      $move_piece = $this->get_active_piece($move->get_piece());
+      $move_piece = $this->get_active_piece($move->get_piece_type());
       $target = $move->get_target(true);
       $target_piece = $this->get_square($target);
 
-      if ($move->get_capture() && $target_piece == '' && !($target->export() == $this->get_en_passant() && $move->get_piece() == 'P')) {
+      if ($move->get_capture() && $target_piece == '' && !($target->export() == $this->get_en_passant() && $move->get_piece_type() == 'P')) {
         throw new RulesException("Cannot capture on empty square.");
       }
 
@@ -694,13 +695,12 @@ class FEN
     private function standard_move(Move &$move) : void
     {
 
-      $move_piece = $this->get_active_piece($move->get_piece());
+      $move_piece = $this->get_active_piece($move->get_piece_type());
       $target = $move->get_target(true);
       $target_piece = $this->get_square($target);
 
       $this->validate_capture_move($move);
-      $origin_candidates = $this->get_move_origin_candidates($move);
-      $origin = $this->get_move_origin($move, $origin_candidates);
+      $origin = $this->get_move_origin($move);
 
       $new_board = $this->board->copy();
 
@@ -709,7 +709,7 @@ class FEN
         $new_board->set_square($target, $move->get_promotion());
       } else {
         $new_board->set_square($target, $move_piece);
-        if ($target->export() == $this->get_en_passant()) {
+        if ($move->get_piece_type() == 'P' && $target->export() == $this->get_en_passant()) {
           if ($this->get_active_color() == 'w') {
             $new_board->set_square($target->get_relative_square(0, -1), '');
           } else {
@@ -750,7 +750,7 @@ class FEN
 
       $this->after_move_update_halfmove($move);
       $this->after_move_set_en_passant($move);
-      $this->after_move_update_castling_availability($move->get_piece(), $move->get_origin(true));
+      $this->after_move_update_castling_availability($move->get_piece_type(), $move->get_origin(true));
       $this->after_move_change_active_color();
     }
 
@@ -779,7 +779,7 @@ class FEN
 
     private function after_move_set_en_passant(Move $move) : void
     {
-      $move_piece = $this->get_active_piece($move->get_piece());
+      $move_piece = $this->get_active_piece($move->get_piece_type());
       $target = $move->get_target(true);
       $origin = $move->get_origin(true);
 
@@ -794,7 +794,7 @@ class FEN
 
     private function after_move_update_halfmove(Move $move) : void
     {
-      if ($move->get_piece() == 'P' || $move->get_capture()) {
+      if ($move->get_piece_type() == 'P' || $move->get_capture()) {
         $this->set_halfmove(0);
       } else {
         $this->set_halfmove($this->get_halfmove() + 1);

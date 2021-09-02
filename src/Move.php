@@ -52,7 +52,7 @@ class Move
 
   private function validate_promotion() : void
   {
-    if ($this->get_promotion() && $this->get_piece() != 'P') {
+    if ($this->get_promotion() && $this->get_piece_type() != 'P') {
       throw new RulesException;
     }
 
@@ -60,7 +60,7 @@ class Move
       throw new RulesException;
     }
 
-    if (!$this->get_promotion() && $this->get_piece() == 'P' && ($this->target->get_rank_index() == 7 || $this->target->get_rank_index() == 0)) {
+    if (!$this->get_promotion() && $this->get_piece_type() == 'P' && ($this->target->get_rank_index() == 7 || $this->target->get_rank_index() == 0)) {
       throw new RulesException;
     }
   }
@@ -96,8 +96,8 @@ class Move
 
   private function san_piece() : string
   {
-    if ($this->get_piece() != 'P') {
-      return $this->get_piece();
+    if ($this->get_piece_type() != 'P') {
+      return $this->get_piece_type();
     }
     return '';
   }
@@ -146,7 +146,7 @@ class Move
     $this->origin = $square;
   }
 
-  public function get_piece() : string
+  public function get_piece_type() : string
   {
     if ($this->piece == '') {
       return 'P';

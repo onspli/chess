@@ -58,7 +58,7 @@
 | [Move::get_target](#Moveget_target) |  |
 | [Move::get_origin](#Moveget_origin) |  |
 | [Move::set_origin](#Moveset_origin) |  |
-| [Move::get_piece](#Moveget_piece) |  |
+| [Move::get_piece_type](#Moveget_piece_type) |  |
 | [Move::get_castling](#Moveget_castling) |  |
 | [Move::get_promotion](#Moveget_promotion) |  |
 | [Move::get_check_mate](#Moveget_check_mate) |  |
@@ -1340,12 +1340,12 @@ Move::set_origin( mixed square ): void
 
 
 ---
-### Move::get_piece
+### Move::get_piece_type
 
 
 
 ```php
-Move::get_piece(  ): string
+Move::get_piece_type(  ): string
 ```
 
 
