@@ -22,6 +22,7 @@
 | [Board::is_check](#Boardis_check) | Tells whether the king of color specified is in check. |
 | [**FEN**](#FEN) | FEN is a standard notation for describing a particular board position of a chess game |
 | [FEN::__construct](#FEN__construct) | Load FEN or setup starting position. |
+| [FEN::copy](#FENcopy) | Creates deep copy of the FEN instance. |
 | [FEN::export](#FENexport) | Export whole FEN string. |
 | [FEN::preview](#FENpreview) | Preview of the board in ASCII graphics. |
 | [FEN::get_board](#FENget_board) | Get piece placement. |
@@ -45,7 +46,6 @@
 | [FEN::is_fifty_move](#FENis_fifty_move) | Returns true if fifty move rule draw can be claimed by active color. |
 | [FEN::is_check](#FENis_check) | Returns true if king of active color is in check. |
 | [FEN::get_legal_moves](#FENget_legal_moves) | Array of all possible moves in current position. |
-| [FEN::copy](#FENcopy) | Creates deep copy of the FEN instance. |
 | [FEN::is_legal_move](#FENis_legal_move) | Tests if move is legal. |
 | [FEN::move](#FENmove) | Perform a move. |
 | [**Move**](#Move) | Class for parsing moves in SAN (standard algebraic notation). |
@@ -503,6 +503,25 @@ FEN::__construct( string fen = '' ): void
 | Parameter | Type | Description |
 |-----------|------|-------------|
 | `fen` | **string** |  |
+
+
+**Return Value:**
+
+
+
+
+
+---
+### FEN::copy
+
+Creates deep copy of the FEN instance.
+
+```php
+FEN::copy(  ): mixed
+```
+
+
+
 
 
 **Return Value:**
@@ -1050,25 +1069,6 @@ Array of all possible moves in current position.
 
 ```php
 FEN::get_legal_moves(  ): array
-```
-
-
-
-
-
-**Return Value:**
-
-
-
-
-
----
-### FEN::copy
-
-Creates deep copy of the FEN instance.
-
-```php
-FEN::copy(  ): mixed
 ```
 
 

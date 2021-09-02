@@ -54,6 +54,14 @@ class FEN
     }
 
     /**
+    * Creates deep copy of the FEN instance.
+    */
+    public function copy()
+    {
+      return new self($this->export());
+    }
+
+    /**
     * Export whole FEN string.
     * @return string FEN string
     */
@@ -399,11 +407,6 @@ class FEN
       return Board::get_piece_of_color($piece, Board::get_opposite_color($this->get_active_color()));
     }
 
-    private function is_active_piece(string $piece) : bool
-    {
-      return $this->get_active_piece($piece) == $piece;
-    }
-
     private function get_reachable_squares_origins($piece) : array
     {
       $reachable_squares_origins = [];
@@ -447,6 +450,9 @@ class FEN
       }
     }
 
+    /**
+    * Add possible moves for all pawns of specified color.
+    */
     private function push_pawns_pseudolegal_moves_to_array(array &$arr, string $color) : void
     {
       $piece = Board::get_piece_of_color('P', $color);
@@ -459,20 +465,27 @@ class FEN
       }
     }
 
+    /**
+    * Add pawn's moves from specified origin to specified target including all possible promotions.
+    */
     private function push_pawn_pseudolegal_move_to_array(array &$arr, Square $origin_square, Square $target_square) : void
     {
-      if (self::is_promoting_square($target_square, $this->get_active_color())) {
-        $promotions = ['=N', '=B', '=R', '=Q'];
-      } else {
-        $promotions = [''];
-      }
-
+      $promotions = $this->get_promotion_strings($target_square);
       foreach ($promotions as $promotion) {
         if ($this->is_capture($target_square)) {
           $arr[] = $origin_square->get_file() . 'x' . $target_square->export() . $promotion;
         } else {
           $arr[] = $target_square->export() . $promotion;
         }
+      }
+    }
+
+    private function get_promotion_strings(Square $target_square) : array
+    {
+      if (self::is_promoting_square($target_square, $this->get_active_color())) {
+        return ['=N', '=B', '=R', '=Q'];
+      } else {
+        return [''];
       }
     }
 
@@ -509,14 +522,6 @@ class FEN
       }
 
       return array_filter($pseudolegal_moves, [$this, 'is_legal_move']);
-    }
-
-    /**
-    * Creates deep copy of the FEN instance.
-    */
-    public function copy()
-    {
-      return new self($this->export());
     }
 
     /**
@@ -676,11 +681,14 @@ class FEN
         throw new RulesException("Target square is occupied.");
       }
 
-      if ($target_piece && $this->is_active_piece($target_piece)) {
+      if ($target_piece && Board::get_color_of_piece($target_piece) == $this->get_active_color()) {
         throw new RulesException("Cannot capture player's own piece.");
       }
     }
 
+    /**
+    * Perform non-castling move.
+    */
     private function standard_move(Move &$move) : void
     {
 
