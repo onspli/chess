@@ -284,8 +284,8 @@ final class BoardTest extends TestCase
 
   public function testPieceColor() : void
   {
-    $this->assertEquals('w', Board::get_piece_color('K'));
-    $this->assertEquals('b', Board::get_piece_color('k'));
+    $this->assertEquals('w', Board::get_color_of_piece('K'));
+    $this->assertEquals('b', Board::get_color_of_piece('k'));
   }
 
   public function testInvalidRegularPiece() : void

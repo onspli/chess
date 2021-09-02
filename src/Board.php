@@ -175,7 +175,7 @@ class Board
       return false;
     }
     $target_piece = $this->get_square($square);
-    if ($target_piece && $excluded_color && self::get_piece_color($target_piece) == $excluded_color) {
+    if ($target_piece && $excluded_color && self::get_color_of_piece($target_piece) == $excluded_color) {
       return false;
     }
     $square->push_to_array($arr, $as_object);
@@ -273,7 +273,7 @@ class Board
       return;
     }
 
-    if ($excluded_color && self::get_piece_color($target_piece) == $excluded_color) {
+    if ($excluded_color && self::get_color_of_piece($target_piece) == $excluded_color) {
       return;
     }
     $target_square->push_to_array($arr, $as_object);
@@ -341,7 +341,7 @@ class Board
         $this->push_squares_reachable_by_black_pawn_to_array($arr, $origin_square, $en_passant_square, $as_object);
         break;
       default:
-        $this->push_squares_defended_by_not_a_pawn_to_array($arr, $moving_piece, $origin_square, $as_object, self::get_piece_color($moving_piece));
+        $this->push_squares_defended_by_not_a_pawn_to_array($arr, $moving_piece, $origin_square, $as_object, self::get_color_of_piece($moving_piece));
     }
 
     return $arr;
@@ -391,33 +391,21 @@ class Board
 
   public static function get_active_piece(string $piece, string $active_color) : string
   {
-    self::validate_color($active_color);
-    self::validate_piece($piece);
-    if ($active_color == 'w') {
-      return strtoupper($piece);
-    } else {
-      return strtolower($piece);
-    }
+    return self::get_piece_of_color($piece, $active_color);
   }
 
   public static function get_opponents_piece(string $piece, string $active_color) : string
   {
-    self::validate_color($active_color);
-    self::validate_piece($piece);
-    if ($active_color == 'b') {
-      return strtoupper($piece);
-    } else {
-      return strtolower($piece);
-    }
+    return self::get_piece_of_color($piece, self::get_opponents_color($active_color));
   }
 
   /**
   * Returns the color of the piece.
   * @return string w|b
   */
-  public static function get_piece_color(string $piece) : string
+  public static function get_color_of_piece(string $piece) : string
   {
-    self::validate_piece($piece);
+    self::validate_regular_piece($piece);
     if ($piece == self::get_active_piece($piece, 'w')) {
       return 'w';
     } else {
@@ -425,8 +413,26 @@ class Board
     }
   }
 
-  private static function get_opponents_color(string $color) : string
+  /**
+  * Converts piece to requested color.
+  */
+  public static function get_piece_of_color(string $piece, string $color) : string
   {
+    self::validate_regular_piece($piece);
+    self::validate_color($color);
+    if ($color == 'w') {
+      return strtoupper($piece);
+    } else {
+      return strtolower($piece);
+    }
+  }
+
+  /**
+  * Get color opposite to color passed as an argument.
+  */
+  public static function get_opponents_color(string $color) : string
+  {
+    self::validate_color($color);
     if ($color == 'b') {
       return 'w';
     } else {
@@ -446,7 +452,7 @@ class Board
 
     $shadow_piece = $piece;
     if ($piece == 'p' || $piece == 'P') {
-      $shadow_piece = self::get_opponents_piece($piece, self::get_piece_color($piece));
+      $shadow_piece = self::get_opponents_piece($piece, self::get_color_of_piece($piece));
     }
 
     $candidate_squares = $this->get_defended_squares($square, $shadow_piece);

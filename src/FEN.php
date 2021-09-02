@@ -420,7 +420,7 @@ class FEN
       return $reachable_squares_origins;
     }
 
-    private function push_piece_pseudolegal_moves_to_array(array &$arr, $piece) : void
+    private function push_pieces_pseudolegal_moves_to_array(array &$arr, string $piece) : void
     {
       $reachable_squares_origins = $this->get_reachable_squares_origins($piece);
 
@@ -447,28 +447,38 @@ class FEN
       }
     }
 
-    private function push_pawn_pseudolegal_moves_to_array(array &$arr, $piece) : void
+    private function push_pawns_pseudolegal_moves_to_array(array &$arr, string $color) : void
     {
+      $piece = Board::get_piece_of_color('P', $color);
       $origin_squares = $this->board->find_squares_with_piece($piece, true);
       foreach ($origin_squares as $origin_square) {
         $target_squares = $this->board->get_reachable_squares($origin_square, $piece, $this->get_en_passant(), true);
         foreach ($target_squares as $target_square) {
-
-          if (self::is_promoting_square($target_square, $this->get_active_color())) {
-            $promotions = ['=N', '=B', '=R', '=Q'];
-          } else {
-            $promotions = [''];
-          }
-
-          foreach ($promotions as $promotion) {
-            if ($this->get_square($target_square)) {
-              $arr[] = $origin_square->get_file() . 'x' . $target_square->export() . $promotion;
-            } else {
-              $arr[] = $target_square->export() . $promotion;
-            }
-          }
+          $this->push_pawn_pseudolegal_move_to_array($arr, $origin_square, $target_square);
         }
       }
+    }
+
+    private function push_pawn_pseudolegal_move_to_array(array &$arr, Square $origin_square, Square $target_square) : void
+    {
+      if (self::is_promoting_square($target_square, $this->get_active_color())) {
+        $promotions = ['=N', '=B', '=R', '=Q'];
+      } else {
+        $promotions = [''];
+      }
+
+      foreach ($promotions as $promotion) {
+        if ($this->is_capture($target_square)) {
+          $arr[] = $origin_square->get_file() . 'x' . $target_square->export() . $promotion;
+        } else {
+          $arr[] = $target_square->export() . $promotion;
+        }
+      }
+    }
+
+    private function is_capture(Square $target_square) : bool
+    {
+      return $this->get_square($target_square) != '';
     }
 
     static private function is_promoting_square(Square $target_square) : bool
@@ -484,12 +494,12 @@ class FEN
     {
       $pseudolegal_moves = [];
 
-      $this->push_pawn_pseudolegal_moves_to_array($pseudolegal_moves, $this->get_active_piece('P'));
-      $this->push_piece_pseudolegal_moves_to_array($pseudolegal_moves, $this->get_active_piece('N'));
-      $this->push_piece_pseudolegal_moves_to_array($pseudolegal_moves, $this->get_active_piece('B'));
-      $this->push_piece_pseudolegal_moves_to_array($pseudolegal_moves, $this->get_active_piece('R'));
-      $this->push_piece_pseudolegal_moves_to_array($pseudolegal_moves, $this->get_active_piece('Q'));
-      $this->push_piece_pseudolegal_moves_to_array($pseudolegal_moves, $this->get_active_piece('K'));
+      $this->push_pawns_pseudolegal_moves_to_array($pseudolegal_moves, $this->get_active_color());
+      $this->push_pieces_pseudolegal_moves_to_array($pseudolegal_moves, $this->get_active_piece('N'));
+      $this->push_pieces_pseudolegal_moves_to_array($pseudolegal_moves, $this->get_active_piece('B'));
+      $this->push_pieces_pseudolegal_moves_to_array($pseudolegal_moves, $this->get_active_piece('R'));
+      $this->push_pieces_pseudolegal_moves_to_array($pseudolegal_moves, $this->get_active_piece('Q'));
+      $this->push_pieces_pseudolegal_moves_to_array($pseudolegal_moves, $this->get_active_piece('K'));
 
       if ($this->get_castling_availability($this->get_active_piece('Q'))) {
         $pseudolegal_moves[] = 'O-O-O';

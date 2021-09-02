@@ -16,7 +16,9 @@
 | [Board::copy](#Boardcopy) | Creates deep copy of the board instance. |
 | [Board::get_active_piece](#Boardget_active_piece) |  |
 | [Board::get_opponents_piece](#Boardget_opponents_piece) |  |
-| [Board::get_piece_color](#Boardget_piece_color) | Returns the color of the piece. |
+| [Board::get_color_of_piece](#Boardget_color_of_piece) | Returns the color of the piece. |
+| [Board::get_piece_of_color](#Boardget_piece_of_color) | Converts piece to requested color. |
+| [Board::get_opponents_color](#Boardget_opponents_color) | Get color opposite to color passed as an argument. |
 | [Board::is_square_attacked_by_piece](#Boardis_square_attacked_by_piece) | Tells whether the square is attacked by particular piece |
 | [Board::is_square_attacked](#Boardis_square_attacked) | Tells whether the square is attacked by the color specified. |
 | [Board::is_check](#Boardis_check) | Tells whether the king of color specified is in check. |
@@ -370,12 +372,12 @@ Board::get_opponents_piece( string piece, string active_color ): string
 
 
 ---
-### Board::get_piece_color
+### Board::get_color_of_piece
 
 Returns the color of the piece.
 
 ```php
-Board::get_piece_color( string piece ): string
+Board::get_color_of_piece( string piece ): string
 ```
 
 
@@ -391,6 +393,57 @@ Board::get_piece_color( string piece ): string
 **Return Value:**
 
 w|b
+
+
+
+---
+### Board::get_piece_of_color
+
+Converts piece to requested color.
+
+```php
+Board::get_piece_of_color( string piece, string color ): string
+```
+
+
+
+* This method is **static**.
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `piece` | **string** |  |
+| `color` | **string** |  |
+
+
+**Return Value:**
+
+
+
+
+
+---
+### Board::get_opponents_color
+
+Get color opposite to color passed as an argument.
+
+```php
+Board::get_opponents_color( string color ): string
+```
+
+
+
+* This method is **static**.
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `color` | **string** |  |
+
+
+**Return Value:**
+
+
 
 
 
