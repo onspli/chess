@@ -620,43 +620,46 @@ class FEN
       $move->set_origin($origin);
     }
 
-    private function get_move_origin_candidates(Move $move) : array
+    /**
+    * Get array of origin squares candidates.
+    * Square is origin square candidate if
+    *  - it contains $piece
+    *  - there is a pseudolegal move (ignoring king in check) of the $piece to $target_square
+    * Returns array of Square objects.
+    */
+    private function get_move_origin_candidates(string $piece, Square $target_square, bool $is_capture) : array
     {
-      $move_piece = $this->get_active_piece($move->get_piece_type());
-      $target = $move->get_target(true);
-      $target_piece = $this->get_square($target);
-
-      if ($move_piece == 'P' && !$move->get_capture()) {
-        $origin_candidates = [$target->get_relative_square(0, -1)];
-        if ($target->get_rank_index() == 3 && $this->get_square($target->get_relative_square(0, -1)) == '') {
-          $origin_candidates[] = $target->get_relative_square(0, -2);
+      if ($piece == 'P' && !$is_capture) {
+        $origin_candidates = [$target_square->get_relative_square(0, -1)];
+        if ($target_square->get_rank_index() == 3 && $this->board->is_square_vacant($target_square->get_relative_square(0, -1))) {
+          $origin_candidates[] = $target_square->get_relative_square(0, -2);
         }
-      } else if($move_piece == 'p' && !$move->get_capture()) {
-        $origin_candidates = [$target->get_relative_square(0, 1)];
-        if ($target->get_rank_index() == 4 && $this->get_square($target->get_relative_square(0, 1)) == '') {
-          $origin_candidates[] = $target->get_relative_square(0, 2);
+      } else if($piece == 'p' && !$is_capture) {
+        $origin_candidates = [$target_square->get_relative_square(0, 1)];
+        if ($target_square->get_rank_index() == 4 && $this->board->is_square_vacant($target_square->get_relative_square(0, 1))) {
+          $origin_candidates[] = $target_square->get_relative_square(0, 2);
         }
       } else {
-        $origin_candidates = $this->board->get_defended_squares($target, $this->get_opponents_piece($move_piece), true);
+        $origin_candidates = $this->board->get_defended_squares($target_square, $this->get_opponents_piece($piece), true);
       }
-      return $origin_candidates;
+
+      $closure_is_piece_on_square = function($square) use ($piece) { return $this->get_square($square) == $piece; };
+      return array_filter($origin_candidates, $closure_is_piece_on_square);
     }
 
     private function get_move_origin(Move $move) : Square
     {
-      $origin_candidates = $this->get_move_origin_candidates($move);
       $piece = $this->get_active_piece($move->get_piece_type());
+      $origin_candidates = $this->get_move_origin_candidates($piece, $move->get_target(true), $move->get_capture());
       $filtered_origin_candidates = [];
       foreach ($origin_candidates as $origin_candidate) {
-        if ($this->get_square($origin_candidate) == $piece) {
-          if ($move->get_origin(true)->has_file() && $origin_candidate->get_file() != $move->get_origin(true)->get_file()) {
-            continue;
-          }
-          if ($move->get_origin(true)->has_rank() && $origin_candidate->get_rank() != $move->get_origin(true)->get_rank()) {
-            continue;
-          }
-          $filtered_origin_candidates[] = $origin_candidate;
+        if ($move->get_origin(true)->has_file() && $origin_candidate->get_file() != $move->get_origin(true)->get_file()) {
+          continue;
         }
+        if ($move->get_origin(true)->has_rank() && $origin_candidate->get_rank() != $move->get_origin(true)->get_rank()) {
+          continue;
+        }
+        $filtered_origin_candidates[] = $origin_candidate;
       }
 
       if (sizeof($filtered_origin_candidates) == 0) {

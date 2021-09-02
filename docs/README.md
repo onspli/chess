@@ -12,6 +12,8 @@
 | [Board::preview](#Boardpreview) | Preview of the board in ASCII graphics. |
 | [Board::get_square](#Boardget_square) | Get piece on a particular square. |
 | [Board::set_square](#Boardset_square) | Set piece on a particular square. |
+| [Board::is_square_vacant](#Boardis_square_vacant) |  |
+| [Board::is_piece_on_square](#Boardis_piece_on_square) |  |
 | [Board::get_defended_squares](#Boardget_defended_squares) | Get array of all squares defended (or attacked) by $defender being on $defender_square. |
 | [Board::get_reachable_squares](#Boardget_reachable_squares) | Get array of all squares reachable from $origin_square by $moving_piece. |
 | [Board::find_squares_with_piece](#Boardfind_squares_with_piece) | Returns array of squares containing piece. |
@@ -251,6 +253,57 @@ Board::set_square( mixed square, string piece ): void
 |-----------|------|-------------|
 | `square` | **mixed** |  |
 | `piece` | **string** |  |
+
+
+**Return Value:**
+
+
+
+
+
+---
+### Board::is_square_vacant
+
+
+
+```php
+Board::is_square_vacant( mixed square ): bool
+```
+
+
+
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `square` | **mixed** |  |
+
+
+**Return Value:**
+
+
+
+
+
+---
+### Board::is_piece_on_square
+
+
+
+```php
+Board::is_piece_on_square( string piece, mixed square ): bool
+```
+
+
+
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `piece` | **string** |  |
+| `square` | **mixed** |  |
 
 
 **Return Value:**
