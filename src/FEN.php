@@ -748,39 +748,20 @@ class FEN
 
       $this->after_move_update_halfmove($move);
       $this->after_move_set_en_passant($move);
-      $this->after_move_update_castling_availability($move);
+      $this->after_move_update_castling_availability($move->get_piece(), $move->get_origin(true));
       $this->after_move_change_active_color();
     }
 
-    private function after_move_update_castling_availability(Move $move) : void
+    private function after_move_update_castling_availability(string $piece_type, Square $origin_square) : void
     {
-      $origin = $move->get_origin(true);
-      if ($move->get_piece() == 'R') {
-        switch ($origin->export()) {
-          case 'a1':
-            $this->set_castling_availability('Q', false);
-            break;
-          case 'h1':
-            $this->set_castling_availability('K', false);
-            break;
-          case 'a8':
-            $this->set_castling_availability('q', false);
-            break;
-          case 'h8':
-            $this->set_castling_availability('k', false);
-            break;
-        }
-      } else if ($move->get_piece() == 'K') {
-        switch ($origin->export()) {
-          case 'e1':
-            $this->set_castling_availability('Q', false);
-            $this->set_castling_availability('K', false);
-            break;
-          case 'e8':
-            $this->set_castling_availability('q', false);
-            $this->set_castling_availability('k', false);
-            break;
-        }
+      $origin_file = $origin_square->get_file();
+      if ($piece_type == 'R' && $origin_file == 'a') {
+        $this->set_castling_availability($this->get_active_piece('Q'), false);
+      } else if ($piece_type == 'R' && $origin_file == 'h') {
+        $this->set_castling_availability($this->get_active_piece('K'), false);
+      } else if ($piece_type == 'K' && $origin_file == 'e') {
+        $this->set_castling_availability($this->get_active_piece('Q'), false);
+        $this->set_castling_availability($this->get_active_piece('K'), false);
       }
     }
 
