@@ -44,7 +44,7 @@
 | [FEN::is_stalemate](#FENis_stalemate) | Returns true if king of active color is in stalemate. |
 | [FEN::is_fifty_move](#FENis_fifty_move) | Returns true if fifty move rule draw can be claimed by active color. |
 | [FEN::is_check](#FENis_check) | Returns true if king of active color is in check. |
-| [FEN::get_possible_moves](#FENget_possible_moves) | Array of all possible moves in current position. |
+| [FEN::get_legal_moves](#FENget_legal_moves) | Array of all possible moves in current position. |
 | [FEN::copy](#FENcopy) | Creates deep copy of the FEN instance. |
 | [FEN::is_legal_move](#FENis_legal_move) | Tests if move is legal. |
 | [FEN::move](#FENmove) | Perform a move. |
@@ -1045,12 +1045,12 @@ FEN::is_check(  ): bool
 
 
 ---
-### FEN::get_possible_moves
+### FEN::get_legal_moves
 
 Array of all possible moves in current position.
 
 ```php
-FEN::get_possible_moves(  ): array
+FEN::get_legal_moves(  ): array
 ```
 
 

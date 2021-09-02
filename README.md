@@ -192,7 +192,7 @@ pppppp.p
 PPPP.PPP
 RNBQKBNR
 */
-print_r($fen->get_possible_moves());
+print_r($fen->get_legal_moves());
 /*
 Array
 (

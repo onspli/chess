@@ -91,5 +91,5 @@ $fen = new Onspli\Chess\FEN;
 $fen->move('e4');
 $fen->move('g6');
 echo($fen->preview());
-print_r($fen->get_possible_moves());
+print_r($fen->get_legal_moves());
 ```

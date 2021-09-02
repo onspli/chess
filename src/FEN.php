@@ -362,7 +362,7 @@ class FEN
     */
     public function is_mate() : bool
     {
-      return $this->is_check() && sizeof($this->get_possible_moves()) == 0;
+      return $this->is_check() && sizeof($this->get_legal_moves()) == 0;
     }
 
     /**
@@ -370,7 +370,7 @@ class FEN
     */
     public function is_stalemate() : bool
     {
-      return !$this->is_check() && sizeof($this->get_possible_moves()) == 0;
+      return !$this->is_check() && sizeof($this->get_legal_moves()) == 0;
     }
 
     /**
@@ -404,7 +404,7 @@ class FEN
       return $this->get_active_piece($piece) == $piece;
     }
 
-    private function push_piece_candidate_moves_to_array(array &$arr, $piece) : void
+    private function get_reachable_squares_origins($piece) : array
     {
       $reachable_squares_origins = [];
       $origin_candidates = $this->board->find_squares_with_piece($piece, true);
@@ -417,6 +417,13 @@ class FEN
           $reachable_squares_origins[$reachable_square][] = $origin_square;
         }
       }
+      return $reachable_squares_origins;
+    }
+
+    private function push_piece_pseudolegal_moves_to_array(array &$arr, $piece) : void
+    {
+      $reachable_squares_origins = $this->get_reachable_squares_origins($piece);
+
       foreach ($reachable_squares_origins as $reachable_square => $origins) {
         $capture = '';
         if ($this->get_square($reachable_square)) {
@@ -440,52 +447,58 @@ class FEN
       }
     }
 
-    private function push_pawn_candidate_moves_to_array(array &$arr, $piece) : void
+    private function push_pawn_pseudolegal_moves_to_array(array &$arr, $piece) : void
     {
-      $origin_candidates = $this->board->find_squares_with_piece($piece, true);
-      foreach ($origin_candidates as $origin_square) {
-        $reachable_squares = $this->board->get_reachable_squares($origin_square, $piece, $this->get_en_passant());
-        foreach ($reachable_squares as $reachable_square) {
+      $origin_squares = $this->board->find_squares_with_piece($piece, true);
+      foreach ($origin_squares as $origin_square) {
+        $target_squares = $this->board->get_reachable_squares($origin_square, $piece, $this->get_en_passant(), true);
+        foreach ($target_squares as $target_square) {
 
-          if (($this->get_active_color() == 'w' && $origin_square->get_rank_index() == 6) ||
-              ($this->get_active_color() == 'b' && $origin_square->get_rank_index() == 1)) {
-                $promotions = ['=N', '=B', '=R', '=Q'];
+          if (self::is_promoting_square($target_square, $this->get_active_color())) {
+            $promotions = ['=N', '=B', '=R', '=Q'];
           } else {
             $promotions = [''];
           }
+
           foreach ($promotions as $promotion) {
-            if ($this->get_square($reachable_square)) {
-              $arr[] = $origin_square->get_file() . 'x' . $reachable_square . $promotion;
+            if ($this->get_square($target_square)) {
+              $arr[] = $origin_square->get_file() . 'x' . $target_square->export() . $promotion;
             } else {
-              $arr[] = $reachable_square . $promotion;
+              $arr[] = $target_square->export() . $promotion;
             }
           }
         }
       }
     }
 
+    static private function is_promoting_square(Square $target_square) : bool
+    {
+      $rank_index = $target_square->get_rank_index();
+      return $rank_index == 7 || $rank_index == 0;
+    }
+
     /**
     * Array of all possible moves in current position.
     */
-    public function get_possible_moves() : array
+    public function get_legal_moves() : array
     {
-      $candidate_moves = [];
+      $pseudolegal_moves = [];
 
-      $this->push_pawn_candidate_moves_to_array($candidate_moves, $this->get_active_piece('P'));
-      $this->push_piece_candidate_moves_to_array($candidate_moves, $this->get_active_piece('N'));
-      $this->push_piece_candidate_moves_to_array($candidate_moves, $this->get_active_piece('B'));
-      $this->push_piece_candidate_moves_to_array($candidate_moves, $this->get_active_piece('R'));
-      $this->push_piece_candidate_moves_to_array($candidate_moves, $this->get_active_piece('Q'));
-      $this->push_piece_candidate_moves_to_array($candidate_moves, $this->get_active_piece('K'));
+      $this->push_pawn_pseudolegal_moves_to_array($pseudolegal_moves, $this->get_active_piece('P'));
+      $this->push_piece_pseudolegal_moves_to_array($pseudolegal_moves, $this->get_active_piece('N'));
+      $this->push_piece_pseudolegal_moves_to_array($pseudolegal_moves, $this->get_active_piece('B'));
+      $this->push_piece_pseudolegal_moves_to_array($pseudolegal_moves, $this->get_active_piece('R'));
+      $this->push_piece_pseudolegal_moves_to_array($pseudolegal_moves, $this->get_active_piece('Q'));
+      $this->push_piece_pseudolegal_moves_to_array($pseudolegal_moves, $this->get_active_piece('K'));
 
       if ($this->get_castling_availability($this->get_active_piece('Q'))) {
-        $candidate_moves[] = 'O-O-O';
+        $pseudolegal_moves[] = 'O-O-O';
       }
       if ($this->get_castling_availability($this->get_active_piece('K'))) {
-        $candidate_moves[] = 'O-O';
+        $pseudolegal_moves[] = 'O-O';
       }
 
-      return array_filter($candidate_moves, [$this, 'is_legal_move']);
+      return array_filter($pseudolegal_moves, [$this, 'is_legal_move']);
     }
 
     /**

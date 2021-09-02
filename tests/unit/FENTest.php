@@ -634,17 +634,17 @@ final class FENTest extends TestCase
   public function testPossibleMoves() : void
   {
     $fen = new FEN;
-    $this->assertEqualsCanonicalizing(['Nf3', 'Nh3', 'Na3', 'Nc3', 'a3', 'a4', 'b3', 'b4', 'c3', 'c4', 'd3', 'd4', 'e3', 'e4', 'f3', 'f4', 'g3', 'g4', 'h3', 'h4'], $fen->get_possible_moves());
+    $this->assertEqualsCanonicalizing(['Nf3', 'Nh3', 'Na3', 'Nc3', 'a3', 'a4', 'b3', 'b4', 'c3', 'c4', 'd3', 'd4', 'e3', 'e4', 'f3', 'f4', 'g3', 'g4', 'h3', 'h4'], $fen->get_legal_moves());
 
     $fen = new FEN;
     $fen->set_active_color('w');
     $fen->set_board('7k/8/8/8/2n5/1P1P4/8/K7');
-    $this->assertEqualsCanonicalizing(['Ka2', 'Kb1', 'bxc4', 'dxc4', 'b4', 'd4'], $fen->get_possible_moves());
+    $this->assertEqualsCanonicalizing(['Ka2', 'Kb1', 'bxc4', 'dxc4', 'b4', 'd4'], $fen->get_legal_moves());
 
     $fen = new FEN;
     $fen->set_active_color('w');
     $fen->set_board('7k/8/8/8/2n5/1P6/8/K7');
-    $this->assertEqualsCanonicalizing(['Ka2', 'Kb1', 'bxc4', 'b4'], $fen->get_possible_moves());
+    $this->assertEqualsCanonicalizing(['Ka2', 'Kb1', 'bxc4', 'b4'], $fen->get_legal_moves());
   }
 
   public function testPossibleMovesAbiguious() : void
@@ -652,17 +652,17 @@ final class FENTest extends TestCase
     $fen = new FEN;
     $fen->set_active_color('w');
     $fen->set_board('2q4k/8/8/8/8/8/8/NK2N3');
-    $this->assertEqualsCanonicalizing(['Ka2', 'Kb2', 'Nac2', 'Nec2', 'Nb3', 'Nd3', 'Nf3', 'Ng2'], $fen->get_possible_moves());
+    $this->assertEqualsCanonicalizing(['Ka2', 'Kb2', 'Nac2', 'Nec2', 'Nb3', 'Nd3', 'Nf3', 'Ng2'], $fen->get_legal_moves());
 
     $fen = new FEN;
     $fen->set_active_color('w');
     $fen->set_board('2q4k/8/8/N7/8/8/8/NK6');
-    $this->assertEqualsCanonicalizing(['Ka2', 'Kb2', 'N1b3', 'Nc2', 'N5b3', 'Nc4', 'Nc6', 'Nb7'], $fen->get_possible_moves());
+    $this->assertEqualsCanonicalizing(['Ka2', 'Kb2', 'N1b3', 'Nc2', 'N5b3', 'Nc4', 'Nc6', 'Nb7'], $fen->get_legal_moves());
 
     $fen = new FEN;
     $fen->set_active_color('w');
     $fen->set_board('2q4k/8/8/8/8/N7/8/NK2N3');
-    $this->assertEqualsCanonicalizing(['Ka2', 'Kb2', 'Na1c2', 'Na3c2', 'Ne1c2', 'Nb3', 'Nd3', 'Nf3', 'Ng2', 'Nc4', 'Nb5'], $fen->get_possible_moves());
+    $this->assertEqualsCanonicalizing(['Ka2', 'Kb2', 'Na1c2', 'Na3c2', 'Ne1c2', 'Nb3', 'Nd3', 'Nf3', 'Ng2', 'Nc4', 'Nb5'], $fen->get_legal_moves());
 
   }
 
@@ -671,7 +671,7 @@ final class FENTest extends TestCase
     $fen = new FEN;
     $fen->set_active_color('w');
     $fen->set_board('1q5k/P7/8/8/8/8/8/K7');
-    $this->assertEqualsCanonicalizing(['Ka2', 'a8=N', 'a8=B', 'a8=R', 'a8=Q', 'axb8=N', 'axb8=B', 'axb8=R', 'axb8=Q'], $fen->get_possible_moves());
+    $this->assertEqualsCanonicalizing(['Ka2', 'a8=N', 'a8=B', 'a8=R', 'a8=Q', 'axb8=N', 'axb8=B', 'axb8=R', 'axb8=Q'], $fen->get_legal_moves());
   }
 
 
