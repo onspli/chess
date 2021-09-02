@@ -28,6 +28,14 @@ class Board
     }
   }
 
+  /**
+  * Creates deep copy of the board instance.
+  */
+  public function copy()
+  {
+    return new self($this->export());
+  }
+
   private function split_to_ranks(string $pieces) : array
   {
     $pieces = preg_replace('/\s+/', '', $pieces);
@@ -382,31 +390,13 @@ class Board
   }
 
   /**
-  * Creates deep copy of the board instance.
-  */
-  public function copy()
-  {
-    return new self($this->export());
-  }
-
-  public static function get_active_piece(string $piece, string $active_color) : string
-  {
-    return self::get_piece_of_color($piece, $active_color);
-  }
-
-  public static function get_opponents_piece(string $piece, string $active_color) : string
-  {
-    return self::get_piece_of_color($piece, self::get_opponents_color($active_color));
-  }
-
-  /**
   * Returns the color of the piece.
   * @return string w|b
   */
   public static function get_color_of_piece(string $piece) : string
   {
     self::validate_regular_piece($piece);
-    if ($piece == self::get_active_piece($piece, 'w')) {
+    if ($piece == self::get_piece_of_color($piece, 'w')) {
       return 'w';
     } else {
       return 'b';
@@ -430,7 +420,7 @@ class Board
   /**
   * Get color opposite to color passed as an argument.
   */
-  public static function get_opponents_color(string $color) : string
+  public static function get_opposite_color(string $color) : string
   {
     self::validate_color($color);
     if ($color == 'b') {
@@ -452,7 +442,7 @@ class Board
 
     $shadow_piece = $piece;
     if ($piece == 'p' || $piece == 'P') {
-      $shadow_piece = self::get_opponents_piece($piece, self::get_color_of_piece($piece));
+      $shadow_piece = self::get_piece_of_color($piece, self::get_opposite_color(self::get_color_of_piece($piece)));
     }
 
     $candidate_squares = $this->get_defended_squares($square, $shadow_piece);
@@ -468,27 +458,27 @@ class Board
     self::validate_regular_square($square);
     self::validate_color($attacking_color);
 
-    if ($this->is_square_attacked_by_piece($square, self::get_active_piece('P', $attacking_color))) {
+    if ($this->is_square_attacked_by_piece($square, self::get_piece_of_color('P', $attacking_color))) {
       return true;
     }
 
-    if ($this->is_square_attacked_by_piece($square, self::get_active_piece('N', $attacking_color))) {
+    if ($this->is_square_attacked_by_piece($square, self::get_piece_of_color('N', $attacking_color))) {
       return true;
     }
 
-    if ($this->is_square_attacked_by_piece($square, self::get_active_piece('B', $attacking_color))) {
+    if ($this->is_square_attacked_by_piece($square, self::get_piece_of_color('B', $attacking_color))) {
       return true;
     }
 
-    if ($this->is_square_attacked_by_piece($square, self::get_active_piece('R', $attacking_color))) {
+    if ($this->is_square_attacked_by_piece($square, self::get_piece_of_color('R', $attacking_color))) {
       return true;
     }
 
-    if ($this->is_square_attacked_by_piece($square, self::get_active_piece('Q', $attacking_color))) {
+    if ($this->is_square_attacked_by_piece($square, self::get_piece_of_color('Q', $attacking_color))) {
       return true;
     }
 
-    if ($this->is_square_attacked_by_piece($square, self::get_active_piece('K', $attacking_color))) {
+    if ($this->is_square_attacked_by_piece($square, self::get_piece_of_color('K', $attacking_color))) {
       return true;
     }
 
@@ -503,12 +493,12 @@ class Board
   {
     self::validate_color($color);
 
-    $king_squares = $this->find_squares_with_piece(self::get_active_piece('K', $color), true);
+    $king_squares = $this->find_squares_with_piece(self::get_piece_of_color('K', $color), true);
     if (sizeof($king_squares) != 1) {
       throw new RulesException("There are " . sizeof($king_squares) . " kings of active color on the board.");
     }
 
-    return $this->is_square_attacked($king_squares[0], self::get_opponents_color($color));
+    return $this->is_square_attacked($king_squares[0], self::get_opposite_color($color));
   }
 
   private static function validate_color(string $color) : void

@@ -391,12 +391,12 @@ class FEN
 
     private function get_active_piece(string $piece) : string
     {
-      return Board::get_active_piece($piece, $this->get_active_color());
+      return Board::get_piece_of_color($piece, $this->get_active_color());
     }
 
     private function get_opponents_piece(string $piece) : string
     {
-      return Board::get_opponents_piece($piece, $this->get_active_color());
+      return Board::get_piece_of_color($piece, Board::get_opposite_color($this->get_active_color()));
     }
 
     private function is_active_piece(string $piece) : bool

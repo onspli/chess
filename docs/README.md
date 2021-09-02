@@ -6,6 +6,7 @@
 |--------|-------------|
 | [**Board**](#Board) |  |
 | [Board::__construct](#Board__construct) | Load piece placement or setup initial position. |
+| [Board::copy](#Boardcopy) | Creates deep copy of the board instance. |
 | [Board::export](#Boardexport) | Export piece placement string. |
 | [Board::preview](#Boardpreview) | Preview of the board in ASCII graphics. |
 | [Board::get_square](#Boardget_square) | Get piece on a particular square. |
@@ -13,12 +14,9 @@
 | [Board::get_defended_squares](#Boardget_defended_squares) | Get array of all squares defended (or attacked) by $defender being on $defender_square. |
 | [Board::get_reachable_squares](#Boardget_reachable_squares) | Get array of all squares reachable from $origin_square by $moving_piece. |
 | [Board::find_squares_with_piece](#Boardfind_squares_with_piece) | Returns array of squares containing piece. |
-| [Board::copy](#Boardcopy) | Creates deep copy of the board instance. |
-| [Board::get_active_piece](#Boardget_active_piece) |  |
-| [Board::get_opponents_piece](#Boardget_opponents_piece) |  |
 | [Board::get_color_of_piece](#Boardget_color_of_piece) | Returns the color of the piece. |
 | [Board::get_piece_of_color](#Boardget_piece_of_color) | Converts piece to requested color. |
-| [Board::get_opponents_color](#Boardget_opponents_color) | Get color opposite to color passed as an argument. |
+| [Board::get_opposite_color](#Boardget_opposite_color) | Get color opposite to color passed as an argument. |
 | [Board::is_square_attacked_by_piece](#Boardis_square_attacked_by_piece) | Tells whether the square is attacked by particular piece |
 | [Board::is_square_attacked](#Boardis_square_attacked) | Tells whether the square is attacked by the color specified. |
 | [Board::is_check](#Boardis_check) | Tells whether the king of color specified is in check. |
@@ -114,6 +112,25 @@ digits 1 through 8 (the number of empty squares), and "/" separates ranks.
 | Parameter | Type | Description |
 |-----------|------|-------------|
 | `pieces` | **string** |  |
+
+
+**Return Value:**
+
+
+
+
+
+---
+### Board::copy
+
+Creates deep copy of the board instance.
+
+```php
+Board::copy(  ): mixed
+```
+
+
+
 
 
 **Return Value:**
@@ -301,77 +318,6 @@ Board::find_squares_with_piece( string piece, bool as_object = false ): array
 
 
 ---
-### Board::copy
-
-Creates deep copy of the board instance.
-
-```php
-Board::copy(  ): mixed
-```
-
-
-
-
-
-**Return Value:**
-
-
-
-
-
----
-### Board::get_active_piece
-
-
-
-```php
-Board::get_active_piece( string piece, string active_color ): string
-```
-
-
-
-* This method is **static**.
-**Parameters:**
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `piece` | **string** |  |
-| `active_color` | **string** |  |
-
-
-**Return Value:**
-
-
-
-
-
----
-### Board::get_opponents_piece
-
-
-
-```php
-Board::get_opponents_piece( string piece, string active_color ): string
-```
-
-
-
-* This method is **static**.
-**Parameters:**
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `piece` | **string** |  |
-| `active_color` | **string** |  |
-
-
-**Return Value:**
-
-
-
-
-
----
 ### Board::get_color_of_piece
 
 Returns the color of the piece.
@@ -423,12 +369,12 @@ Board::get_piece_of_color( string piece, string color ): string
 
 
 ---
-### Board::get_opponents_color
+### Board::get_opposite_color
 
 Get color opposite to color passed as an argument.
 
 ```php
-Board::get_opponents_color( string color ): string
+Board::get_opposite_color( string color ): string
 ```
 
 
