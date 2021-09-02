@@ -85,6 +85,12 @@ final class MoveTest extends TestCase
       $this->assertEquals('O-O-O', (new Move('O-O-O'))->export());
   }
 
+  public function testStringable() : void
+  {
+    $move = new Move('Nxe4');
+    $this->assertEquals('Nxe4', (string) $move);
+  }
+
   public function testIncompleteTarget() : void
   {
     $this->expectException(ParseException::class);

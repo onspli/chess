@@ -32,6 +32,12 @@ final class SquareTest extends TestCase
     $this->assertTrue($s->is_null());
   }
 
+  public function testStringable() : void
+  {
+    $s = new Square('e4');
+    $this->assertEquals('e4', (string) $s);
+  }
+
   public function testInitializationFile() : void
   {
     $s = new Square('e');

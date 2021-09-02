@@ -81,6 +81,10 @@ class Move
     return $str;
   }
 
+  public function __toString() : string
+  {
+    return $this->export();
+  }
 
   private function san_origin() : string
   {

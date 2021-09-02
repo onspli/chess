@@ -42,6 +42,11 @@ class Square
     }
   }
 
+  public function __toString() : string
+  {
+    return $this->export();
+  }
+
   /**
   * Get rank index of the square.
   *

@@ -7,6 +7,7 @@
 | [**Board**](#Board) |  |
 | [Board::__construct](#Board__construct) | Load piece placement or setup initial position. |
 | [Board::copy](#Boardcopy) | Creates deep copy of the board instance. |
+| [Board::__toString](#Board__toString) |  |
 | [Board::export](#Boardexport) | Export piece placement string. |
 | [Board::preview](#Boardpreview) | Preview of the board in ASCII graphics. |
 | [Board::get_square](#Boardget_square) | Get piece on a particular square. |
@@ -24,6 +25,7 @@
 | [FEN::__construct](#FEN__construct) | Load FEN or setup starting position. |
 | [FEN::copy](#FENcopy) | Creates deep copy of the FEN instance. |
 | [FEN::export](#FENexport) | Export whole FEN string. |
+| [FEN::__toString](#FEN__toString) |  |
 | [FEN::preview](#FENpreview) | Preview of the board in ASCII graphics. |
 | [FEN::get_board](#FENget_board) | Get piece placement. |
 | [FEN::set_board](#FENset_board) | Setup piece placement. |
@@ -51,6 +53,7 @@
 | [**Move**](#Move) | Class for parsing moves in SAN (standard algebraic notation). |
 | [Move::__construct](#Move__construct) |  |
 | [Move::export](#Moveexport) |  |
+| [Move::__toString](#Move__toString) |  |
 | [Move::get_capture](#Moveget_capture) |  |
 | [Move::get_target](#Moveget_target) |  |
 | [Move::get_origin](#Moveget_origin) |  |
@@ -65,6 +68,7 @@
 | [**RulesException**](#RulesException) |  |
 | [**Square**](#Square) | Class representing coordinates of a square on a chess board. |
 | [Square::__construct](#Square__construct) | Create square. |
+| [Square::__toString](#Square__toString) |  |
 | [Square::get_rank_index](#Squareget_rank_index) | Get rank index of the square. |
 | [Square::get_rank](#Squareget_rank) | Get rank of the square. |
 | [Square::get_file_index](#Squareget_file_index) | Get file index of the square. |
@@ -127,6 +131,25 @@ Creates deep copy of the board instance.
 
 ```php
 Board::copy(  ): mixed
+```
+
+
+
+
+
+**Return Value:**
+
+
+
+
+
+---
+### Board::__toString
+
+
+
+```php
+Board::__toString(  ): string
 ```
 
 
@@ -492,7 +515,7 @@ move according to chess rules.
 Load FEN or setup starting position.
 
 ```php
-FEN::__construct( string fen = '' ): void
+FEN::__construct( string fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1' ): void
 ```
 
 
@@ -546,6 +569,25 @@ FEN::export(  ): string
 **Return Value:**
 
 FEN string
+
+
+
+---
+### FEN::__toString
+
+
+
+```php
+FEN::__toString(  ): string
+```
+
+
+
+
+
+**Return Value:**
+
+
 
 
 
@@ -1185,6 +1227,25 @@ Move::export(  ): string
 
 
 ---
+### Move::__toString
+
+
+
+```php
+Move::__toString(  ): string
+```
+
+
+
+
+
+**Return Value:**
+
+
+
+
+
+---
 ### Move::get_capture
 
 
@@ -1442,6 +1503,25 @@ Creates null square if file or rank index is out of bounds.
 |-----------|------|-------------|
 | `san_or_file_index` | **mixed** |  |
 | `rank_index` | **mixed** |  |
+
+
+**Return Value:**
+
+
+
+
+
+---
+### Square::__toString
+
+
+
+```php
+Square::__toString(  ): string
+```
+
+
+
 
 
 **Return Value:**

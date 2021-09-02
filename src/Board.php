@@ -67,6 +67,11 @@ class Board
     }
   }
 
+  public function __toString() : string
+  {
+    return $this->export();
+  }
+
   /**
   * Export piece placement string.
   *

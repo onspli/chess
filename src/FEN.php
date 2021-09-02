@@ -28,29 +28,21 @@ class FEN
     * @param string $fen
     * @return void
     */
-    function __construct(string $fen = '')
+    function __construct(string $fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1')
     {
-      if ($fen)
-      {
-        $fen = trim($fen);
-        $fen = preg_replace('/\s+/', ' ', $fen);
-        $parts = explode(' ', $fen);
-        if (sizeof($parts) != 6) {
-          throw new ParseException("FEN has " . sizeof($parts) . " fields. It must have 6 fields.");
-        }
+      $fen = trim($fen);
+      $fen = preg_replace('/\s+/', ' ', $fen);
+      $parts = explode(' ', $fen);
+      if (sizeof($parts) != 6) {
+        throw new ParseException("FEN has " . sizeof($parts) . " fields. It must have 6 fields.");
+      }
 
-        $this->set_board($parts[0]);
-        $this->set_active_color($parts[1]);
-        $this->set_castling_string($parts[2]);
-        $this->set_en_passant($parts[3]);
-        $this->set_halfmove($parts[4]);
-        $this->set_fullmove($parts[5]);
-      }
-      else
-      {
-        $this->set_board('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR');
-        $this->set_en_passant('-');
-      }
+      $this->set_board($parts[0]);
+      $this->set_active_color($parts[1]);
+      $this->set_castling_string($parts[2]);
+      $this->set_en_passant($parts[3]);
+      $this->set_halfmove($parts[4]);
+      $this->set_fullmove($parts[5]);
     }
 
     /**
@@ -68,6 +60,11 @@ class FEN
     public function export() : string
     {
       return implode(' ', [$this->get_board(), $this->get_active_color(), $this->get_castling_string(), $this->get_en_passant(), $this->get_halfmove(), $this->get_fullmove()]);
+    }
+
+    public function __toString() : string
+    {
+      return $this->export();
     }
 
     /**
@@ -407,7 +404,7 @@ class FEN
       return Board::get_piece_of_color($piece, Board::get_opposite_color($this->get_active_color()));
     }
 
-    private function get_reachable_squares_origins($piece) : array
+    private function get_reachable_squares_origins(string $piece) : array
     {
       $reachable_squares_origins = [];
       $origin_candidates = $this->board->find_squares_with_piece($piece, true);
@@ -427,25 +424,30 @@ class FEN
     {
       $reachable_squares_origins = $this->get_reachable_squares_origins($piece);
 
-      foreach ($reachable_squares_origins as $reachable_square => $origins) {
-        $capture = '';
-        if ($this->get_square($reachable_square)) {
-          $capture = 'x';
-        }
-        if (sizeof($origins) == 1) {
-          $arr[] = strtoupper($piece) . $capture . $reachable_square;
-        } else if (sizeof($origins) == 2) {
-          if ($origins[0]->get_file_index() != $origins[1]->get_file_index()) {
-            $arr[] = strtoupper($piece) . $origins[0]->get_file() . $capture . $reachable_square;
-            $arr[] = strtoupper($piece) . $origins[1]->get_file() . $capture . $reachable_square;
-          } else {
-            $arr[] = strtoupper($piece) . $origins[0]->get_rank() . $capture . $reachable_square;
-            $arr[] = strtoupper($piece) . $origins[1]->get_rank() . $capture . $reachable_square;
-          }
+      foreach ($reachable_squares_origins as $target_square_str => $origin_squares) {
+        $this->push_piece_pseudolegal_moves_to_specific_target_square_to_array($arr, $piece, $origin_squares, new Square($target_square_str));
+      }
+    }
+
+    private function push_piece_pseudolegal_moves_to_specific_target_square_to_array(array &$arr, string $piece, array $origin_squares, Square $target_square) : void
+    {
+
+      $capture = $this->is_capture($target_square) ? 'x' : '';
+      $piece_type = Board::get_piece_of_color($piece, 'w');
+
+      if (sizeof($origin_squares) == 1) {
+        $arr[] = $piece_type . $capture . $target_square;
+      } else if (sizeof($origin_squares) == 2) {
+        if ($origin_squares[0]->get_file_index() != $origin_squares[1]->get_file_index()) {
+          $arr[] = $piece_type . $origin_squares[0]->get_file() . $capture . $target_square;
+          $arr[] = $piece_type . $origin_squares[1]->get_file() . $capture . $target_square;
         } else {
-          foreach ($origins as $origin) {
-            $arr[] = strtoupper($piece) . $origin->export() . $capture . $reachable_square;
-          }
+          $arr[] = $piece_type . $origin_squares[0]->get_rank() . $capture . $target_square;
+          $arr[] = $piece_type . $origin_squares[1]->get_rank() . $capture . $target_square;
+        }
+      } else {
+        foreach ($origin_squares as $origin_square) {
+          $arr[] = $piece_type . $origin_square . $capture . $target_square;
         }
       }
     }
@@ -473,9 +475,9 @@ class FEN
       $promotions = $this->get_promotion_strings($target_square);
       foreach ($promotions as $promotion) {
         if ($this->is_capture($target_square)) {
-          $arr[] = $origin_square->get_file() . 'x' . $target_square->export() . $promotion;
+          $arr[] = $origin_square->get_file() . 'x' . $target_square . $promotion;
         } else {
-          $arr[] = $target_square->export() . $promotion;
+          $arr[] = $target_square . $promotion;
         }
       }
     }

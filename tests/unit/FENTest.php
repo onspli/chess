@@ -8,6 +8,12 @@ use PHPUnit\Framework\TestCase;
 final class FENTest extends TestCase
 {
 
+  public function testStringable() : void
+  {
+      $fen = new FEN;
+      $this->assertEquals('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', (string) $fen);
+  }
+
   public function testSetFullmoveInvalid1() : void
   {
     $this->expectException(ParseException::class);
