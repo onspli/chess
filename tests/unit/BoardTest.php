@@ -170,14 +170,6 @@ final class BoardTest extends TestCase
     $this->assertFalse($board->is_square_vacant('e1'));
   }
 
-  public function testIsPieceOnSquare() : void
-  {
-    $board = new Board;
-    $this->assertTrue($board->is_piece_on_square('K', 'e1'));
-    $this->assertFalse($board->is_piece_on_square('k', 'e1'));
-    $this->assertFalse($board->is_piece_on_square('Q', 'e1'));
-  }
-
   public function testCopy() : void
   {
     $board1 = new Board('rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR');

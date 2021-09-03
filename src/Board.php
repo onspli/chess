@@ -169,11 +169,6 @@ class Board
     return $this->get_square($square) == '';
   }
 
-  public function is_piece_on_square(string $piece, $square) : bool
-  {
-    return $this->get_square($square) == $piece;
-  }
-  
   private function push_squares_in_direction_to_array(array &$arr, Square $origin_square, int $north, int $east, bool $as_object, string $excluded_color = '') : void
   {
       $square = $origin_square;

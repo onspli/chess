@@ -523,7 +523,7 @@ class FEN
         $pseudolegal_moves[] = 'O-O';
       }
 
-      return array_filter($pseudolegal_moves, [$this, 'is_legal_move']);
+      return array_values(array_filter($pseudolegal_moves, [$this, 'is_legal_move']));
     }
 
     /**
@@ -643,34 +643,38 @@ class FEN
         $origin_candidates = $this->board->get_defended_squares($target_square, $this->get_opponents_piece($piece), true);
       }
 
-      $closure_is_piece_on_square = function($square) use ($piece) { return $this->get_square($square) == $piece; };
-      return array_filter($origin_candidates, $closure_is_piece_on_square);
+      $is_piece_on_square = function($square) use ($piece) { return $this->get_square($square) == $piece; };
+      return array_filter($origin_candidates, $is_piece_on_square);
     }
 
     private function get_move_origin(Move $move) : Square
     {
       $piece = $this->get_active_piece($move->get_piece_type());
-      $origin_candidates = $this->get_move_origin_candidates($piece, $move->get_target(true), $move->get_capture());
-      $filtered_origin_candidates = [];
-      foreach ($origin_candidates as $origin_candidate) {
-        if ($move->get_origin(true)->has_file() && $origin_candidate->get_file() != $move->get_origin(true)->get_file()) {
-          continue;
-        }
-        if ($move->get_origin(true)->has_rank() && $origin_candidate->get_rank() != $move->get_origin(true)->get_rank()) {
-          continue;
-        }
-        $filtered_origin_candidates[] = $origin_candidate;
-      }
+      $move_origin = $move->get_origin(true);
 
-      if (sizeof($filtered_origin_candidates) == 0) {
+      $origin_candidates = $this->get_move_origin_candidates($piece, $move->get_target(true), $move->get_capture());
+
+      $does_origin_candidate_comply_with_move_origin = function ($origin_candidate) use ($move_origin) {
+        if ($move_origin->has_file() && $origin_candidate->get_file() != $move_origin->get_file()) {
+          return false;
+        }
+        if ($move_origin->has_rank() && $origin_candidate->get_rank() != $move_origin->get_rank()) {
+          return false;
+        }
+        return true;
+      };
+
+      $origin_candidates = array_filter($origin_candidates, $does_origin_candidate_comply_with_move_origin);
+
+      if (sizeof($origin_candidates) == 0) {
         throw new RulesException("Invalid move.");
       }
 
-      if (sizeof($filtered_origin_candidates) > 1) {
+      if (sizeof($origin_candidates) > 1) {
         throw new RulesException("Ambiguous move.");
       }
 
-      return $filtered_origin_candidates[0];
+      return reset($origin_candidates);
     }
 
     private function validate_capture_move(Move $move) : void
