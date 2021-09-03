@@ -682,9 +682,8 @@ class FEN
       return reset($origin_candidates);
     }
 
-    private function validate_capture_move(Move $move) : void
+    private function validate_move_target_square(Move $move) : void
     {
-      $move_piece = $this->get_active_piece($move->get_piece_type());
       $target = $move->get_target(true);
       $target_piece = $this->get_square($target);
 
@@ -706,11 +705,10 @@ class FEN
     */
     private function standard_move(Move &$move) : void
     {
+      $this->validate_move_target_square($move);
 
       $piece = $this->get_active_piece($move->get_piece_type());
       $target = $move->get_target(true);
-
-      $this->validate_capture_move($move);
       $origin = $this->get_move_origin($move);
 
       $new_board = $this->board->copy();
