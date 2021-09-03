@@ -707,9 +707,8 @@ class FEN
     private function standard_move(Move &$move) : void
     {
 
-      $move_piece = $this->get_active_piece($move->get_piece_type());
+      $piece = $this->get_active_piece($move->get_piece_type());
       $target = $move->get_target(true);
-      $target_piece = $this->get_square($target);
 
       $this->validate_capture_move($move);
       $origin = $this->get_move_origin($move);
@@ -720,7 +719,7 @@ class FEN
       if ($move->get_promotion()) {
         $new_board->set_square($target, $move->get_promotion());
       } else {
-        $new_board->set_square($target, $move_piece);
+        $new_board->set_square($target, $piece);
         if ($move->get_piece_type() == 'P' && $target->export() == $this->get_en_passant()) {
           if ($this->get_active_color() == 'w') {
             $new_board->set_square($target->get_relative_square(0, -1), '');
