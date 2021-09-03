@@ -647,6 +647,11 @@ class FEN
       return array_filter($origin_candidates, $is_piece_on_square);
     }
 
+    /**
+    * Get origin square of chess move.
+    * Standard chess moves notation specifies only piece and target square and ommits origin square
+    * when possible. We need to do some work to get the origin.
+    */
     private function get_move_origin(Move $move) : Square
     {
       $piece = $this->get_active_piece($move->get_piece_type());
