@@ -230,3 +230,38 @@ Array
 
 */
 ```
+
+Load game in PGN notation:
+``` php
+$pgn = new Onspli\Chess\PGN('[Event "Testing"] 1.Nf3 Nf6 2.c4 g6');
+echo($pgn->get_tag('Event'));
+// Testing
+echo($pgn->get_current_fen(true)->preview());
+/*
+rnbqkb.r
+pppppp.p
+.....np.
+........
+..P.....
+.....N..
+PP.PPPPP
+RNBQKB.R
+*/
+echo($pgn->get_fen_after_move(1, 'b', true)->preview());
+/*
+rnbqkb.r
+pppppppp
+.....n..
+........
+........
+.....N..
+PPPPPPPP
+RNBQKB.R
+*/
+$pgn->move('a4');
+echo($pgn->export());
+/*
+[Event "Testing"]
+1. Nf3 Nf6 2. c4 g6 3. a4
+*/
+```

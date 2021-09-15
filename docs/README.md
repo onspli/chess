@@ -66,6 +66,24 @@
 | [Move::get_annotation](#Moveget_annotation) |  |
 | [**NotImplementedException**](#NotImplementedException) |  |
 | [**ParseException**](#ParseException) |  |
+| [**PGN**](#PGN) |  |
+| [PGN::__construct](#PGN__construct) |  |
+| [PGN::export](#PGNexport) |  |
+| [PGN::set_tag](#PGNset_tag) |  |
+| [PGN::set_initial_fen](#PGNset_initial_fen) |  |
+| [PGN::unset_initial_fen](#PGNunset_initial_fen) |  |
+| [PGN::unset_tag](#PGNunset_tag) |  |
+| [PGN::get_tag](#PGNget_tag) |  |
+| [PGN::get_initial_fen](#PGNget_initial_fen) |  |
+| [PGN::get_current_fen](#PGNget_current_fen) | Get FEN of current position. |
+| [PGN::get_fen_after_halfmove](#PGNget_fen_after_halfmove) |  |
+| [PGN::get_fen_after_move](#PGNget_fen_after_move) |  |
+| [PGN::get_current_halfmove_number](#PGNget_current_halfmove_number) |  |
+| [PGN::get_initial_halfmove_number](#PGNget_initial_halfmove_number) |  |
+| [PGN::get_halfmove](#PGNget_halfmove) | Get halfmove in standard algebraic notation. |
+| [PGN::get_move](#PGNget_move) |  |
+| [PGN::get_halfmove_number](#PGNget_halfmove_number) |  |
+| [PGN::move](#PGNmove) | Perform move. |
 | [**RulesException**](#RulesException) |  |
 | [**Square**](#Square) | Class representing coordinates of a square on a chess board. |
 | [Square::__construct](#Square__construct) | Create square. |
@@ -1481,6 +1499,425 @@ Move::get_annotation(  ): string
 * Parent class: 
 
 
+## PGN
+
+
+
+
+
+* Full name: \Onspli\Chess\PGN
+
+
+### PGN::__construct
+
+
+
+```php
+PGN::__construct( string pgn = '' ): mixed
+```
+
+
+
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `pgn` | **string** |  |
+
+
+**Return Value:**
+
+
+
+
+
+---
+### PGN::export
+
+
+
+```php
+PGN::export(  ): string
+```
+
+
+
+
+
+**Return Value:**
+
+
+
+
+
+---
+### PGN::set_tag
+
+
+
+```php
+PGN::set_tag( string name, ?string value ): void
+```
+
+
+
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `name` | **string** |  |
+| `value` | **?string** |  |
+
+
+**Return Value:**
+
+
+
+
+
+---
+### PGN::set_initial_fen
+
+
+
+```php
+PGN::set_initial_fen( string fen ): void
+```
+
+
+
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `fen` | **string** |  |
+
+
+**Return Value:**
+
+
+
+
+
+---
+### PGN::unset_initial_fen
+
+
+
+```php
+PGN::unset_initial_fen(  ): void
+```
+
+
+
+
+
+**Return Value:**
+
+
+
+
+
+---
+### PGN::unset_tag
+
+
+
+```php
+PGN::unset_tag( string name ): void
+```
+
+
+
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `name` | **string** |  |
+
+
+**Return Value:**
+
+
+
+
+
+---
+### PGN::get_tag
+
+
+
+```php
+PGN::get_tag( string name ): ?string
+```
+
+
+
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `name` | **string** |  |
+
+
+**Return Value:**
+
+
+
+
+
+---
+### PGN::get_initial_fen
+
+
+
+```php
+PGN::get_initial_fen( bool as_object = false ): mixed
+```
+
+
+
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `as_object` | **bool** |  |
+
+
+**Return Value:**
+
+
+
+
+
+---
+### PGN::get_current_fen
+
+Get FEN of current position.
+
+```php
+PGN::get_current_fen( bool as_object = false ): mixed
+```
+
+
+
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `as_object` | **bool** |  |
+
+
+**Return Value:**
+
+
+
+
+
+---
+### PGN::get_fen_after_halfmove
+
+
+
+```php
+PGN::get_fen_after_halfmove( int halfmove_number, bool as_object = false ): mixed
+```
+
+
+
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `halfmove_number` | **int** |  |
+| `as_object` | **bool** |  |
+
+
+**Return Value:**
+
+
+
+
+
+---
+### PGN::get_fen_after_move
+
+
+
+```php
+PGN::get_fen_after_move( int move_number, string color, bool as_object = false ): mixed
+```
+
+
+
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `move_number` | **int** |  |
+| `color` | **string** |  |
+| `as_object` | **bool** |  |
+
+
+**Return Value:**
+
+
+
+
+
+---
+### PGN::get_current_halfmove_number
+
+
+
+```php
+PGN::get_current_halfmove_number(  ): int
+```
+
+
+
+
+
+**Return Value:**
+
+
+
+
+
+---
+### PGN::get_initial_halfmove_number
+
+
+
+```php
+PGN::get_initial_halfmove_number(  ): int
+```
+
+
+
+
+
+**Return Value:**
+
+
+
+
+
+---
+### PGN::get_halfmove
+
+Get halfmove in standard algebraic notation.
+
+```php
+PGN::get_halfmove( int halfmove_number, bool as_object = false ): mixed
+```
+
+Halfmove number starts with 1 (white's first move).
+
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `halfmove_number` | **int** |  |
+| `as_object` | **bool** |  |
+
+
+**Return Value:**
+
+
+
+
+
+---
+### PGN::get_move
+
+
+
+```php
+PGN::get_move( int move_number, string color, bool as_object = false ): mixed
+```
+
+
+
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `move_number` | **int** |  |
+| `color` | **string** |  |
+| `as_object` | **bool** |  |
+
+
+**Return Value:**
+
+
+
+
+
+---
+### PGN::get_halfmove_number
+
+
+
+```php
+PGN::get_halfmove_number( int move_number, string color ): int
+```
+
+
+
+* This method is **static**.
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `move_number` | **int** |  |
+| `color` | **string** |  |
+
+
+**Return Value:**
+
+
+
+
+
+---
+### PGN::move
+
+Perform move.
+
+```php
+PGN::move( string move ): void
+```
+
+The method validates syntax of the move, however it doesn't check
+the move is valid acording to chess rules.
+
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `move` | **string** |  |
+
+
+**Return Value:**
+
+
+
+
+
+---
 ## RulesException
 
 

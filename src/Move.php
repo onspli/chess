@@ -24,7 +24,7 @@ class Move
     if (preg_match('/^([O-]+)([+#]?)([!?]*)$/', $move, $matches)) {
       $castling = $matches[1];
       if ($castling != 'O-O' && $castling != 'O-O-O') {
-        throw new ParseException;
+        throw new ParseException('Move "' . $move . '" is not valid.');
       }
       $this->piece = 'K';
       $this->castling = $castling;
@@ -36,7 +36,7 @@ class Move
     }
 
     if (!preg_match('/^([PNBRQK]?)([a-h]?[1-8]?)([x]?)([a-h][1-8])(?:=([NBRQ]))?([+#]?)([!?]*)$/', $move, $matches)) {
-      throw new ParseException;
+      throw new ParseException('Move "' . $move . '" is not valid.');
     }
 
     $this->piece = $matches[1];

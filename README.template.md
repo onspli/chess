@@ -93,3 +93,13 @@ $fen->move('g6');
 echo($fen->preview());
 print_r($fen->get_legal_moves());
 ```
+
+Load game in PGN notation:
+``` php
+$pgn = new Onspli\Chess\PGN('[Event "Testing"] 1.Nf3 Nf6 2.c4 g6');
+echo($pgn->get_tag('Event'));
+echo($pgn->get_current_fen(true)->preview());
+echo($pgn->get_fen_after_move(1, 'b', true)->preview());
+$pgn->move('a4');
+echo($pgn->export());
+```
