@@ -258,10 +258,27 @@ pppppppp
 PPPPPPPP
 RNBQKB.R
 */
+
+echo($pgn->get_move(2, 'w'));
+// c4
+echo($pgn->get_halfmove(3));
+// c4
+echo($pgn->get_current_halfmove_number());
+// 4
+
+echo($pgn->get_fen_after_move(1, 'b'));
+// rnbqkb1r/pppppppp/5n2/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 2 2
+echo($pgn->get_fen_after_halfmove(2));
+// rnbqkb1r/pppppppp/5n2/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 2 2
+echo($pgn->get_initial_fen());
+// rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
+
 $pgn->move('a4');
+$pgn->set_tag('Site', 'Github');
 echo($pgn->export());
 /*
 [Event "Testing"]
+[Site "Github"]
 1. Nf3 Nf6 2. c4 g6 3. a4
 */
 ```
