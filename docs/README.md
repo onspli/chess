@@ -80,9 +80,9 @@
 | [PGN::get_tag](#PGNget_tag) | Read tag pair (header) value. |
 | [PGN::get_initial_fen](#PGNget_initial_fen) | Get initial position. |
 | [PGN::get_current_fen](#PGNget_current_fen) | Get FEN of current position. |
-| [PGN::get_fen_after_halfmove](#PGNget_fen_after_halfmove) | Get poosition after given halfmove. |
-| [PGN::get_last_halfmove_number](#PGNget_last_halfmove_number) |  |
-| [PGN::get_initial_halfmove_number](#PGNget_initial_halfmove_number) |  |
+| [PGN::get_fen_after_halfmove](#PGNget_fen_after_halfmove) | Get position after given halfmove. |
+| [PGN::get_last_halfmove_number](#PGNget_last_halfmove_number) | Get halfmove number of the last recorded move. |
+| [PGN::get_initial_halfmove_number](#PGNget_initial_halfmove_number) | Get halfmove number of the first recorder move. |
 | [PGN::get_halfmove](#PGNget_halfmove) | Get move in standard algebraic notation. |
 | [PGN::get_halfmove_number](#PGNget_halfmove_number) | Converts (move number, color) to halfmove number. |
 | [PGN::move](#PGNmove) | Perform move. |
@@ -1804,13 +1804,17 @@ Return position after last move.
 ---
 ### PGN::get_fen_after_halfmove
 
-Get poosition after given halfmove.
+Get position after given halfmove.
 
 ```php
 PGN::get_fen_after_halfmove( int halfmove_number, bool as_object = false ): mixed
 ```
 
-
+Some edge cases:
+```php
+$pgn->get_initial_fen() = $pgn->get_fen_after_halfmove($pgn->get_initial_halfmove_number() - 1);
+$pgn->get_current_fen() = $pgn->get_fen_after_halfmove($pgn->get_last_halfmove_number());
+```
 
 
 **Parameters:**
@@ -1830,7 +1834,7 @@ PGN::get_fen_after_halfmove( int halfmove_number, bool as_object = false ): mixe
 ---
 ### PGN::get_last_halfmove_number
 
-
+Get halfmove number of the last recorded move.
 
 ```php
 PGN::get_last_halfmove_number(  ): int
@@ -1849,7 +1853,7 @@ PGN::get_last_halfmove_number(  ): int
 ---
 ### PGN::get_initial_halfmove_number
 
-
+Get halfmove number of the first recorder move.
 
 ```php
 PGN::get_initial_halfmove_number(  ): int

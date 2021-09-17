@@ -168,7 +168,13 @@ class PGN
   }
 
   /**
-  * Get poosition after given halfmove.
+  * Get position after given halfmove.
+  *
+  * Some edge cases:
+  * ```php
+  * $pgn->get_initial_fen() = $pgn->get_fen_after_halfmove($pgn->get_initial_halfmove_number() - 1);
+  * $pgn->get_current_fen() = $pgn->get_fen_after_halfmove($pgn->get_last_halfmove_number());
+  * ```
   */
   public function get_fen_after_halfmove(int $halfmove_number, bool $as_object = false)
   {
@@ -187,11 +193,17 @@ class PGN
     return $fen->export();
   }
 
+  /**
+  * Get halfmove number of the last recorded move.
+  */
   public function get_last_halfmove_number() : int
   {
     return sizeof($this->halfmoves) + $this->get_initial_halfmove_number() - 1;
   }
 
+  /**
+  * Get halfmove number of the first recorder move.
+  */
   public function get_initial_halfmove_number() : int
   {
     return $this->initial_halfmove_number;
