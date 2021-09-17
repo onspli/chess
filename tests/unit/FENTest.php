@@ -277,6 +277,11 @@ final class FENTest extends TestCase
     $fen->move('Nc6');
     $this->assertEquals('r1bqkbnr/pppp1ppp/2n5/4p3/4P3/P7/1PPP1PPP/RNBQKBNR w KQkq - 1 3', $fen->export());
 
+    // two pseudolegal moves Ne2, one knight pinned
+    $fen = new FEN("rn1qk1nr/pp1b1ppp/4p3/1B1p4/1b1P1B2/2N5/PPP2PPP/R2QK1NR w KQkq - 4 7");
+    $fen->move('Ne2');
+    $this->assertEquals('rn1qk1nr/pp1b1ppp/4p3/1B1p4/1b1P1B2/2N5/PPP1NPPP/R2QK2R', $fen->get_board());
+
   }
 
   public function testMoveToCheck() : void
