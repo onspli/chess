@@ -155,7 +155,7 @@ class PGN
   public function get_initial_fen(bool $as_object = false)
   {
     if ($as_object) {
-      return $this->initial_fen->copy();
+      return clone $this->initial_fen;
     }
     return $this->initial_fen->export();
   }
@@ -196,7 +196,7 @@ class PGN
     }
     $fen = $this->fens[$halfmove_index];
     if ($as_object) {
-      return $fen->copy();
+      return clone $fen;
     }
     return $fen->export();
   }
@@ -223,7 +223,7 @@ class PGN
     if ($computed == 0) {
       return $this->get_initial_fen(true);
     }
-    return $this->fens[$computed - 1]->copy();
+    return clone $this->fens[$computed - 1];
   }
 
   private function compute_fens(int $max_halfmove_to_compute) : void
@@ -239,7 +239,7 @@ class PGN
       } catch (\Exception $e) {
         throw new \Exception('Move ' . ceil($halfmove_number / 2) . ($halfmove_number % 2 ? '. ' : '... ') . $halfmove . ' is invalid. FEN ' . $this->get_fen_after_halfmove($halfmove_number - 1), 0, $e);
       }
-      $this->fens[] = $fen->copy();
+      $this->fens[] = clone $fen;
     }
   }
 

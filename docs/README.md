@@ -6,7 +6,6 @@
 |--------|-------------|
 | [**Board**](#Board) |  |
 | [Board::__construct](#Board__construct) | Load piece placement or setup initial position. |
-| [Board::copy](#Boardcopy) | Creates deep copy of the board instance. |
 | [Board::__toString](#Board__toString) |  |
 | [Board::export](#Boardexport) | Export piece placement string. |
 | [Board::preview](#Boardpreview) | Preview of the board in ASCII graphics. |
@@ -24,7 +23,7 @@
 | [Board::is_check](#Boardis_check) | Tells whether the king of color specified is in check. |
 | [**FEN**](#FEN) | FEN is a standard notation for describing a particular board position of a chess game |
 | [FEN::__construct](#FEN__construct) | Load FEN or setup starting position. |
-| [FEN::copy](#FENcopy) | Creates deep copy of the FEN instance. |
+| [FEN::__clone](#FEN__clone) |  |
 | [FEN::export](#FENexport) | Export whole FEN string. |
 | [FEN::export_short](#FENexport_short) | Export FEN string without halfmoves count and fullmove number. |
 | [FEN::__toString](#FEN__toString) |  |
@@ -138,25 +137,6 @@ digits 1 through 8 (the number of empty squares), and "/" separates ranks.
 | Parameter | Type | Description |
 |-----------|------|-------------|
 | `pieces` | **string** |  |
-
-
-**Return Value:**
-
-
-
-
-
----
-### Board::copy
-
-Creates deep copy of the board instance.
-
-```php
-Board::copy(  ): mixed
-```
-
-
-
 
 
 **Return Value:**
@@ -582,12 +562,12 @@ FEN::__construct( string fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQ
 
 
 ---
-### FEN::copy
+### FEN::__clone
 
-Creates deep copy of the FEN instance.
+
 
 ```php
-FEN::copy(  ): mixed
+FEN::__clone(  ): mixed
 ```
 
 

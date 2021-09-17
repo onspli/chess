@@ -173,7 +173,7 @@ final class BoardTest extends TestCase
   public function testCopy() : void
   {
     $board1 = new Board('rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR');
-    $board2 = $board1->copy();
+    $board2 = clone $board1;
 
     $this->assertEquals($board1->export(), $board2->export());
     $board2->set_square('a1', '');

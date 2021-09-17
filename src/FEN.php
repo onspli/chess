@@ -45,13 +45,11 @@ class FEN
       $this->set_fullmove($parts[5] ?? 1);
     }
 
-    /**
-    * Creates deep copy of the FEN instance.
-    */
-    public function copy()
-    {
-      return new self($this->export());
-    }
+    public function __clone()
+  	{
+  		$this->board = clone $this->board;
+      $this->en_passant = clone $this->en_passant;
+  	}
 
     /**
     * Export whole FEN string.
@@ -541,7 +539,7 @@ class FEN
     */
     public function is_legal_move(string $move) : bool
     {
-      $fen = $this->copy();
+      $fen = clone $this;
       try {
         $fen->move($move);
       } catch (\Exception $e) {
@@ -575,7 +573,7 @@ class FEN
         throw new RulesException("Castling not available. King in check.");
       }
 
-      $new_board = $this->board->copy();
+      $new_board = clone $this->board;
       $new_board->set_square($origin, '');
       $new_board->set_square($origin->get_relative_square(1, 0), $this->get_active_piece('K'));
       if ($new_board->is_check($this->get_active_color())) {
@@ -615,7 +613,7 @@ class FEN
         throw new RulesException("Castling not available. King in check.");
       }
 
-      $new_board = $this->board->copy();
+      $new_board = clone $this->board;
       $new_board->set_square($origin, '');
       $new_board->set_square($origin->get_relative_square(-1, 0), $this->get_active_piece('K'));
       if ($new_board->is_check($this->get_active_color())) {
@@ -734,7 +732,7 @@ class FEN
 
     private function get_new_board(Move $move, Square $origin) : Board
     {
-      $new_board = $this->board->copy();
+      $new_board = clone $this->board;
       $piece = $this->get_active_piece($move->get_piece_type());
       $target = $move->get_target(true);
 

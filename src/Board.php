@@ -28,14 +28,6 @@ class Board
     }
   }
 
-  /**
-  * Creates deep copy of the board instance.
-  */
-  public function copy()
-  {
-    return new self($this->export());
-  }
-
   private function split_to_ranks(string $pieces) : array
   {
     $pieces = preg_replace('/\s+/', '', $pieces);

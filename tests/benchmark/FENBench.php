@@ -24,7 +24,7 @@ class FENBench
   public function benchCopy()
   {
     $fen = new FEN('rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR b KQq c6 1 2');
-    $fen->copy();
+    $fen2 = clone $fen;
   }
 
   /**

@@ -17,11 +17,13 @@ final class FENTest extends TestCase
   public function testCopy() : void
   {
     $fen = new FEN;
-    $fen2 = $fen->copy();
+    $fen2 = clone $fen;
     $fen->set_square('e4', 'Q');
     $fen->set_fullmove(5);
+    $fen->set_en_passant('e3');
     $this->assertEquals('', $fen2->get_square('e4'));
     $this->assertEquals(1, $fen2->get_fullmove());
+    $this->assertEquals('-', $fen2->get_en_passant());
   }
 
   public function testSetFullmoveInvalid1() : void
