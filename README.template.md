@@ -155,7 +155,7 @@ echo($pgn->get_fen_after_halfmove(2));
 echo($pgn->get_fen_after_halfmove(Onspli\Chess\PGN::get_halfmove_number(1, 'b')));
 ```
 
-FEN is returned as `php string` by default. Passing parameter `php $as_object = true` makes it FEN object:
+FEN is returned as `string` by default. Passing parameter `$as_object = true` makes it FEN object:
 ``` php
 $pgn = new Onspli\Chess\PGN('1.Nf3 Nf6 2.c4 g6');
 echo($pgn->get_current_fen(true)->preview());
@@ -167,4 +167,5 @@ PGN with custom initial position:
 $pgn = new Onspli\Chess\PGN('[FEN "rnbqkb1r/pppp1ppp/5n2/4p3/2P1P3/5N2/PP1P1PPP/RNBQKB1R b KQkq - 0 3"] 3... Nc6 4. Qb3');
 echo($pgn->get_initial_fen());
 echo($pgn->get_initial_halfmove_number());
+echo($pgn->get_halfmove(6));
 ```
