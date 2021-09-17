@@ -671,15 +671,25 @@ class FEN
 
       $origin_candidates = array_filter($origin_candidates, $does_origin_candidate_comply_with_move_origin);
 
-      if (sizeof($origin_candidates) == 0) {
+      $origin_candidates_legal = [];
+      $active_color = $this->get_active_color();
+      foreach ($origin_candidates as $origin)
+      {
+          $new_board = $this->get_new_board($move, $origin);
+          if (!$new_board->is_check($active_color)) {
+            $origin_candidates_legal[] = $origin;
+          }
+      }
+
+      if (sizeof($origin_candidates_legal) == 0) {
         throw new RulesException("Invalid move.");
       }
 
-      if (sizeof($origin_candidates) > 1) {
+      if (sizeof($origin_candidates_legal) > 1) {
         throw new RulesException("Ambiguous move.");
       }
 
-      return reset($origin_candidates);
+      return reset($origin_candidates_legal);
     }
 
     private function validate_move_target_square(Move $move) : void
@@ -706,12 +716,17 @@ class FEN
     private function standard_move(Move &$move) : void
     {
       $this->validate_move_target_square($move);
+      $origin = $this->get_move_origin($move);
+      $new_board = $this->get_new_board($move, $origin);
+      $this->set_new_board($new_board);
+      $move->set_origin($origin);
+    }
 
+    private function get_new_board(Move $move, Square $origin) : Board
+    {
+      $new_board = $this->board->copy();
       $piece = $this->get_active_piece($move->get_piece_type());
       $target = $move->get_target(true);
-      $origin = $this->get_move_origin($move);
-
-      $new_board = $this->board->copy();
 
       $new_board->set_square($origin, '');
       if ($move->get_promotion()) {
@@ -726,9 +741,7 @@ class FEN
           }
         }
       }
-
-      $this->set_new_board($new_board);
-      $move->set_origin($origin);
+      return $new_board;
     }
 
     private function set_new_board(Board $new_board) : void
