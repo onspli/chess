@@ -40,6 +40,11 @@ class PGN
     return trim($pgn);
   }
 
+  public function validate() : void
+  {
+    $this->get_current_fen();
+  }
+
   public function set_tag(string $name, ?string $value) : void
   {
     if ($value !== null) {
@@ -111,6 +116,9 @@ class PGN
 
   public function get_fen_after_halfmove(int $halfmove_number, bool $as_object = false)
   {
+    if ($halfmove_number == 0) {
+      return $this->get_initial_fen($as_object);
+    }
     $halfmove_index = $this->get_halfmove_index($halfmove_number);
     $this->compute_fens($halfmove_number);
     if (!isset($this->fens[$halfmove_index])) {
@@ -154,7 +162,12 @@ class PGN
     }
     $fen = $this->get_last_computed_fen();
     for ($halfmove_number = sizeof($this->fens) + $this->get_initial_halfmove_number(); $halfmove_number <= $max_halfmove_to_compute; $halfmove_number ++) {
-      $fen->move($this->get_halfmove($halfmove_number));
+      $halfmove = $this->get_halfmove($halfmove_number);
+      try {
+        $fen->move($halfmove);
+      } catch (\Exception $e) {
+        throw new \Exception('Move ' . ceil($halfmove_number / 2) . ($halfmove_number % 2 ? '. ' : '... ') . $halfmove . ' is invalid. FEN ' . $this->get_fen_after_halfmove($halfmove_number - 1), 0, $e);
+      }
       $this->fens[] = $fen->copy();
     }
   }

@@ -69,6 +69,7 @@
 | [**PGN**](#PGN) |  |
 | [PGN::__construct](#PGN__construct) |  |
 | [PGN::export](#PGNexport) |  |
+| [PGN::validate](#PGNvalidate) |  |
 | [PGN::set_tag](#PGNset_tag) |  |
 | [PGN::set_initial_fen](#PGNset_initial_fen) |  |
 | [PGN::unset_initial_fen](#PGNunset_initial_fen) |  |
@@ -1539,6 +1540,25 @@ PGN::__construct( string pgn = '' ): mixed
 
 ```php
 PGN::export(  ): string
+```
+
+
+
+
+
+**Return Value:**
+
+
+
+
+
+---
+### PGN::validate
+
+
+
+```php
+PGN::validate(  ): void
 ```
 
 
