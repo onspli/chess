@@ -78,6 +78,7 @@
 | [PGN::unset_initial_fen](#PGNunset_initial_fen) | Unset custom initial position - use the standard initial position. |
 | [PGN::unset_tag](#PGNunset_tag) | Remove tag pair (header). |
 | [PGN::get_tag](#PGNget_tag) | Read tag pair (header) value. |
+| [PGN::get_tags](#PGNget_tags) | Get all tags as associative array |
 | [PGN::get_initial_fen](#PGNget_initial_fen) | Get initial position. |
 | [PGN::get_current_fen](#PGNget_current_fen) | Get FEN of current position. |
 | [PGN::get_fen_after_halfmove](#PGNget_fen_after_halfmove) | Get position after given halfmove. |
@@ -1743,6 +1744,25 @@ PGN::get_tag( string name ): ?string
 | Parameter | Type | Description |
 |-----------|------|-------------|
 | `name` | **string** |  |
+
+
+**Return Value:**
+
+
+
+
+
+---
+### PGN::get_tags
+
+Get all tags as associative array
+
+```php
+PGN::get_tags(  ): array
+```
+
+
+
 
 
 **Return Value:**

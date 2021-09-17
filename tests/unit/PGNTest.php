@@ -139,4 +139,18 @@ Nf2 42. g4 Bd3 43. Re6 1/2-1/2'
     $pgn->validate_moves();
   }
 
+  public function testGetAllTags() : void
+  {
+    $pgn = new PGN($this->samples[0]);
+    $this->assertEquals([
+      "Event" => "F/S Return Match",
+      "Site" => "Belgrade, Serbia JUG",
+      "Date" => "1992.11.04",
+      "Round" => "29",
+      "White" => "Fischer, Robert J.",
+      "Black" => "Spassky, Boris V.",
+      "Result" => "1/2-1/2"
+    ], $pgn->get_tags());
+  }
+
 }

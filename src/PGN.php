@@ -142,6 +142,14 @@ class PGN
   }
 
   /**
+  * Get all tags as associative array
+  */
+  public function get_tags() : array
+  {
+    return $this->tags;
+  }
+
+  /**
   * Get initial position.
   */
   public function get_initial_fen(bool $as_object = false)

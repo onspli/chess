@@ -38,6 +38,8 @@ Setup chess board to starting position and read FEN fields.
 $fen = new Onspli\Chess\FEN;
 echo($fen->export());
 // rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
+echo($fen->export_short());
+// rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -
 echo($fen->get_board());
 // rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR
 echo($fen->get_active_color());
@@ -68,6 +70,8 @@ Initialize custom position and read FEN fields.
 $fen = new Onspli\Chess\FEN('rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR b KQq c6 1 2');
 echo($fen->export());
 // rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR b KQq c6 1 2
+echo($fen->export_short());
+// rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR b KQq c6
 echo($fen->get_board());
 // rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR
 echo($fen->get_active_color());
@@ -93,12 +97,31 @@ RNBQKBNR
 */
 ```
 
+Manipulate with pieces.
+``` php
+$fen = new Onspli\Chess\FEN;
+echo($fen->get_square('a1'));
+// R
+$fen->set_square('a1', '');
+$fen->set_square('a3', 'R');
+echo($fen->preview());
+/*
+rnbqkbnr
+pppppppp
+........
+........
+........
+R.......
+PPPPPPPP
+.NBQKBNR
+*/
+```
+
 Each of the fields can be set with the corresponding setter:
 ``` php
 $fen = new Onspli\Chess\FEN;
 echo($fen->export());
 // rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
-
 $fen->set_board('rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR');
 $fen->set_active_color('b');
 $fen->set_castling_string('KQq');
@@ -162,6 +185,10 @@ Test check, mate, stalemate:
 $fen = new Onspli\Chess\FEN;
 $fen->set_active_color('w');
 $fen->set_board('1q5k/8/8/8/8/8/8/K7');
+echo($fen->is_check() ? 'true' : 'false');
+// false
+echo($fen->is_stalemate() ? 'true' : 'false');
+// false
 echo($fen->preview());
 /*
 .q.....k
@@ -173,12 +200,12 @@ echo($fen->preview());
 ........
 K.......
 */
-echo($fen->is_check() ? 'true' : 'false');
-// false
-echo($fen->is_stalemate() ? 'true' : 'false');
-// false
 $fen->move('Ka2');
 $fen->move('Qa8');
+echo($fen->is_check() ? 'true' : 'false');
+// true
+echo($fen->is_mate() ? 'true' : 'false');
+// false
 echo($fen->preview());
 /*
 q......k
@@ -190,10 +217,6 @@ q......k
 K.......
 ........
 */
-echo($fen->is_check() ? 'true' : 'false');
-// true
-echo($fen->is_mate() ? 'true' : 'false');
-// false
 ```
 
 List all possible moves:
@@ -251,11 +274,68 @@ Array
 */
 ```
 
-Load game in PGN notation:
+Load game in PGN notation and read tags and moves:
 ``` php
 $pgn = new Onspli\Chess\PGN('[Event "Testing"] 1.Nf3 Nf6 2.c4 g6');
 echo($pgn->get_tag('Event'));
 // Testing
+echo($pgn->get_halfmove(2));
+// Nf6
+echo($pgn->get_initial_halfmove_number());
+// 1
+echo($pgn->get_last_halfmove_number());
+// 4
+```
+
+Record new moves, add tags and export PGN:
+``` php
+$pgn = new Onspli\Chess\PGN('[Event "Testing"] 1.Nf3 Nf6 2.c4 g6');
+$pgn->set_tag('Site', 'Github');
+$pgn->move('a4');
+$pgn->move('a5');
+print_r($pgn->get_tags());
+/*
+Array
+(
+    [Event] => Testing
+    [Site] => Github
+)
+
+*/
+echo($pgn->export_tags());
+/*
+[Event "Testing"]
+[Site "Github"]
+
+*/
+echo($pgn->export_movetext());
+// 1. Nf3 Nf6 2. c4 g6 3. a4 a5
+echo($pgn->export());
+/*
+[Event "Testing"]
+[Site "Github"]
+1. Nf3 Nf6 2. c4 g6 3. a4 a5
+*/
+```
+
+Extract position after certain move:
+``` php
+$pgn = new Onspli\Chess\PGN('1.Nf3 Nf6 2.c4 g6');
+echo($pgn->get_current_fen());
+// rnbqkb1r/pppppp1p/5np1/8/2P5/5N2/PP1PPPPP/RNBQKB1R w KQkq - 0 3
+echo($pgn->get_initial_fen());
+// rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
+echo($pgn->get_fen_after_halfmove(0));
+// rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
+echo($pgn->get_fen_after_halfmove(2));
+// rnbqkb1r/pppppppp/5n2/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 2 2
+echo($pgn->get_fen_after_halfmove(Onspli\Chess\PGN::get_halfmove_number(1, 'b')));
+// rnbqkb1r/pppppppp/5n2/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 2 2
+```
+
+FEN is returned as `php string` by default. Passing parameter `php $as_object = true` makes it FEN object:
+``` php
+$pgn = new Onspli\Chess\PGN('1.Nf3 Nf6 2.c4 g6');
 echo($pgn->get_current_fen(true)->preview());
 /*
 rnbqkb.r
@@ -278,36 +358,13 @@ pppppppp
 PPPPPPPP
 RNBQKB.R
 */
+```
 
-echo($pgn->get_halfmove(Onspli\Chess\PGN::get_halfmove_number(2, 'w')));
-// c4
-echo($pgn->get_halfmove(3));
-// c4
-echo($pgn->get_last_halfmove_number());
-// 4
-
-echo($pgn->get_fen_after_halfmove(2));
-// rnbqkb1r/pppppppp/5n2/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 2 2
+PGN with custom initial position:
+``` php
+$pgn = new Onspli\Chess\PGN('[FEN "rnbqkb1r/pppp1ppp/5n2/4p3/2P1P3/5N2/PP1P1PPP/RNBQKB1R b KQkq - 0 3"] 3... Nc6 4. Qb3');
 echo($pgn->get_initial_fen());
-// rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
-
-$pgn->move('a4');
-$pgn->set_tag('Site', 'Github');
-echo($pgn->export());
-/*
-[Event "Testing"]
-[Site "Github"]
-1. Nf3 Nf6 2. c4 g6 3. a4
-*/
-
-for ($hm = $pgn->get_initial_halfmove_number() - 1; $hm <= $pgn->get_last_halfmove_number(); $hm++) echo $pgn->get_fen_after_halfmove($hm) . PHP_EOL;
-/*
-rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
-rnbqkbnr/pppppppp/8/8/8/5N2/PPPPPPPP/RNBQKB1R b KQkq - 1 1
-rnbqkb1r/pppppppp/5n2/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 2 2
-rnbqkb1r/pppppppp/5n2/8/2P5/5N2/PP1PPPPP/RNBQKB1R b KQkq c3 0 2
-rnbqkb1r/pppppp1p/5np1/8/2P5/5N2/PP1PPPPP/RNBQKB1R w KQkq - 0 3
-rnbqkb1r/pppppp1p/5np1/8/P1P5/5N2/1P1PPPPP/RNBQKB1R b KQkq a3 0 3
-
-*/
+// rnbqkb1r/pppp1ppp/5n2/4p3/2P1P3/5N2/PP1P1PPP/RNBQKB1R b KQkq - 0 3
+echo($pgn->get_initial_halfmove_number());
+// 6
 ```
