@@ -53,7 +53,7 @@ class PGN
       } else if ($halfmove_number % 2 == 1) {
         $pgn .= $move_number . '. ';
       }
-      $pgn .= $this->get_move($halfmove_number) . ' ';
+      $pgn .= $this->get_halfmove($halfmove_number) . ' ';
     }
     return trim($pgn);
   }
@@ -213,7 +213,7 @@ class PGN
     }
     $fen = $this->get_last_computed_fen();
     for ($halfmove_number = sizeof($this->fens) + $this->get_initial_halfmove_number(); $halfmove_number <= $max_halfmove_to_compute; $halfmove_number ++) {
-      $halfmove = $this->get_move($halfmove_number);
+      $halfmove = $this->get_halfmove($halfmove_number);
       try {
         $fen->move($halfmove);
       } catch (\Exception $e) {
@@ -224,12 +224,12 @@ class PGN
   }
 
   /**
-  * Get halfmove in standard algebraic notation.
+  * Get move in standard algebraic notation.
   *
   * Halfmove number starts with 1 (white's first move). One move has
   * two halfmoves (for white and black player).
   */
-  public function get_move(int $halfmove_number, bool $as_object = false)
+  public function get_halfmove(int $halfmove_number, bool $as_object = false)
   {
     $halfmove_index = $this->get_halfmove_index($halfmove_number);
     if (!isset($this->halfmoves[$halfmove_index])) {

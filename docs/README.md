@@ -83,7 +83,7 @@
 | [PGN::get_fen_after_halfmove](#PGNget_fen_after_halfmove) | Get poosition after given halfmove. |
 | [PGN::get_current_halfmove_number](#PGNget_current_halfmove_number) |  |
 | [PGN::get_initial_halfmove_number](#PGNget_initial_halfmove_number) |  |
-| [PGN::get_move](#PGNget_move) | Get halfmove in standard algebraic notation. |
+| [PGN::get_halfmove](#PGNget_halfmove) | Get move in standard algebraic notation. |
 | [PGN::get_halfmove_number](#PGNget_halfmove_number) | Converts (move number, color) to halfmove number. |
 | [PGN::move](#PGNmove) | Perform move. |
 | [**RulesException**](#RulesException) |  |
@@ -1866,12 +1866,12 @@ PGN::get_initial_halfmove_number(  ): int
 
 
 ---
-### PGN::get_move
+### PGN::get_halfmove
 
-Get halfmove in standard algebraic notation.
+Get move in standard algebraic notation.
 
 ```php
-PGN::get_move( int halfmove_number, bool as_object = false ): mixed
+PGN::get_halfmove( int halfmove_number, bool as_object = false ): mixed
 ```
 
 Halfmove number starts with 1 (white's first move). One move has
