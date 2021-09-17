@@ -226,6 +226,7 @@ final class FENTest extends TestCase
   {
     $fen = new FEN;
     $this->assertEquals('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', $fen->export());
+    $this->assertEquals('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -', $fen->export_short());
     $this->assertEquals('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR', $fen->get_board());
     $this->assertEquals('w', $fen->get_active_color());
     $this->assertEquals('KQkq', $fen->get_castling_string());
@@ -241,6 +242,9 @@ final class FENTest extends TestCase
     $this->assertEquals('c6', $fen->get_en_passant());
     $this->assertEquals(1, $fen->get_halfmove());
     $this->assertEquals(2, $fen->get_fullmove());
+
+    $fen = new FEN('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -');
+    $this->assertEquals('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', $fen->export());
 
     // just assert it doesnt throw exceptions
     $fen->preview();

@@ -26,6 +26,7 @@
 | [FEN::__construct](#FEN__construct) | Load FEN or setup starting position. |
 | [FEN::copy](#FENcopy) | Creates deep copy of the FEN instance. |
 | [FEN::export](#FENexport) | Export whole FEN string. |
+| [FEN::export_short](#FENexport_short) | Export FEN string without halfmoves count and fullmove number. |
 | [FEN::__toString](#FEN__toString) |  |
 | [FEN::preview](#FENpreview) | Preview of the board in ASCII graphics. |
 | [FEN::get_board](#FENget_board) | Get piece placement. |
@@ -614,6 +615,25 @@ FEN::export(  ): string
 **Return Value:**
 
 FEN string
+
+
+
+---
+### FEN::export_short
+
+Export FEN string without halfmoves count and fullmove number.
+
+```php
+FEN::export_short(  ): string
+```
+
+They really are not so important to describe chess position.
+
+
+
+**Return Value:**
+
+
 
 
 

@@ -33,16 +33,16 @@ class FEN
       $fen = trim($fen);
       $fen = preg_replace('/\s+/', ' ', $fen);
       $parts = explode(' ', $fen);
-      if (sizeof($parts) != 6) {
-        throw new ParseException("FEN has " . sizeof($parts) . " fields. It must have 6 fields.");
+      if (sizeof($parts) < 4 || sizeof($parts) > 6) {
+        throw new ParseException("FEN has " . sizeof($parts) . " fields. It must have at least 4 fields.");
       }
 
       $this->set_board($parts[0]);
       $this->set_active_color($parts[1]);
       $this->set_castling_string($parts[2]);
       $this->set_en_passant($parts[3]);
-      $this->set_halfmove($parts[4]);
-      $this->set_fullmove($parts[5]);
+      $this->set_halfmove($parts[4] ?? 0);
+      $this->set_fullmove($parts[5] ?? 1);
     }
 
     /**
@@ -60,6 +60,16 @@ class FEN
     public function export() : string
     {
       return implode(' ', [$this->get_board(), $this->get_active_color(), $this->get_castling_string(), $this->get_en_passant(), $this->get_halfmove(), $this->get_fullmove()]);
+    }
+
+    /**
+    * Export FEN string without halfmoves count and fullmove number.
+    *
+    * They really are not so important to describe chess position.
+    */
+    public function export_short() : string
+    {
+      return implode(' ', [$this->get_board(), $this->get_active_color(), $this->get_castling_string(), $this->get_en_passant()]);
     }
 
     public function __toString() : string
