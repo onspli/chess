@@ -14,6 +14,16 @@ final class FENTest extends TestCase
       $this->assertEquals('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', (string) $fen);
   }
 
+  public function testCopy() : void
+  {
+    $fen = new FEN;
+    $fen2 = $fen->copy();
+    $fen->set_square('e4', 'Q');
+    $fen->set_fullmove(5);
+    $this->assertEquals('', $fen2->get_square('e4'));
+    $this->assertEquals(1, $fen2->get_fullmove());
+  }
+
   public function testSetFullmoveInvalid1() : void
   {
     $this->expectException(ParseException::class);
