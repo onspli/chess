@@ -69,7 +69,7 @@
 | [**PGN**](#PGN) |  |
 | [PGN::__construct](#PGN__construct) |  |
 | [PGN::export](#PGNexport) |  |
-| [PGN::validate](#PGNvalidate) |  |
+| [PGN::validate_moves](#PGNvalidate_moves) |  |
 | [PGN::set_tag](#PGNset_tag) |  |
 | [PGN::set_initial_fen](#PGNset_initial_fen) |  |
 | [PGN::unset_initial_fen](#PGNunset_initial_fen) |  |
@@ -1553,12 +1553,12 @@ PGN::export(  ): string
 
 
 ---
-### PGN::validate
+### PGN::validate_moves
 
 
 
 ```php
-PGN::validate(  ): void
+PGN::validate_moves(  ): void
 ```
 
 

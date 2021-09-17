@@ -281,4 +281,15 @@ echo($pgn->export());
 [Site "Github"]
 1. Nf3 Nf6 2. c4 g6 3. a4
 */
+
+for ($hm = $pgn->get_initial_halfmove_number() - 1; $hm <= $pgn->get_current_halfmove_number(); $hm++) echo $pgn->get_fen_after_halfmove($hm) . PHP_EOL;
+/*
+rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
+rnbqkbnr/pppppppp/8/8/8/5N2/PPPPPPPP/RNBQKB1R b KQkq - 1 1
+rnbqkb1r/pppppppp/5n2/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 2 2
+rnbqkb1r/pppppppp/5n2/8/2P5/5N2/PP1PPPPP/RNBQKB1R b KQkq c3 0 2
+rnbqkb1r/pppppp1p/5np1/8/2P5/5N2/PP1PPPPP/RNBQKB1R w KQkq - 0 3
+rnbqkb1r/pppppp1p/5np1/8/P1P5/5N2/1P1PPPPP/RNBQKB1R b KQkq a3 0 3
+
+*/
 ```

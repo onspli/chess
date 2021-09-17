@@ -8,37 +8,6 @@ use PHPUnit\Framework\TestCase;
 final class PGNTest extends TestCase
 {
 
-/*
-  public function testBugs() : void
-  {
-    $pgn = new PGN('[Event "Live Chess"]
-[Site "Chess.com"]
-[Date "2021.01.28"]
-[Round "?"]
-[White "djkvetak"]
-[Black "Nirrmall"]
-[Result "1-0"]
-[ECO "B01"]
-[WhiteElo "1126"]
-[BlackElo "1092"]
-[TimeControl "3600"]
-[EndTime "7:02:24 PST"]
-[Termination "djkvetak won by resignation"]
-
-1. e4 d5 2. exd5 Qxd5 3. c4 Qd8 4. d4 h6 5. Qh5 Nf6 6. Qf3 Qxd4 7. Nc3 Ng4 8.
-Be3 Nxe3 9. fxe3 Qd8 10. Qg3 e6 11. Nf3 g6 12. a3 Bd6 13. Ne5 Qe7 14. Nb5 Qf6
-15. O-O-O Bxe5 16. Nxc7+ Bxc7 17. Qxc7 O-O 18. Qd6 Rd8 19. Qxd8+ Qxd8 20. Rxd8+
-Kg7 21. Rxc8 Kf6 22. g3 Ke7 23. Bg2 a5 24. Bxb7 Ra7 25. Rxb8 Kd7 26. Bc8+ Kc7
-27. Rb7+ Rxb7 28. Bxb7 Kxb7 29. Rd1 Kb6 30. b4 a4 31. Kb1 f5 32. Rc1 Kc6 33. h3
-h5 34. Re1 g5 35. h4 g4 36. e4 f4 37. gxf4 Kd6 38. f5 exf5 39. exf5 g3 40. Rg1
-Ke5 41. Rxg3 Kxf5 42. b5 Kf4 43. Rg4+ Kxg4 44. b6 Kxh4 45. b7 Kg5 46. b8=Q h4
-47. c5 h3 48. Qb5 Kg4 49. Qc4+ Kg3 50. Qe4 h2 51. c6 Kf2 52. c7 Kg1 53. c8=Q
-h1=Q 54. Qc1+ Kh2 55. Qcxh1+ Kg3 1-0');
-    $pgn->validate();
-  }
-  */
-
-
   protected $samples = [
     '[Event "F/S Return Match"]
 [Site "Belgrade, Serbia JUG"]
@@ -99,10 +68,14 @@ Nf2 42. g4 Bd3 43. Re6 1/2-1/2'
 1. e4 e5 2. Nf3', $pgn->export());
   }
 
+
+
   public function testCustomInitialPosition() : void
   {
     $pgn = new PGN;
     $this->assertEquals('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', $pgn->get_initial_fen());
+    $this->assertEquals('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', $pgn->get_current_fen());
+    $this->assertEquals('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', $pgn->get_fen_after_halfmove(0));
 
     $fen = new FEN;
     $fen->move('e4');
@@ -154,6 +127,16 @@ Nf2 42. g4 Bd3 43. Re6 1/2-1/2'
     $pgn->set_initial_fen($fen->export());
     $this->expectException(\OutOfBoundsException::class);
     $pgn->get_halfmove(1);
+  }
+
+  public function testValidateMoves() : void
+  {
+    $pgn = new PGN($this->samples[0]);
+    $this->assertNull($pgn->validate_moves());
+
+    $pgn = new PGN('1. e5');
+    $this->expectException(\Exception::class);
+    $pgn->validate_moves();
   }
 
 }

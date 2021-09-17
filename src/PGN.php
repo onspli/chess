@@ -40,7 +40,7 @@ class PGN
     return trim($pgn);
   }
 
-  public function validate() : void
+  public function validate_moves() : void
   {
     $this->get_current_fen();
   }

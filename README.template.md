@@ -112,4 +112,6 @@ echo($pgn->get_initial_fen());
 $pgn->move('a4');
 $pgn->set_tag('Site', 'Github');
 echo($pgn->export());
+
+for ($hm = $pgn->get_initial_halfmove_number() - 1; $hm <= $pgn->get_current_halfmove_number(); $hm++) echo $pgn->get_fen_after_halfmove($hm) . PHP_EOL;
 ```
