@@ -304,6 +304,10 @@ final class FENTest extends TestCase
     $fen->set_board('1q5k/P7/8/8/8/8/8/K7');
     $fen->move('a8=Q');
     $this->assertEquals('Qq5k/8/8/8/8/8/8/K7', $fen->get_board());
+
+    $fen = new FEN('2Q5/8/8/8/p3Q3/P7/7p/1K4k1 b - - 0 53');
+    $fen->move('h1=Q');
+    $this->assertEquals('2Q5/8/8/8/p3Q3/P7/8/1K4kq', $fen->get_board());
   }
 
   public function testPromotionNotSpecified() : void

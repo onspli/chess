@@ -715,7 +715,7 @@ class FEN
 
       $new_board->set_square($origin, '');
       if ($move->get_promotion()) {
-        $new_board->set_square($target, $move->get_promotion());
+        $new_board->set_square($target, Board::get_piece_of_color($move->get_promotion(), $this->get_active_color()));
       } else {
         $new_board->set_square($target, $piece);
         if ($move->get_piece_type() == 'P' && $target->export() == $this->get_en_passant()) {
@@ -733,8 +733,9 @@ class FEN
 
     private function set_new_board(Board $new_board) : void
     {
-      if ($new_board->is_check($this->get_active_color())) {
-        throw new RulesException('King is in check.');
+      $active_color = $this->get_active_color();
+      if ($new_board->is_check($active_color)) {
+        throw new RulesException('King is in check. ' . $new_board->export() . ' ' . $active_color);
       }
       $this->set_board($new_board);
     }
