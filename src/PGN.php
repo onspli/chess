@@ -46,7 +46,7 @@ class PGN
   public function export_movetext() : string
   {
     $pgn = '';
-    for ($halfmove_number = $this->get_initial_halfmove_number(); $halfmove_number <= $this->get_current_halfmove_number(); $halfmove_number++) {
+    for ($halfmove_number = $this->get_initial_halfmove_number(); $halfmove_number <= $this->get_last_halfmove_number(); $halfmove_number++) {
       $move_number = ceil($halfmove_number / 2);
       if ($halfmove_number % 2 == 0 && $halfmove_number == $this->get_initial_halfmove_number()) {
         $pgn .= $move_number . '... ';
@@ -164,7 +164,7 @@ class PGN
   */
   public function get_current_fen(bool $as_object = false)
   {
-    return $this->get_fen_after_halfmove($this->get_current_halfmove_number(), $as_object);
+    return $this->get_fen_after_halfmove($this->get_last_halfmove_number(), $as_object);
   }
 
   /**
@@ -187,7 +187,7 @@ class PGN
     return $fen->export();
   }
 
-  public function get_current_halfmove_number() : int
+  public function get_last_halfmove_number() : int
   {
     return sizeof($this->halfmoves) + $this->get_initial_halfmove_number() - 1;
   }
@@ -208,7 +208,7 @@ class PGN
 
   private function compute_fens(int $max_halfmove_to_compute) : void
   {
-    if ($max_halfmove_to_compute > $this->get_current_halfmove_number()) {
+    if ($max_halfmove_to_compute > $this->get_last_halfmove_number()) {
       throw new \OutOfBoundsException;
     }
     $fen = $this->get_last_computed_fen();

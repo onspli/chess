@@ -81,7 +81,7 @@
 | [PGN::get_initial_fen](#PGNget_initial_fen) | Get initial position. |
 | [PGN::get_current_fen](#PGNget_current_fen) | Get FEN of current position. |
 | [PGN::get_fen_after_halfmove](#PGNget_fen_after_halfmove) | Get poosition after given halfmove. |
-| [PGN::get_current_halfmove_number](#PGNget_current_halfmove_number) |  |
+| [PGN::get_last_halfmove_number](#PGNget_last_halfmove_number) |  |
 | [PGN::get_initial_halfmove_number](#PGNget_initial_halfmove_number) |  |
 | [PGN::get_halfmove](#PGNget_halfmove) | Get move in standard algebraic notation. |
 | [PGN::get_halfmove_number](#PGNget_halfmove_number) | Converts (move number, color) to halfmove number. |
@@ -1828,12 +1828,12 @@ PGN::get_fen_after_halfmove( int halfmove_number, bool as_object = false ): mixe
 
 
 ---
-### PGN::get_current_halfmove_number
+### PGN::get_last_halfmove_number
 
 
 
 ```php
-PGN::get_current_halfmove_number(  ): int
+PGN::get_last_halfmove_number(  ): int
 ```
 
 
