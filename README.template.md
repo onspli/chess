@@ -119,13 +119,12 @@ Load game in PGN notation:
 $pgn = new Onspli\Chess\PGN('[Event "Testing"] 1.Nf3 Nf6 2.c4 g6');
 echo($pgn->get_tag('Event'));
 echo($pgn->get_current_fen(true)->preview());
-echo($pgn->get_fen_after_move(1, 'b', true)->preview());
+echo($pgn->get_fen_after_halfmove(2, true)->preview());
 
-echo($pgn->get_move(2, 'w'));
-echo($pgn->get_halfmove(3));
+echo($pgn->get_move(Onspli\Chess\PGN::get_halfmove_number(2, 'w')));
+echo($pgn->get_move(3));
 echo($pgn->get_current_halfmove_number());
 
-echo($pgn->get_fen_after_move(1, 'b'));
 echo($pgn->get_fen_after_halfmove(2));
 echo($pgn->get_initial_fen());
 

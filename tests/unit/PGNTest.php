@@ -31,10 +31,10 @@ Nf2 42. g4 Bd3 43. Re6 1/2-1/2'
   public function testMovetextParsing() : void
   {
     $pgn = new PGN($this->samples[0]);
-    $this->assertEquals('e4', $pgn->get_move(1, 'w'));
-    $this->assertEquals('e5', $pgn->get_move(1, 'b'));
-    $this->assertEquals('Re6', $pgn->get_move(43, 'w'));
-    $this->assertEquals('e5', $pgn->get_move(1, 'b', true)->export());
+    $this->assertEquals('e4', $pgn->get_move(PGN::get_halfmove_number(1, 'w')));
+    $this->assertEquals('e5', $pgn->get_move(PGN::get_halfmove_number(1, 'b')));
+    $this->assertEquals('Re6', $pgn->get_move(PGN::get_halfmove_number(43, 'w')));
+    $this->assertEquals('e5', $pgn->get_move(PGN::get_halfmove_number(1, 'b'), true)->export());
   }
 
   public function testTagsParsing() : void
@@ -116,7 +116,7 @@ Nf2 42. g4 Bd3 43. Re6 1/2-1/2'
   {
     $pgn = new PGN($this->samples[0]);
     $this->expectException(\OutOfBoundsException::class);
-    $pgn->get_halfmove(100);
+    $pgn->get_move(100);
   }
 
   public function testHalfmoveOutOfBoundsTooSmall2() : void
@@ -126,7 +126,7 @@ Nf2 42. g4 Bd3 43. Re6 1/2-1/2'
     $fen->move('e4');
     $pgn->set_initial_fen($fen->export());
     $this->expectException(\OutOfBoundsException::class);
-    $pgn->get_halfmove(1);
+    $pgn->get_move(1);
   }
 
   public function testValidateMoves() : void

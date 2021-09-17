@@ -267,7 +267,7 @@ pppppp.p
 PP.PPPPP
 RNBQKB.R
 */
-echo($pgn->get_fen_after_move(1, 'b', true)->preview());
+echo($pgn->get_fen_after_halfmove(2, true)->preview());
 /*
 rnbqkb.r
 pppppppp
@@ -279,15 +279,13 @@ PPPPPPPP
 RNBQKB.R
 */
 
-echo($pgn->get_move(2, 'w'));
+echo($pgn->get_move(Onspli\Chess\PGN::get_halfmove_number(2, 'w')));
 // c4
-echo($pgn->get_halfmove(3));
+echo($pgn->get_move(3));
 // c4
 echo($pgn->get_current_halfmove_number());
 // 4
 
-echo($pgn->get_fen_after_move(1, 'b'));
-// rnbqkb1r/pppppppp/5n2/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 2 2
 echo($pgn->get_fen_after_halfmove(2));
 // rnbqkb1r/pppppppp/5n2/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 2 2
 echo($pgn->get_initial_fen());

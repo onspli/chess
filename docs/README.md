@@ -67,24 +67,24 @@
 | [Move::get_annotation](#Moveget_annotation) |  |
 | [**NotImplementedException**](#NotImplementedException) |  |
 | [**ParseException**](#ParseException) |  |
-| [**PGN**](#PGN) |  |
-| [PGN::__construct](#PGN__construct) |  |
-| [PGN::export](#PGNexport) |  |
-| [PGN::validate_moves](#PGNvalidate_moves) |  |
-| [PGN::set_tag](#PGNset_tag) |  |
-| [PGN::set_initial_fen](#PGNset_initial_fen) |  |
-| [PGN::unset_initial_fen](#PGNunset_initial_fen) |  |
-| [PGN::unset_tag](#PGNunset_tag) |  |
-| [PGN::get_tag](#PGNget_tag) |  |
-| [PGN::get_initial_fen](#PGNget_initial_fen) |  |
+| [**PGN**](#PGN) | Portable Game Notation (PGN) is a standard plain text format for recording chess games. |
+| [PGN::__construct](#PGN__construct) | Initialize object from PGN string. |
+| [PGN::export](#PGNexport) | Export PGN string. |
+| [PGN::export_movetext](#PGNexport_movetext) | Export movetext section of pgn. |
+| [PGN::export_tags](#PGNexport_tags) | Export tag pairs section (headers) of PGN. |
+| [PGN::validate_moves](#PGNvalidate_moves) | Validate all moves make sense according to chess rules. |
+| [PGN::set_tag](#PGNset_tag) | Set tag pair (header). |
+| [PGN::set_initial_fen](#PGNset_initial_fen) | Set custom initial position. |
+| [PGN::unset_initial_fen](#PGNunset_initial_fen) | Unset custom initial position - use the standard initial position. |
+| [PGN::unset_tag](#PGNunset_tag) | Remove tag pair (header). |
+| [PGN::get_tag](#PGNget_tag) | Read tag pair (header) value. |
+| [PGN::get_initial_fen](#PGNget_initial_fen) | Get initial position. |
 | [PGN::get_current_fen](#PGNget_current_fen) | Get FEN of current position. |
-| [PGN::get_fen_after_halfmove](#PGNget_fen_after_halfmove) |  |
-| [PGN::get_fen_after_move](#PGNget_fen_after_move) |  |
+| [PGN::get_fen_after_halfmove](#PGNget_fen_after_halfmove) | Get poosition after given halfmove. |
 | [PGN::get_current_halfmove_number](#PGNget_current_halfmove_number) |  |
 | [PGN::get_initial_halfmove_number](#PGNget_initial_halfmove_number) |  |
-| [PGN::get_halfmove](#PGNget_halfmove) | Get halfmove in standard algebraic notation. |
-| [PGN::get_move](#PGNget_move) |  |
-| [PGN::get_halfmove_number](#PGNget_halfmove_number) |  |
+| [PGN::get_move](#PGNget_move) | Get halfmove in standard algebraic notation. |
+| [PGN::get_halfmove_number](#PGNget_halfmove_number) | Converts (move number, color) to halfmove number. |
 | [PGN::move](#PGNmove) | Perform move. |
 | [**RulesException**](#RulesException) |  |
 | [**Square**](#Square) | Class representing coordinates of a square on a chess board. |
@@ -1522,16 +1522,18 @@ Move::get_annotation(  ): string
 
 ## PGN
 
+Portable Game Notation (PGN) is a standard plain text format for recording chess games.
 
-
-
+Portable Game Notation (PGN) is a standard plain text format for recording
+chess games (both the moves and related data), which can be read by humans
+and is also supported by most chess software.
 
 * Full name: \Onspli\Chess\PGN
 
 
 ### PGN::__construct
 
-
+Initialize object from PGN string.
 
 ```php
 PGN::__construct( string pgn = '' ): mixed
@@ -1556,7 +1558,7 @@ PGN::__construct( string pgn = '' ): mixed
 ---
 ### PGN::export
 
-
+Export PGN string.
 
 ```php
 PGN::export(  ): string
@@ -1573,9 +1575,47 @@ PGN::export(  ): string
 
 
 ---
+### PGN::export_movetext
+
+Export movetext section of pgn.
+
+```php
+PGN::export_movetext(  ): string
+```
+
+
+
+
+
+**Return Value:**
+
+
+
+
+
+---
+### PGN::export_tags
+
+Export tag pairs section (headers) of PGN.
+
+```php
+PGN::export_tags(  ): string
+```
+
+
+
+
+
+**Return Value:**
+
+
+
+
+
+---
 ### PGN::validate_moves
 
-
+Validate all moves make sense according to chess rules.
 
 ```php
 PGN::validate_moves(  ): void
@@ -1594,7 +1634,7 @@ PGN::validate_moves(  ): void
 ---
 ### PGN::set_tag
 
-
+Set tag pair (header).
 
 ```php
 PGN::set_tag( string name, ?string value ): void
@@ -1620,7 +1660,7 @@ PGN::set_tag( string name, ?string value ): void
 ---
 ### PGN::set_initial_fen
 
-
+Set custom initial position.
 
 ```php
 PGN::set_initial_fen( string fen ): void
@@ -1645,7 +1685,7 @@ PGN::set_initial_fen( string fen ): void
 ---
 ### PGN::unset_initial_fen
 
-
+Unset custom initial position - use the standard initial position.
 
 ```php
 PGN::unset_initial_fen(  ): void
@@ -1664,7 +1704,7 @@ PGN::unset_initial_fen(  ): void
 ---
 ### PGN::unset_tag
 
-
+Remove tag pair (header).
 
 ```php
 PGN::unset_tag( string name ): void
@@ -1689,7 +1729,7 @@ PGN::unset_tag( string name ): void
 ---
 ### PGN::get_tag
 
-
+Read tag pair (header) value.
 
 ```php
 PGN::get_tag( string name ): ?string
@@ -1714,7 +1754,7 @@ PGN::get_tag( string name ): ?string
 ---
 ### PGN::get_initial_fen
 
-
+Get initial position.
 
 ```php
 PGN::get_initial_fen( bool as_object = false ): mixed
@@ -1745,7 +1785,7 @@ Get FEN of current position.
 PGN::get_current_fen( bool as_object = false ): mixed
 ```
 
-
+Return position after last move.
 
 
 **Parameters:**
@@ -1764,7 +1804,7 @@ PGN::get_current_fen( bool as_object = false ): mixed
 ---
 ### PGN::get_fen_after_halfmove
 
-
+Get poosition after given halfmove.
 
 ```php
 PGN::get_fen_after_halfmove( int halfmove_number, bool as_object = false ): mixed
@@ -1778,33 +1818,6 @@ PGN::get_fen_after_halfmove( int halfmove_number, bool as_object = false ): mixe
 | Parameter | Type | Description |
 |-----------|------|-------------|
 | `halfmove_number` | **int** |  |
-| `as_object` | **bool** |  |
-
-
-**Return Value:**
-
-
-
-
-
----
-### PGN::get_fen_after_move
-
-
-
-```php
-PGN::get_fen_after_move( int move_number, string color, bool as_object = false ): mixed
-```
-
-
-
-
-**Parameters:**
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `move_number` | **int** |  |
-| `color` | **string** |  |
 | `as_object` | **bool** |  |
 
 
@@ -1853,15 +1866,16 @@ PGN::get_initial_halfmove_number(  ): int
 
 
 ---
-### PGN::get_halfmove
+### PGN::get_move
 
 Get halfmove in standard algebraic notation.
 
 ```php
-PGN::get_halfmove( int halfmove_number, bool as_object = false ): mixed
+PGN::get_move( int halfmove_number, bool as_object = false ): mixed
 ```
 
-Halfmove number starts with 1 (white's first move).
+Halfmove number starts with 1 (white's first move). One move has
+two halfmoves (for white and black player).
 
 
 **Parameters:**
@@ -1879,36 +1893,9 @@ Halfmove number starts with 1 (white's first move).
 
 
 ---
-### PGN::get_move
-
-
-
-```php
-PGN::get_move( int move_number, string color, bool as_object = false ): mixed
-```
-
-
-
-
-**Parameters:**
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `move_number` | **int** |  |
-| `color` | **string** |  |
-| `as_object` | **bool** |  |
-
-
-**Return Value:**
-
-
-
-
-
----
 ### PGN::get_halfmove_number
 
-
+Converts (move number, color) to halfmove number.
 
 ```php
 PGN::get_halfmove_number( int move_number, string color ): int

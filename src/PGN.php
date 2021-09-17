@@ -3,6 +3,13 @@
 namespace Onspli\Chess;
 
 
+/**
+* Portable Game Notation (PGN) is a standard plain text format for recording chess games.
+*
+* Portable Game Notation (PGN) is a standard plain text format for recording
+* chess games (both the moves and related data), which can be read by humans
+* and is also supported by most chess software.
+*/
 class PGN
 {
   protected $tags = [];
@@ -11,6 +18,9 @@ class PGN
   protected $initial_fen;
   protected $initial_halfmove_number = 1;
 
+  /**
+  * Initialize object from PGN string.
+  */
   function __construct(string $pgn = '')
   {
     $this->unset_initial_fen();
@@ -22,12 +32,20 @@ class PGN
     }
   }
 
+  /**
+  * Export PGN string.
+  */
   public function export() : string
   {
+    return $this->export_tags() . $this->export_movetext();
+  }
+
+  /**
+  * Export movetext section of pgn.
+  */
+  public function export_movetext() : string
+  {
     $pgn = '';
-    foreach ($this->tags as $name => $value) {
-      $pgn .= '[' . $name . ' "' . $value . '"]' . PHP_EOL;
-    }
     for ($halfmove_number = $this->get_initial_halfmove_number(); $halfmove_number <= $this->get_current_halfmove_number(); $halfmove_number++) {
       $move_number = ceil($halfmove_number / 2);
       if ($halfmove_number % 2 == 0 && $halfmove_number == $this->get_initial_halfmove_number()) {
@@ -35,16 +53,34 @@ class PGN
       } else if ($halfmove_number % 2 == 1) {
         $pgn .= $move_number . '. ';
       }
-      $pgn .= $this->get_halfmove($halfmove_number) . ' ';
+      $pgn .= $this->get_move($halfmove_number) . ' ';
     }
     return trim($pgn);
   }
 
+  /**
+  * Export tag pairs section (headers) of PGN.
+  */
+  public function export_tags() : string
+  {
+    $pgn = '';
+    foreach ($this->tags as $name => $value) {
+      $pgn .= '[' . $name . ' "' . $value . '"]' . PHP_EOL;
+    }
+    return $pgn;
+  }
+
+  /**
+  * Validate all moves make sense according to chess rules.
+  */
   public function validate_moves() : void
   {
     $this->get_current_fen();
   }
 
+  /**
+  * Set tag pair (header).
+  */
   public function set_tag(string $name, ?string $value) : void
   {
     if ($value !== null) {
@@ -60,6 +96,9 @@ class PGN
     }
   }
 
+  /**
+  * Set custom initial position.
+  */
   public function set_initial_fen(string $fen) : void
   {
     $this->initial_fen = new FEN($fen);
@@ -69,6 +108,9 @@ class PGN
     $this->fens = [];
   }
 
+  /**
+  * Unset custom initial position - use the standard initial position.
+  */
   public function unset_initial_fen() : void
   {
     $this->initial_fen = new FEN;
@@ -80,11 +122,17 @@ class PGN
     $this->fens = [];
   }
 
+  /**
+  * Remove tag pair (header).
+  */
   public function unset_tag(string $name) : void
   {
     $this->set_tag($name, null);
   }
 
+  /**
+  * Read tag pair (header) value.
+  */
   public function get_tag(string $name) : ?string
   {
     if (!isset($this->tags[$name])) {
@@ -93,6 +141,9 @@ class PGN
     return $this->tags[$name];
   }
 
+  /**
+  * Get initial position.
+  */
   public function get_initial_fen(bool $as_object = false)
   {
     if ($as_object) {
@@ -108,12 +159,17 @@ class PGN
 
   /**
   * Get FEN of current position.
+  *
+  * Return position after last move.
   */
   public function get_current_fen(bool $as_object = false)
   {
     return $this->get_fen_after_halfmove($this->get_current_halfmove_number(), $as_object);
   }
 
+  /**
+  * Get poosition after given halfmove.
+  */
   public function get_fen_after_halfmove(int $halfmove_number, bool $as_object = false)
   {
     if ($halfmove_number == 0) {
@@ -129,11 +185,6 @@ class PGN
       return $fen->copy();
     }
     return $fen->export();
-  }
-
-  public function get_fen_after_move(int $move_number, string $color, bool $as_object = false)
-  {
-    return $this->get_fen_after_halfmove($this->get_halfmove_number($move_number, $color), $as_object);
   }
 
   public function get_current_halfmove_number() : int
@@ -162,7 +213,7 @@ class PGN
     }
     $fen = $this->get_last_computed_fen();
     for ($halfmove_number = sizeof($this->fens) + $this->get_initial_halfmove_number(); $halfmove_number <= $max_halfmove_to_compute; $halfmove_number ++) {
-      $halfmove = $this->get_halfmove($halfmove_number);
+      $halfmove = $this->get_move($halfmove_number);
       try {
         $fen->move($halfmove);
       } catch (\Exception $e) {
@@ -174,9 +225,11 @@ class PGN
 
   /**
   * Get halfmove in standard algebraic notation.
-  * Halfmove number starts with 1 (white's first move).
+  *
+  * Halfmove number starts with 1 (white's first move). One move has
+  * two halfmoves (for white and black player).
   */
-  public function get_halfmove(int $halfmove_number, bool $as_object = false)
+  public function get_move(int $halfmove_number, bool $as_object = false)
   {
     $halfmove_index = $this->get_halfmove_index($halfmove_number);
     if (!isset($this->halfmoves[$halfmove_index])) {
@@ -189,13 +242,10 @@ class PGN
     return $halfmove->export();
   }
 
-  public function get_move(int $move_number, string $color, bool $as_object = false)
-  {
 
-    return $this->get_halfmove(self::get_halfmove_number($move_number, $color), $as_object);
-  }
-
-
+  /**
+  * Converts (move number, color) to halfmove number.
+  */
   static public function get_halfmove_number(int $move_number, string $color) : int
   {
     if ($color == 'w') {
