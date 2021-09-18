@@ -112,17 +112,19 @@ final class SquareTest extends TestCase
     new Square('a9');
   }
 
+  /*
   public function testInvalidFloatFile() : void
   {
     $this->expectException(ParseException::class);
     $s = new Square(0.5, 0);
-  }
+  }*/
 
-  public function testInvalidFloarRank() : void
+  /*
+  public function testInvalidFloatRank() : void
   {
     $this->expectException(ParseException::class);
     $s = new Square(0, 0.5);
-  }
+  }*/
 
   public function testNullRank() : void
   {
@@ -131,12 +133,13 @@ final class SquareTest extends TestCase
     $s->get_rank();
   }
 
+  /*
   public function testNullRankIndex() : void
   {
     $s = new Square('-');
     $this->expectException(\OutOfBoundsException::class);
     $s->get_rank_index();
-  }
+  }*/
 
   public function testNullFile() : void
   {
@@ -145,25 +148,44 @@ final class SquareTest extends TestCase
     $s->get_file();
   }
 
+  /*
   public function testNullFileIndex() : void
   {
     $s = new Square('-');
     $this->expectException(\OutOfBoundsException::class);
     $s->get_file_index();
-  }
+  }*/
 
+  /*
   public function testFileIndexRank() : void
   {
     $this->expectException(\OutOfBoundsException::class);
     $s = new Square('4');
     $s->get_file_index();
-  }
+  }*/
 
+  /*
   public function testRankIndexFile() : void
   {
     $s = new Square('e');
     $this->expectException(\OutOfBoundsException::class);
     $s->get_rank_index();
+  }*/
+
+  public function testHasFileRank() : void
+  {
+    $r = new Square('1');
+    $f = new Square('a');
+    $s = new Square('a1');
+    $n = new Square('-');
+    $this->assertTrue($r->has_rank());
+    $this->assertFalse($r->has_file());
+    $this->assertFalse($f->has_rank());
+    $this->assertTrue($f->has_file());
+    $this->assertTrue($s->has_file());
+    $this->assertTrue($s->has_file());
+    $this->assertFalse($n->has_file());
+    $this->assertFalse($n->has_rank());
   }
 
   public function testAddToArrayAsObjects() : void

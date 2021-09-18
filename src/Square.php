@@ -50,14 +50,14 @@ class Square
   /**
   * Get rank index of the square.
   *
-  * For square 'e4' it returns 3. Throws `\OutOfBoundsException` for null squares
-  * and files.
+  * For square 'e4' it returns 3.
   */
   public function get_rank_index() : int
   {
-    if ($this->is_null() || $this->is_file()) {
+    // 10% better performance
+    /*if ($this->is_null() || $this->is_file()) {
       throw new \OutOfBoundsException;
-    }
+    }*/
     return $this->rank_index;
   }
 
@@ -81,14 +81,14 @@ class Square
   /**
   * Get file index of the square.
   *
-  * For square 'e4' it returns 4. Throws `\OutOfBoundsException` for null squares
-  * and ranks.
+  * For square 'e4' it returns 4.
   */
   public function get_file_index() : int
   {
-    if ($this->is_null() || $this->is_rank()) {
+    // 10% better performance
+    /*if ($this->is_null() || $this->is_rank()) {
       throw new \OutOfBoundsException;
-    }
+    }*/
     return $this->file_index;
   }
 
@@ -132,7 +132,7 @@ class Square
   */
   public function is_regular() : bool
   {
-    return $this->has_rank() && $this->has_file();
+    return $this->rank_index !== null && $this->file_index !== null;
   }
 
   /**
@@ -219,10 +219,11 @@ class Square
     $this->rank_index = null;
   }
 
+  /*
   private static function is_index_valid($index) : bool
   {
     return $index === null || intval($index) === $index;
-  }
+  }*/
 
   private static function is_index_in_range($index) : bool
   {
@@ -231,9 +232,10 @@ class Square
 
   private function validate_indices() : void
   {
-    if (!self::is_index_valid($this->file_index) || !self::is_index_valid($this->rank_index)) {
+    // 10% better performance
+    /*if (!self::is_index_valid($this->file_index) || !self::is_index_valid($this->rank_index)) {
       throw new ParseException;
-    }
+    }*/
     if (!self::is_index_in_range($this->file_index) || !self::is_index_in_range($this->rank_index)) {
       $this->set_to_null();
     }

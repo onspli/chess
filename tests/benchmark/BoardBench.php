@@ -21,4 +21,13 @@ class BoardBench
     $board2 = clone $board;
   }
 
+  /**
+  * @Revs(10)
+  */
+  public function benchCheck()
+  {
+    $board = new Board('8/8/8/8/7q/8/5n2/4K3');
+    $board->is_check('w');
+  }
+
 }
