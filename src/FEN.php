@@ -618,7 +618,7 @@ class FEN
     {
       // assert
       $this->validate_castling($this->castling_rights, $this->kings_file, $this->kings_rook_file, $this->queens_rook_file);
-      
+
       $pseudolegal_moves = [];
 
       $this->push_pawns_pseudolegal_moves_to_array($pseudolegal_moves, $this->get_active_color());
@@ -659,31 +659,17 @@ class FEN
       }
 
       if ($this->get_active_color() == 'w') {
-        $origin = new Square('e1');
+        $rank = 1;
       } else {
-        $origin = new Square('e8');
+        $rank = 8;
       }
 
-      if ($this->get_square($origin->get_relative_square(1, 0)) || $this->get_square($origin->get_relative_square(2, 0))) {
-        throw new RulesException("Castling not available. There are pieces in the way.");
-      }
-      if ($this->is_check()) {
-        throw new RulesException("Castling not available. King in check.");
-      }
+      $origin_king = new Square($this->kings_file.$rank);
+      $target_king = new Square('g'.$rank);
+      $origin_rook = new Square($this->kings_rook_file.$rank);
+      $target_rook = new Square('f'.$rank);
 
-      $new_board = clone $this->board;
-      $new_board->set_square($origin, '');
-      $new_board->set_square($origin->get_relative_square(1, 0), $this->get_active_piece('K'));
-      if ($new_board->is_check($this->get_active_color())) {
-        throw new RulesException("Castling not available. King in check.");
-      }
-
-      $new_board->set_square($origin->get_relative_square(1, 0), $this->get_active_piece('R'));
-      $new_board->set_square($origin->get_relative_square(3, 0), '');
-      $new_board->set_square($origin->get_relative_square(2, 0), $this->get_active_piece('K'));
-
-      $this->set_new_board($new_board);
-      $move->set_origin($origin);
+      $this->castle_generic($move, $origin_king, $target_king, $origin_rook, $target_rook);
     }
 
     private function castle_queenside(Move &$move) : void
@@ -693,31 +679,71 @@ class FEN
       }
 
       if ($this->get_active_color() == 'w') {
-        $origin = new Square('e1');
+        $rank = 1;
       } else {
-        $origin = new Square('e8');
+        $rank = 8;
       }
 
-      if ($this->get_square($origin->get_relative_square(-1, 0)) || $this->get_square($origin->get_relative_square(-2, 0)) || $this->get_square($origin->get_relative_square(-3, 0))) {
-        throw new RulesException("Castling not available. There are pieces in the way.");
+      $origin_king = new Square($this->kings_file.$rank);
+      $target_king = new Square('c'.$rank);
+      $origin_rook = new Square($this->queens_rook_file.$rank);
+      $target_rook = new Square('d'.$rank);
+
+      $this->castle_generic($move, $origin_king, $target_king, $origin_rook, $target_rook);
+    }
+
+    private function castle_generic(Move &$move, Square $origin_king, Square $target_king, Square $origin_rook, Square $target_rook)
+    {
+      if (!$this->are_castling_squares_vacant($origin_king, $target_king, $origin_rook->get_file())) {
+        throw new RulesException("Castling not available. There are pieces in the way of King.");
       }
-      if ($this->is_check()) {
+      if (!$this->are_castling_squares_vacant($origin_rook, $target_rook, $origin_rook->get_file())) {
+        throw new RulesException("Castling not available. There are pieces in the way of Rook.");
+      }
+      if (!$this->are_castling_squares_safe($origin_king, $target_king)) {
         throw new RulesException("Castling not available. King in check.");
       }
 
-      $new_board = clone $this->board;
-      $new_board->set_square($origin, '');
-      $new_board->set_square($origin->get_relative_square(-1, 0), $this->get_active_piece('K'));
-      if ($new_board->is_check($this->get_active_color())) {
-        throw new RulesException("Castling not available. King in check.");
+      $this->board->set_square($origin_king, '');
+      $this->board->set_square($origin_rook, '');
+      $this->board->set_square($target_rook, $this->get_active_piece('R'));
+      $this->board->set_square($target_king, $this->get_active_piece('K'));
+
+      $move->set_origin($origin_king);
+    }
+
+    private function are_castling_squares_vacant(Square $origin, Square $target, $allowed_rook_file)
+    {
+      $min_file = min($origin->get_file(), $target->get_file());
+      $max_file = max($origin->get_file(), $target->get_file());
+
+      $rank = $origin->get_rank();
+      for ($file = $min_file; $file <= $max_file; $file++)
+      {
+        if ($file == $allowed_rook_file || $file == $this->kings_file) {
+          continue;
+        }
+        $piece = $this->board->get_square($file.$rank);
+        if ($piece) {
+          return false;
+        }
       }
+      return true;
+    }
 
-      $new_board->set_square($origin->get_relative_square(-1, 0), $this->get_active_piece('R'));
-      $new_board->set_square($origin->get_relative_square(-4, 0), '');
-      $new_board->set_square($origin->get_relative_square(-2, 0), $this->get_active_piece('K'));
+    private function are_castling_squares_safe(Square $origin, Square $target)
+    {
+      $min_file = min($origin->get_file(), $target->get_file());
+      $max_file = max($origin->get_file(), $target->get_file());
 
-      $this->set_new_board($new_board);
-      $move->set_origin($origin);
+      $rank = $origin->get_rank();
+      for ($file = $min_file; $file <= $max_file; $file++)
+      {
+        if ($this->board->is_square_attacked($file.$rank, Board::get_opposite_color($this->get_active_color()))) {
+          return false;
+        }
+      }
+      return true;
     }
 
     /**

@@ -5,7 +5,7 @@ PHP library for reading and editing FEN and PGN chess formats.
 
 ## Features
 ### FEN class
- - load FEN representing chess position
+ - load FEN representing chess position (standard or Shredder-FEN)
  - read and modify all FEN fields
  - export FEN
  - read and set piece placement
@@ -15,6 +15,7 @@ PHP library for reading and editing FEN and PGN chess formats.
  - perform move in given position
  - test if move is legal in given position
  - list all legal moves in given position
+ - supports Fisher's random (Chess960)
 
 ### PGN class
  - load PGN representing chess game
@@ -22,6 +23,7 @@ PHP library for reading and editing FEN and PGN chess formats.
  - export PGN
  - read and add moves
  - get FEN position after any move
+ - supports Fisher's random (Chess960)
 
 ## Installation
 Install with composer:

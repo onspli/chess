@@ -434,6 +434,24 @@ final class FENTest extends TestCase
     $this->assertEquals('k', $fen->get_castling());
     $fen->move('Rh6');
     $this->assertEquals('-', $fen->get_castling());
+
+
+    $fen960 = new FEN('nqrkbrnb/pppppppp/8/8/8/8/PPPPPPPP/NQRKBRNB w CFcf -');
+    $fen960->move('c4');
+    $fen960->move('c5');
+    $this->assertEquals('CFcf', $fen960->get_castling());
+    $fen960->move('Rc3');
+    $this->assertEquals('Fcf', $fen960->get_castling());
+    $fen960->move('Rc7');
+    $this->assertEquals('Ff', $fen960->get_castling());
+    $fen960->move('f4');
+    $fen960->move('f5');
+    $this->assertEquals('Ff', $fen960->get_castling());
+    $fen960->move('Rf2');
+    $this->assertEquals('f', $fen960->get_castling());
+    $fen960->move('Rf6');
+    $this->assertEquals('-', $fen960->get_castling());
+
   }
 
   public function testBongcloud() : void
@@ -446,6 +464,16 @@ final class FENTest extends TestCase
     $this->assertEquals('kq', $fen->get_castling());
     $fen->move('Ke7');
     $this->assertEquals('-', $fen->get_castling());
+
+    $fen960 = new FEN('nqrkbrnb/pppppppp/8/8/8/8/PPPPPPPP/NQRKBRNB w CFcf -');
+    $fen960->move('d4');
+    $fen960->move('d5');
+    $this->assertEquals('CFcf', $fen960->get_castling());
+    $fen960->move('Kd2');
+    $this->assertEquals('cf', $fen960->get_castling());
+    $fen960->move('Kd7');
+    $this->assertEquals('-', $fen960->get_castling());
+
   }
 
   public function testCastlingKingside() : void
@@ -461,6 +489,22 @@ final class FENTest extends TestCase
     $fen->move('O-O');
     $this->assertEquals('-', $fen->get_castling());
     $this->assertEquals('rnbq1rk1/ppppppbp/5np1/8/8/5NP1/PPPPPPBP/RNBQ1RK1', $fen->get_board());
+
+    $fen960 = new FEN('nqrkbrnb/pppppppp/8/8/8/8/PPPPPPPP/NQRKBRNB w CFcf -');
+    $fen960->move('g4');
+    $fen960->move('g5');
+    $fen960->move('d4');
+    $fen960->move('d5');
+    $fen960->move('Bg2');
+    $fen960->move('Bg7');
+    $fen960->move('Bd2');
+    $fen960->move('Bd7');
+    $fen960->move('Nh3');
+    $fen960->move('Nh6');
+    $fen960->move('O-O');
+    $fen960->move('O-O');
+    $this->assertEquals('-', $fen960->get_castling());
+    $this->assertEquals('nqr2rk1/pppbppbp/7n/3p2p1/3P2P1/7N/PPPBPPBP/NQR2RK1', $fen960->get_board());
   }
 
   public function testCastlingQueenside() : void
@@ -480,6 +524,12 @@ final class FENTest extends TestCase
     $fen->move('O-O-O');
     $this->assertEquals('-', $fen->get_castling());
     $this->assertEquals('2kr1bnr/pbpqpppp/1pn5/3p4/3P4/1PN5/PBPQPPPP/2KR1BNR', $fen->get_board());
+
+    $fen960 = new FEN('nqrkbrnb/pppppppp/8/8/8/8/PPPPPPPP/NQRKBRNB w CFcf -');
+    $fen960->move('O-O-O');
+    $fen960->move('O-O-O');
+    $fen960 = new FEN('nqkrbrnb/pppppppp/8/8/8/8/PPPPPPPP/NQKRBRNB w - -');
+
   }
 
   public function testCastlingKingsideNotAvailableWhite() : void
@@ -533,11 +583,31 @@ final class FENTest extends TestCase
   }
 
   // Capturing black's rook prevents castling
+  public function testCastlingKingsideBlackCapture2() : void
+  {
+    $fen = new FEN('1rk1r3/8/8/1B2B3/8/8/8/1RK1R3 w be - 0 1');
+    $fen->move('Bxe8');
+    $this->assertEquals('b', $fen->get_castling());
+    $this->expectException(RulesException::class);
+    $fen->move('O-O');
+  }
+
+  // Capturing black's rook prevents castling
   public function testCastlingQueensideBlackCapture() : void
   {
     $fen = new FEN('r3k2r/8/8/4B3/4B3/8/8/4K3 w kq - 0 1');
     $fen->move('Bxa8');
     $this->assertEquals('k', $fen->get_castling());
+    $this->expectException(RulesException::class);
+    $fen->move('O-O-O');
+  }
+
+  // Capturing black's rook prevents castling
+  public function testCastlingQueensideBlackCapture2() : void
+  {
+    $fen = new FEN('1rk1r3/8/8/1B2B3/8/8/8/1RK1R3 w be - 0 1');
+    $fen->move('Bxb8');
+    $this->assertEquals('e', $fen->get_castling());
     $this->expectException(RulesException::class);
     $fen->move('O-O-O');
   }
