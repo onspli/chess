@@ -18,13 +18,18 @@ class FEN
 {
     private $board;
     private $active = 'w';
-    private $castling = 'KQkq';
     private $en_passant;
     private $halfmove = 0;
     private $fullmove = 1;
 
+    private $kings_rook_file = 'h';
+    private $queens_rook_file = 'a';
+    private $kings_file = 'e';
+    private $use_shredder_fen = false;
+    private $castling_rights = [ "K" => true, "Q" => true, "k" => true, "q" => true];
+
     /**
-    * Load FEN or setup starting position.
+    * Load FEN (or Shredder-FEN) or setup starting position.
     * @param string $fen
     * @return void
     */
@@ -39,7 +44,7 @@ class FEN
 
       $this->set_board($parts[0]);
       $this->set_active_color($parts[1]);
-      $this->set_castling_string($parts[2]);
+      $this->set_castling($parts[2]);
       $this->set_en_passant($parts[3]);
       $this->set_halfmove($parts[4] ?? 0);
       $this->set_fullmove($parts[5] ?? 1);
@@ -57,7 +62,7 @@ class FEN
     */
     public function export() : string
     {
-      return implode(' ', [$this->get_board(), $this->get_active_color(), $this->get_castling_string(), $this->get_en_passant(), $this->get_halfmove(), $this->get_fullmove()]);
+      return implode(' ', [$this->get_board(), $this->get_active_color(), $this->get_castling(), $this->get_en_passant(), $this->get_halfmove(), $this->get_fullmove()]);
     }
 
     /**
@@ -67,7 +72,7 @@ class FEN
     */
     public function export_short() : string
     {
-      return implode(' ', [$this->get_board(), $this->get_active_color(), $this->get_castling_string(), $this->get_en_passant()]);
+      return implode(' ', [$this->get_board(), $this->get_active_color(), $this->get_castling(), $this->get_en_passant()]);
     }
 
     public function __toString() : string
@@ -188,12 +193,32 @@ class FEN
     * "Q" (White can castle queenside), "k" (Black can castle kingside), and/or
     * "q" (Black can castle queenside). A move that temporarily prevents castling
     * does not negate this notation.
+    * Shredder-FEN is also supported - instead of K and Q the letters
+    * of files containing rooks are used. For standard chess its AHah.
+    * X-FEN is not supported.
     *
     * @return string castling availability string
     */
-    public function get_castling_string() : string
+    public function get_castling() : string
     {
-      return $this->castling;
+      if ($this->use_shredder_fen)
+      {
+        $str =
+            ($this->castling_rights['Q'] ? strtoupper($this->queens_rook_file) : '') .
+            ($this->castling_rights['K'] ? strtoupper($this->kings_rook_file) : '') .
+            ($this->castling_rights['q'] ? $this->queens_rook_file : '').
+            ($this->castling_rights['k'] ? $this->kings_rook_file : '');
+        return $str ? $str : '-';
+      }
+      else
+      {
+        $str =
+            ($this->castling_rights['K'] ? 'K' : '') .
+            ($this->castling_rights['Q'] ? 'Q' : '') .
+            ($this->castling_rights['k'] ? 'k' : '') .
+            ($this->castling_rights['q'] ? 'q' : '');
+        return $str ? $str : '-';
+      }
     }
 
     /**
@@ -204,15 +229,116 @@ class FEN
     * "Q" (White can castle queenside), "k" (Black can castle kingside), and/or
     * "q" (Black can castle queenside). A move that temporarily prevents castling
     * does not negate this notation.
+    * Shredder-FEN is also supported - instead of K and Q the letters
+    * of files containing rooks are used. For standard chess its AHah.
+    * X-FEN is not supported.
     *
     * @param string castling availability string
     */
-    public function set_castling_string(string $castling) : void
+    public function set_castling(string $castling) : void
     {
-      if (!in_array($castling, ['-', 'KQkq', 'KQk', 'KQq', 'KQ', 'Kkq', 'Kk', 'Kq', 'K', 'Qkq', 'Qk', 'Qq', 'Q', 'kq', 'k', 'q'])) {
-        throw new ParseException("Invalid castling string '$castling'.");
+      if (in_array($castling, ['-', 'KQkq', 'KQk', 'KQq', 'KQ', 'Kkq', 'Kk', 'Kq', 'K', 'Qkq', 'Qk', 'Qq', 'Q', 'kq', 'k', 'q'])) {
+        $new_use_shredder_fen = false;
+        $new_kings_rook_file = 'h';
+        $new_queens_rook_file = 'a';
+        $new_kings_file = 'e';
+      } else {
+        $new_use_shredder_fen = true;
+        $new_kings_rook_file = null;
+        $new_queens_rook_file = null;
+        $new_kings_file = null;
       }
-      $this->castling = $castling;
+      $new_castling_rights = [ "K" => false, "Q" => false, "k" => false, "q" => false];
+
+      if ($castling == '-') {
+        $castling_rights = [];
+      } else {
+        $castling_rights = str_split($castling);
+      }
+
+      $white_king_square = $this->board->find_square_with_piece('K', true);
+      $black_king_square = $this->board->find_square_with_piece('k', true);
+      foreach ($castling_rights as $castling_right)
+      {
+        if ($new_use_shredder_fen && strtolower($castling_right) >= 'a' && strtolower($castling_right) <= 'h')
+        {
+          $new_kings_file = $this->board->find_square_with_piece(Board::get_piece_of_color('K', ctype_upper($castling_right) ? 'w' : 'b'), true)->get_file();
+          $rooks_file = strtolower($castling_right);
+          if ($rooks_file < $new_kings_file) {
+            $castling_type = ctype_upper($castling_right)? 'Q' : 'q';
+            $new_queens_rook_file = $rooks_file;
+          } else {
+            $castling_type = ctype_upper($castling_right)? 'K' : 'k';
+            $new_kings_rook_file = $rooks_file;
+          }
+        }
+        else if (!$new_use_shredder_fen)
+        {
+          $castling_type = $castling_right;
+        }
+        else
+        {
+          throw new ParseException("Invalid castling right '$castling_right' in string '$castling'.");
+        }
+        $new_castling_rights[$castling_type] = true;
+      }
+
+      $this->validate_castling($new_castling_rights, $new_kings_file, $new_kings_rook_file, $new_queens_rook_file);
+      $this->kings_file = $new_kings_file;
+      $this->kings_rook_file = $new_kings_rook_file;
+      $this->queens_rook_file = $new_queens_rook_file;
+      $this->castling_rights = $new_castling_rights;
+      $this->use_shredder_fen = $new_use_shredder_fen;
+    }
+
+    private function validate_castling(array $castling_rights, $kings_file, $kings_rook_file, $queens_rook_file) : void
+    {
+      if ($kings_file === null || $kings_rook_file === null || $queens_rook_file === null)
+      {
+        throw new ParseException("Invalid castling string.");
+      }
+
+      if ($castling_rights['K'] || $castling_rights['Q'])
+      {
+        if ($this->board->get_square($kings_file.'1') != 'K') {
+          throw new ParseException("Invalid castling string. White king not in initial position.");
+        }
+      }
+
+      if ($castling_rights['k'] || $castling_rights['q'])
+      {
+        if ($this->board->get_square($kings_file.'8') != 'k') {
+          throw new ParseException("Invalid castling string. Black king not in initial position.");
+        }
+      }
+
+      if ($castling_rights['K'])
+      {
+        if ($this->board->get_square($kings_rook_file.'1') != 'R') {
+          throw new ParseException("Invalid castling string. White king's rook not in initial position.");
+        }
+      }
+
+      if ($castling_rights['k'])
+      {
+        if ($this->board->get_square($kings_rook_file.'8') != 'r') {
+          throw new ParseException("Invalid castling string. Black king's rook not in initial position.");
+        }
+      }
+
+      if ($castling_rights['Q'])
+      {
+        if ($this->board->get_square($queens_rook_file.'1') != 'R') {
+          throw new ParseException("Invalid castling string. White queen's rook not in initial position.");
+        }
+      }
+
+      if ($castling_rights['q'])
+      {
+        if ($this->board->get_square($queens_rook_file.'8') != 'r') {
+          throw new ParseException("Invalid castling string. Black queen's rook not in initial position.");
+        }
+      }
     }
 
     /**
@@ -225,11 +351,10 @@ class FEN
     *
     * @param string castling type
     */
-    public function get_castling_availability(string $type) : bool
+    private function get_castling_availability(string $type) : bool
     {
       self::validate_castling_type($type);
-      $castling = str_split($this->castling);
-      return in_array($type, $castling);
+      return $this->castling_rights[$type];
     }
 
     /**
@@ -243,34 +368,10 @@ class FEN
     * @param string castling type
     * @param bool set availability
     */
-    public function set_castling_availability(string $type, bool $avalability) : void
+    private function set_castling_availability(string $type, bool $avalability) : void
     {
       self::validate_castling_type($type);
-      if ($this->get_castling_availability($type) === $avalability) {
-        return;
-      }
-
-      // convert str to array of available types
-      if ($this->castling == '-') {
-        $castling = [];
-      }
-      else {
-        $castling = str_split($this->castling);
-      }
-
-      // add or remove castling availability for type
-      if ($avalability === false) {
-        $castling = array_diff($castling, [$type]);
-      }
-      else {
-        $castling = array_merge($castling, [$type]);
-      }
-
-      // sort and convert array back to string
-      sort($castling);
-      $castling = sizeof($castling) ? implode('', $castling) : '-';
-
-      $this->set_castling_string($castling);
+      $this->castling_rights[$type] = $avalability;
     }
 
     private static function validate_castling_type(string $type) : void

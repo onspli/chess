@@ -391,6 +391,18 @@ class Board
   }
 
   /**
+  * Returns square containing piece. If there are more pieces, throws.
+  */
+  public function find_square_with_piece(string $piece, bool $as_object = false)
+  {
+    $squares = $this->find_squares_with_piece($piece, $as_object);
+    if (sizeof($squares) != 1) {
+      throw new RulesException("There are " . sizeof($squares) . " pieces '" . $piece . "' on the board.");
+    }
+    return $squares[0];
+  }
+
+  /**
   * Returns the color of the piece.
   * @return string w|b
   */
@@ -493,13 +505,8 @@ class Board
   public function is_check(string $color) : bool
   {
     self::validate_color($color);
-
-    $king_squares = $this->find_squares_with_piece(self::get_piece_of_color('K', $color), true);
-    if (sizeof($king_squares) != 1) {
-      throw new RulesException("There are " . sizeof($king_squares) . " kings of active color on the board.");
-    }
-
-    return $this->is_square_attacked($king_squares[0], self::get_opposite_color($color));
+    $king_square = $this->find_square_with_piece(self::get_piece_of_color('K', $color), true);
+    return $this->is_square_attacked($king_square, self::get_opposite_color($color));
   }
 
   private static function validate_color(string $color) : void

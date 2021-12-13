@@ -15,6 +15,7 @@
 | [Board::get_defended_squares](#Boardget_defended_squares) | Get array of all squares defended (or attacked) by $defender being on $defender_square. |
 | [Board::get_reachable_squares](#Boardget_reachable_squares) | Get array of all squares reachable from $origin_square by $moving_piece. |
 | [Board::find_squares_with_piece](#Boardfind_squares_with_piece) | Returns array of squares containing piece. |
+| [Board::find_square_with_piece](#Boardfind_square_with_piece) | Returns square containing piece. If there are more pieces, throws. |
 | [Board::get_color_of_piece](#Boardget_color_of_piece) | Returns the color of the piece. |
 | [Board::get_piece_of_color](#Boardget_piece_of_color) | Converts piece to requested color. |
 | [Board::get_opposite_color](#Boardget_opposite_color) | Get color opposite to color passed as an argument. |
@@ -22,7 +23,7 @@
 | [Board::is_square_attacked](#Boardis_square_attacked) | Tells whether the square is attacked by the color specified. |
 | [Board::is_check](#Boardis_check) | Tells whether the king of color specified is in check. |
 | [**FEN**](#FEN) | FEN is a standard notation for describing a particular board position of a chess game |
-| [FEN::__construct](#FEN__construct) | Load FEN or setup starting position. |
+| [FEN::__construct](#FEN__construct) | Load FEN (or Shredder-FEN) or setup starting position. |
 | [FEN::__clone](#FEN__clone) |  |
 | [FEN::export](#FENexport) | Export whole FEN string. |
 | [FEN::export_short](#FENexport_short) | Export FEN string without halfmoves count and fullmove number. |
@@ -34,10 +35,8 @@
 | [FEN::set_square](#FENset_square) | Set piece on a particular square. |
 | [FEN::get_active_color](#FENget_active_color) | Active color. |
 | [FEN::set_active_color](#FENset_active_color) | Set active color. |
-| [FEN::get_castling_string](#FENget_castling_string) | Castling availability. |
-| [FEN::set_castling_string](#FENset_castling_string) | Set castling availability. |
-| [FEN::get_castling_availability](#FENget_castling_availability) | Get castling availability of particular type. |
-| [FEN::set_castling_availability](#FENset_castling_availability) | Set castling availability of particular type. |
+| [FEN::get_castling](#FENget_castling) | Castling availability. |
+| [FEN::set_castling](#FENset_castling) | Set castling availability. |
 | [FEN::get_en_passant](#FENget_en_passant) | Get En Passant target square. |
 | [FEN::set_en_passant](#FENset_en_passant) | Set En Passant target square. |
 | [FEN::get_halfmove](#FENget_halfmove) | Get Halfmove clock |
@@ -368,6 +367,32 @@ Board::find_squares_with_piece( string piece, bool as_object = false ): array
 
 
 ---
+### Board::find_square_with_piece
+
+Returns square containing piece. If there are more pieces, throws.
+
+```php
+Board::find_square_with_piece( string piece, bool as_object = false ): mixed
+```
+
+
+
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `piece` | **string** |  |
+| `as_object` | **bool** |  |
+
+
+**Return Value:**
+
+
+
+
+
+---
 ### Board::get_color_of_piece
 
 Returns the color of the piece.
@@ -539,7 +564,7 @@ move according to chess rules.
 
 ### FEN::__construct
 
-Load FEN or setup starting position.
+Load FEN (or Shredder-FEN) or setup starting position.
 
 ```php
 FEN::__construct( string fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1' ): void
@@ -818,12 +843,12 @@ FEN::set_active_color( string color ): void
 
 
 ---
-### FEN::get_castling_string
+### FEN::get_castling
 
 Castling availability.
 
 ```php
-FEN::get_castling_string(  ): string
+FEN::get_castling(  ): string
 ```
 
 If neither side can castle, this is "-".
@@ -831,6 +856,9 @@ Otherwise, this has one or more letters: "K" (White can castle kingside),
 "Q" (White can castle queenside), "k" (Black can castle kingside), and/or
 "q" (Black can castle queenside). A move that temporarily prevents castling
 does not negate this notation.
+Shredder-FEN is also supported - instead of K and Q the letters
+of files containing rooks are used. For standard chess its AHah.
+X-FEN is not supported.
 
 
 
@@ -841,12 +869,12 @@ castling availability string
 
 
 ---
-### FEN::set_castling_string
+### FEN::set_castling
 
 Set castling availability.
 
 ```php
-FEN::set_castling_string( string castling ): void
+FEN::set_castling( string castling ): void
 ```
 
 If neither side can castle, this is "-".
@@ -854,6 +882,9 @@ Otherwise, this has one or more letters: "K" (White can castle kingside),
 "Q" (White can castle queenside), "k" (Black can castle kingside), and/or
 "q" (Black can castle queenside). A move that temporarily prevents castling
 does not negate this notation.
+Shredder-FEN is also supported - instead of K and Q the letters
+of files containing rooks are used. For standard chess its AHah.
+X-FEN is not supported.
 
 
 **Parameters:**
@@ -861,63 +892,6 @@ does not negate this notation.
 | Parameter | Type | Description |
 |-----------|------|-------------|
 | `castling` | **string** |  |
-
-
-**Return Value:**
-
-
-
-
-
----
-### FEN::get_castling_availability
-
-Get castling availability of particular type.
-
-```php
-FEN::get_castling_availability( string type ): bool
-```
-
-Possible castling types: "K" (White can castle kingside),
-"Q" (White can castle queenside), "k" (Black can castle kingside), and/or
-"q" (Black can castle queenside). A move that temporarily prevents castling
-does not negate this notation.
-
-
-**Parameters:**
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `type` | **string** |  |
-
-
-**Return Value:**
-
-
-
-
-
----
-### FEN::set_castling_availability
-
-Set castling availability of particular type.
-
-```php
-FEN::set_castling_availability( string type, bool avalability ): void
-```
-
-Possible castling types: "K" (White can castle kingside),
-"Q" (White can castle queenside), "k" (Black can castle kingside), and/or
-"q" (Black can castle queenside). A move that temporarily prevents castling
-does not negate this notation.
-
-
-**Parameters:**
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `type` | **string** |  |
-| `avalability` | **bool** |  |
 
 
 **Return Value:**
