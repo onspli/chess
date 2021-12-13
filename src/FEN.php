@@ -560,14 +560,8 @@ class FEN
         $origin = new Square('e8');
       }
 
-      if ($this->get_square($origin) != $this->get_active_piece('K')) {
-        throw new RulesException("Castling not available. King not in initial position.");
-      }
       if ($this->get_square($origin->get_relative_square(1, 0)) || $this->get_square($origin->get_relative_square(2, 0))) {
         throw new RulesException("Castling not available. There are pieces in the way.");
-      }
-      if ($this->get_square($origin->get_relative_square(3, 0)) != $this->get_active_piece('R')) {
-        throw new RulesException("Castling not available. Rook not in initial position");
       }
       if ($this->is_check()) {
         throw new RulesException("Castling not available. King in check.");
@@ -600,14 +594,8 @@ class FEN
         $origin = new Square('e8');
       }
 
-      if ($this->get_square($origin) != $this->get_active_piece('K')) {
-        throw new RulesException("Castling not available. King not in initial position.");
-      }
       if ($this->get_square($origin->get_relative_square(-1, 0)) || $this->get_square($origin->get_relative_square(-2, 0)) || $this->get_square($origin->get_relative_square(-3, 0))) {
         throw new RulesException("Castling not available. There are pieces in the way.");
-      }
-      if ($this->get_square($origin->get_relative_square(-4, 0)) != $this->get_active_piece('R')) {
-        throw new RulesException("Castling not available. Rook not in initial position");
       }
       if ($this->is_check()) {
         throw new RulesException("Castling not available. King in check.");
@@ -781,12 +769,13 @@ class FEN
 
       $this->after_move_update_halfmove($move);
       $this->after_move_set_en_passant($move);
-      $this->after_move_update_castling_availability($move->get_piece_type(), $move->get_origin(true));
+      $this->after_move_update_castling_availability($move->get_piece_type(), $move->get_origin(true), $move->get_target(true));
       $this->after_move_change_active_color();
     }
 
-    private function after_move_update_castling_availability(string $piece_type, Square $origin_square) : void
+    private function after_move_update_castling_availability(string $piece_type, Square $origin_square, Square $target_square) : void
     {
+      // moving king or rooks prevents castling
       $origin_file = $origin_square->get_file();
       if ($piece_type == 'R' && $origin_file == 'a') {
         $this->set_castling_availability($this->get_active_piece('Q'), false);
@@ -795,6 +784,19 @@ class FEN
       } else if ($piece_type == 'K' && $origin_file == 'e') {
         $this->set_castling_availability($this->get_active_piece('Q'), false);
         $this->set_castling_availability($this->get_active_piece('K'), false);
+      }
+
+      // capturing opponents rooks prevents castling
+      $active_color = $this->get_active_color();
+      $target_square_str = $target_square->export();
+      if ($active_color == 'b' && $target_square_str == 'a1') {
+        $this->set_castling_availability($this->get_opponents_piece('Q'), false);
+      } else if ($active_color == 'b' && $target_square_str == 'h1') {
+        $this->set_castling_availability($this->get_opponents_piece('K'), false);
+      } else if ($active_color == 'w' && $target_square_str == 'a8') {
+        $this->set_castling_availability($this->get_opponents_piece('Q'), false);
+      } else if ($active_color == 'w' && $target_square_str == 'h8') {
+        $this->set_castling_availability($this->get_opponents_piece('K'), false);
       }
     }
 

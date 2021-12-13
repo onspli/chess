@@ -511,82 +511,42 @@ final class FENTest extends TestCase
     $fen->move('O-O-O');
   }
 
-  public function testCastlingKingsideNotAvailableKingMovedWhite() : void
+  // Capturing black's rook prevents castling
+  public function testCastlingKingsideBlackCapture() : void
   {
-    $fen = new FEN;
-    $fen->set_active_color('w');
-    $fen->set_castling_string('KQkq');
-    $fen->set_board('r4k1r/8/8/8/8/8/8/R4K1R');
+    $fen = new FEN('r3k2r/8/8/4B3/4B3/8/8/4K3 w kq - 0 1');
+    $fen->move('Bxh8');
+    $this->assertEquals('q', $fen->get_castling_string());
     $this->expectException(RulesException::class);
     $fen->move('O-O');
   }
 
-  public function testCastlingKingsideNotAvailableKingMovedBlack() : void
+  // Capturing black's rook prevents castling
+  public function testCastlingQueensideBlackCapture() : void
   {
-    $fen = new FEN;
-    $fen->set_active_color('b');
-    $fen->set_castling_string('KQkq');
-    $fen->set_board('r4k1r/8/8/8/8/8/8/R4K1R');
-    $this->expectException(RulesException::class);
-    $fen->move('O-O');
-  }
-
-  public function testCastlingQueensideNotAvailableKingMovedWhite() : void
-  {
-    $fen = new FEN;
-    $fen->set_active_color('w');
-    $fen->set_castling_string('KQkq');
-    $fen->set_board('r4k1r/8/8/8/8/8/8/R4K1R');
+    $fen = new FEN('r3k2r/8/8/4B3/4B3/8/8/4K3 w kq - 0 1');
+    $fen->move('Bxa8');
+    $this->assertEquals('k', $fen->get_castling_string());
     $this->expectException(RulesException::class);
     $fen->move('O-O-O');
   }
 
-  public function testCastlingQueensideNotAvailableKingMovedBlack() : void
+  // Capturing white's rook prevents castling
+  public function testCastlingKingsideWhiteCapture() : void
   {
-    $fen = new FEN;
-    $fen->set_active_color('b');
-    $fen->set_castling_string('KQkq');
-    $fen->set_board('r4k1r/8/8/8/8/8/8/R4K1R');
-    $this->expectException(RulesException::class);
-    $fen->move('O-O-O');
-  }
-
-  public function testCastlingKingsideNotAvailableRookMovedWhite() : void
-  {
-    $fen = new FEN;
-    $fen->set_active_color('w');
-    $fen->set_castling_string('KQkq');
-    $fen->set_board('r3k3/8/8/7r/7R/8/8/R3K3');
+    $fen = new FEN('4k3/8/8/4b3/4b3/8/8/R3K2R b KQ - 0 1');
+    $fen->move('Bxh1');
+    $this->assertEquals('Q', $fen->get_castling_string());
     $this->expectException(RulesException::class);
     $fen->move('O-O');
   }
 
-  public function testCastlingKingsideNotAvailableRookMovedBlack() : void
+  // Capturing white's rook prevents castling
+  public function testCastlingQueensideWhiteCapture() : void
   {
-    $fen = new FEN;
-    $fen->set_active_color('b');
-    $fen->set_castling_string('KQkq');
-    $fen->set_board('r3k3/8/8/7r/7R/8/8/R3K3');
-    $this->expectException(RulesException::class);
-    $fen->move('O-O');
-  }
-
-  public function testCastlingQueensideNotAvailableRookMovedWhite() : void
-  {
-    $fen = new FEN;
-    $fen->set_active_color('w');
-    $fen->set_castling_string('KQkq');
-    $fen->set_board('4k2r/r7/8/8/8/8/R7/4K2R');
-    $this->expectException(RulesException::class);
-    $fen->move('O-O-O');
-  }
-
-  public function testCastlingQueensideNotAvailableRookMovedBlack() : void
-  {
-    $fen = new FEN;
-    $fen->set_active_color('b');
-    $fen->set_castling_string('KQkq');
-    $fen->set_board('4k2r/r7/8/8/8/8/R7/4K2R');
+    $fen = new FEN('4k3/8/8/4b3/4b3/8/8/R3K2R b KQ - 0 1');
+    $fen->move('Bxa1');
+    $this->assertEquals('K', $fen->get_castling_string());
     $this->expectException(RulesException::class);
     $fen->move('O-O-O');
   }
