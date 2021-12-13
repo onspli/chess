@@ -5,7 +5,7 @@ PHP library for reading and editing FEN and PGN chess formats.
 
 ## Features
 ### FEN class
- - load FEN representing chess position
+ - load FEN representing chess position (standard or Shredder-FEN)
  - read and modify all FEN fields
  - export FEN
  - read and set piece placement
@@ -15,6 +15,7 @@ PHP library for reading and editing FEN and PGN chess formats.
  - perform move in given position
  - test if move is legal in given position
  - list all legal moves in given position
+ - supports Fisher's random (Chess960)
 
 ### PGN class
  - load PGN representing chess game
@@ -22,6 +23,7 @@ PHP library for reading and editing FEN and PGN chess formats.
  - export PGN
  - read and add moves
  - get FEN position after any move
+ - supports Fisher's random (Chess960)
 
 ## Installation
 Install with composer:
@@ -40,7 +42,7 @@ echo($fen->export());
 echo($fen->export_short());
 echo($fen->get_board());
 echo($fen->get_active_color());
-echo($fen->get_castling_string());
+echo($fen->get_castling());
 echo($fen->get_en_passant());
 echo($fen->get_halfmove());
 echo($fen->get_fullmove());
@@ -54,7 +56,7 @@ echo($fen->export());
 echo($fen->export_short());
 echo($fen->get_board());
 echo($fen->get_active_color());
-echo($fen->get_castling_string());
+echo($fen->get_castling());
 echo($fen->get_en_passant());
 echo($fen->get_halfmove());
 echo($fen->get_fullmove());
@@ -76,7 +78,7 @@ $fen = new Onspli\Chess\FEN;
 echo($fen->export());
 $fen->set_board('rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR');
 $fen->set_active_color('b');
-$fen->set_castling_string('KQq');
+$fen->set_castling('KQq');
 $fen->set_en_passant('c6');
 $fen->set_halfmove(1);
 $fen->set_fullmove(2);
@@ -105,6 +107,7 @@ Test check, mate, stalemate:
 $fen = new Onspli\Chess\FEN;
 $fen->set_active_color('w');
 $fen->set_board('1q5k/8/8/8/8/8/8/K7');
+$fen->set_castling('-');
 echo($fen->is_check() ? 'true' : 'false');
 echo($fen->is_stalemate() ? 'true' : 'false');
 echo($fen->preview());
