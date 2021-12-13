@@ -5,7 +5,8 @@
 require __DIR__ . '/../vendor/autoload.php';
 
 $template = __DIR__ . '/../README.template.md';
-$output = __DIR__ . '/../README.md';
+$output_file = $argv[1] ?? 'README.md';
+$output = __DIR__ . '/../' . $output_file;
 
 $handle_in = fopen($template, "r");
 $handle_out = fopen($output, "w");

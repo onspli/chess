@@ -30,11 +30,19 @@
           "php-coveralls -v"
         ],
         "docs": [
+          "composer download-phpdoc",
           "php phpDocumentor.phar --directory=src --target=docs --template=vendor/onspli/phpdoc-markdown/templates/public-onefile",
           "php bin/generate_readme.php"
         ],
+        "docs-up-to-date-check": [
+          "composer download-phpdoc",
+          "php phpDocumentor.phar --directory=src --target=build/docs_check --template=vendor/onspli/phpdoc-markdown/templates/public-onefile",
+          "php bin/generate_readme.php build/README.md",
+          "cmp --silent build/README.md README.md",
+          "cmp --silent build/docs_check/README.md docs/README.md"
+        ],
         "download-phpdoc": [
-          "wget https://phpdoc.org/phpDocumentor.phar"
+          "if [ ! -f phpDocumentor.phar ]; then wget https://phpdoc.org/phpDocumentor.phar; fi"
         ],
         "benchmark": [
           "phpbench run tests/benchmark --report=default"

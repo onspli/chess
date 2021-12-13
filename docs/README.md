@@ -2033,8 +2033,7 @@ Get rank index of the square.
 Square::get_rank_index(  ): int
 ```
 
-For square 'e4' it returns 3. Throws `\OutOfBoundsException` for null squares
-and files.
+For square 'e4' it returns 3.
 
 
 
@@ -2073,8 +2072,7 @@ Get file index of the square.
 Square::get_file_index(  ): int
 ```
 
-For square 'e4' it returns 4. Throws `\OutOfBoundsException` for null squares
-and ranks.
+For square 'e4' it returns 4.
 
 
 

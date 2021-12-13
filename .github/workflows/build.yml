@@ -29,25 +29,23 @@ jobs:
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress
 
+    - name: Check docs up to date
+      run: composer docs-up-to-date-check
+
     - name: Run test suite
       env:
         XDEBUG_MODE: coverage
       run: composer test
-    
+
     - name: Run benchmark
       run: composer benchmark
-      
+
     - name: Upload coverage results to Coveralls
       env:
         COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: composer coverall
-      
+
     - name: Upload coverage results to Code Climate
       uses: paambaati/codeclimate-action@v2.7.5
       env:
         CC_TEST_REPORTER_ID: ${{ secrets.CODECLIMATE }}
-
-      
-      
-      
-  
