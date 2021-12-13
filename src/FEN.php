@@ -616,6 +616,9 @@ class FEN
     */
     public function get_legal_moves() : array
     {
+      // assert
+      $this->validate_castling($this->castling_rights, $this->kings_file, $this->kings_rook_file, $this->queens_rook_file);
+      
       $pseudolegal_moves = [];
 
       $this->push_pawns_pseudolegal_moves_to_array($pseudolegal_moves, $this->get_active_color());
@@ -855,6 +858,9 @@ class FEN
     */
     public function move(string $move) : void
     {
+      // assert
+      $this->validate_castling($this->castling_rights, $this->kings_file, $this->kings_rook_file, $this->queens_rook_file);
+
       $move = new Move($move);
 
       switch ($move->get_castling()) {
@@ -878,11 +884,11 @@ class FEN
     {
       // moving king or rooks prevents castling
       $origin_file = $origin_square->get_file();
-      if ($piece_type == 'R' && $origin_file == 'a') {
+      if ($piece_type == 'R' && $origin_file == $this->queens_rook_file) {
         $this->set_castling_availability($this->get_active_piece('Q'), false);
-      } else if ($piece_type == 'R' && $origin_file == 'h') {
+      } else if ($piece_type == 'R' && $origin_file == $this->kings_rook_file) {
         $this->set_castling_availability($this->get_active_piece('K'), false);
-      } else if ($piece_type == 'K' && $origin_file == 'e') {
+      } else if ($piece_type == 'K' && $origin_file == $this->kings_file) {
         $this->set_castling_availability($this->get_active_piece('Q'), false);
         $this->set_castling_availability($this->get_active_piece('K'), false);
       }
@@ -890,15 +896,18 @@ class FEN
       // capturing opponents rooks prevents castling
       $active_color = $this->get_active_color();
       $target_square_str = $target_square->export();
-      if ($active_color == 'b' && $target_square_str == 'a1') {
+      if ($active_color == 'b' && $target_square_str == $this->queens_rook_file.'1') {
         $this->set_castling_availability($this->get_opponents_piece('Q'), false);
-      } else if ($active_color == 'b' && $target_square_str == 'h1') {
+      } else if ($active_color == 'b' && $target_square_str == $this->kings_rook_file.'1') {
         $this->set_castling_availability($this->get_opponents_piece('K'), false);
-      } else if ($active_color == 'w' && $target_square_str == 'a8') {
+      } else if ($active_color == 'w' && $target_square_str == $this->queens_rook_file.'8') {
         $this->set_castling_availability($this->get_opponents_piece('Q'), false);
-      } else if ($active_color == 'w' && $target_square_str == 'h8') {
+      } else if ($active_color == 'w' && $target_square_str == $this->kings_rook_file.'8') {
         $this->set_castling_availability($this->get_opponents_piece('K'), false);
       }
+
+      // assert
+      $this->validate_castling($this->castling_rights, $this->kings_file, $this->kings_rook_file, $this->queens_rook_file);
     }
 
     private function after_move_change_active_color() : void

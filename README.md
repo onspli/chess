@@ -185,6 +185,7 @@ Test check, mate, stalemate:
 $fen = new Onspli\Chess\FEN;
 $fen->set_active_color('w');
 $fen->set_board('1q5k/8/8/8/8/8/8/K7');
+$fen->set_castling('-');
 echo($fen->is_check() ? 'true' : 'false');
 // false
 echo($fen->is_stalemate() ? 'true' : 'false');
