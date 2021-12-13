@@ -45,7 +45,7 @@ jobs:
     - name: Upload coverage results to Code Climate
       uses: paambaati/codeclimate-action@v2.7.5
       env:
-        CC_TEST_REPORTER_ID: f0a449927da0170b75137b1fb6ef52d20608c219ae7fee397ef849d1c46afb07
+        CC_TEST_REPORTER_ID: ${{ secrets.CODECLIMATE }}
 
       
       
