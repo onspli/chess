@@ -266,9 +266,15 @@ class FEN
           $rooks_file = strtolower($castling_right);
           if ($rooks_file < $new_kings_file) {
             $castling_type = ctype_upper($castling_right)? 'Q' : 'q';
+            if ($new_queens_rook_file && $new_queens_rook_file != $rooks_file) {
+              throw new ParseException("Multiple queen's rook castling rights in string '$castling'.");
+            }
             $new_queens_rook_file = $rooks_file;
           } else {
             $castling_type = ctype_upper($castling_right)? 'K' : 'k';
+            if ($new_kings_rook_file && $new_kings_rook_file != $rooks_file) {
+              throw new ParseException("Multiple king's rook castling rights in string '$castling'.");
+            }
             $new_kings_rook_file = $rooks_file;
           }
         }
@@ -293,10 +299,6 @@ class FEN
 
     private function validate_castling(array $castling_rights, $kings_file, $kings_rook_file, $queens_rook_file) : void
     {
-      if ($kings_file === null || $kings_rook_file === null || $queens_rook_file === null)
-      {
-        throw new ParseException("Invalid castling string.");
-      }
 
       if ($castling_rights['K'] || $castling_rights['Q'])
       {
@@ -353,7 +355,6 @@ class FEN
     */
     private function get_castling_availability(string $type) : bool
     {
-      self::validate_castling_type($type);
       return $this->castling_rights[$type];
     }
 
@@ -370,15 +371,7 @@ class FEN
     */
     private function set_castling_availability(string $type, bool $avalability) : void
     {
-      self::validate_castling_type($type);
       $this->castling_rights[$type] = $avalability;
-    }
-
-    private static function validate_castling_type(string $type) : void
-    {
-      if (!in_array($type, ['K', 'Q', 'k', 'q'])) {
-        throw new ParseException("Invalid castling type '$type'.");
-      }
     }
 
     /**
@@ -844,7 +837,7 @@ class FEN
       $this->validate_move_target_square($move);
       $origin = $this->get_move_origin($move);
       $new_board = $this->get_new_board($move, $origin);
-      $this->set_new_board($new_board);
+      $this->set_board($new_board);
       $move->set_origin($origin);
     }
 
@@ -868,15 +861,6 @@ class FEN
         }
       }
       return $new_board;
-    }
-
-    private function set_new_board(Board $new_board) : void
-    {
-      $active_color = $this->get_active_color();
-      if ($new_board->is_check($active_color)) {
-        throw new RulesException('King is in check. ' . $new_board->export() . ' ' . $active_color);
-      }
-      $this->set_board($new_board);
     }
 
     /**
