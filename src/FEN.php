@@ -908,27 +908,31 @@ class FEN
 
     private function after_move_update_castling_availability(string $piece_type, Square $origin_square, Square $target_square) : void
     {
+      $active_color = $this->get_active_color();
+      if ($active_color == 'w') {
+        $active_first_rank = '1';
+        $opponents_first_rank = '8';
+      } else {
+        $active_first_rank = '8';
+        $opponents_first_rank = '1';
+      }
+
       // moving king or rooks prevents castling
-      $origin_file = $origin_square->get_file();
-      if ($piece_type == 'R' && $origin_file == $this->queens_rook_file) {
+      $origin_square_str = $origin_square->export();
+      if ($piece_type == 'R' && $origin_square_str == $this->queens_rook_file.$active_first_rank) {
         $this->set_castling_availability($this->get_active_piece('Q'), false);
-      } else if ($piece_type == 'R' && $origin_file == $this->kings_rook_file) {
+      } else if ($piece_type == 'R' && $origin_square_str == $this->kings_rook_file.$active_first_rank) {
         $this->set_castling_availability($this->get_active_piece('K'), false);
-      } else if ($piece_type == 'K' && $origin_file == $this->kings_file) {
+      } else if ($piece_type == 'K' && $origin_square_str == $this->kings_file.$active_first_rank) {
         $this->set_castling_availability($this->get_active_piece('Q'), false);
         $this->set_castling_availability($this->get_active_piece('K'), false);
       }
 
       // capturing opponents rooks prevents castling
-      $active_color = $this->get_active_color();
       $target_square_str = $target_square->export();
-      if ($active_color == 'b' && $target_square_str == $this->queens_rook_file.'1') {
+      if ($target_square_str == $this->queens_rook_file.$opponents_first_rank) {
         $this->set_castling_availability($this->get_opponents_piece('Q'), false);
-      } else if ($active_color == 'b' && $target_square_str == $this->kings_rook_file.'1') {
-        $this->set_castling_availability($this->get_opponents_piece('K'), false);
-      } else if ($active_color == 'w' && $target_square_str == $this->queens_rook_file.'8') {
-        $this->set_castling_availability($this->get_opponents_piece('Q'), false);
-      } else if ($active_color == 'w' && $target_square_str == $this->kings_rook_file.'8') {
+      } else if ($target_square_str == $this->kings_rook_file.$opponents_first_rank) {
         $this->set_castling_availability($this->get_opponents_piece('K'), false);
       }
 
