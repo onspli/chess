@@ -139,66 +139,138 @@ final class FENTest extends TestCase
     $this->assertEquals('-', $fen->get_castling());
   }
 
-  public function testSetCastlingInvalid1() : void
+  public function testSetCastlingInvalidString() : void
   {
     $fen = new FEN;
     $this->expectException(ParseException::class);
+    $this->expectExceptionMessage("Invalid castling right 'K' in string 'KQxq'.");
+    // this is Shredder FEN and the first invalid castling right is 'K'
     $fen->set_castling('KQxq');
   }
 
-  public function testSetCastlingInvalid2() : void
+  public function testSetCastlingInvalidStringMixShredder() : void
   {
     $fen = new FEN;
     $this->expectException(ParseException::class);
-    $fen->set_castling('KQah');
+    $this->expectExceptionMessage("Invalid castling right 'k' in string 'AHkq'.");
+    // this is Shredder FEN and the first invalid castling right is 'k'
+    $fen->set_castling('AHkq');
   }
 
-  public function testSetCastlingInvalid3() : void
+  public function testSetCastlingInvalidStringMixFiles1() : void
   {
+    $fen = new FEN;
     $this->expectException(ParseException::class);
-    $fen = new FEN('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w AHbh - 0 1');
+    $this->expectExceptionMessage("Multiple queen's rook castling rights in string 'AHbh'.");
+    $fen->set_castling('AHbh');
   }
 
-  public function testSetCastlingInvalid4() : void
+  public function testSetCastlingInvalidStringMixFiles2() : void
   {
+    $fen = new FEN;
     $this->expectException(ParseException::class);
-    $fen = new FEN('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w AHag - 0 1');
+    $this->expectExceptionMessage("Multiple queen's rook castling rights in string 'BHah'.");
+    $fen->set_castling('BHah');
   }
 
-  public function testSetCastlingInvalid5() : void
+  public function testSetCastlingInvalidStringMixFiles3() : void
   {
+    $fen = new FEN;
     $this->expectException(ParseException::class);
-    $fen = new FEN('rnbkqbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBKqBNR w KQkq - 0 1');
+    $this->expectExceptionMessage("Multiple king's rook castling rights in string 'AHag'.");
+    $fen->set_castling('AHag');
   }
 
-  public function testSetCastlingInvalid6() : void
+  public function testSetCastlingInvalidStringMixFiles4() : void
   {
+    $fen = new FEN;
     $this->expectException(ParseException::class);
-    $fen = new FEN('nrbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/NRBQKBNR w KQkq - 0 1');
+    $this->expectExceptionMessage("Multiple king's rook castling rights in string 'AGah'.");
+    $fen->set_castling('AGah');
   }
 
-  public function testSetCastlingInvalid7() : void
+  public function testSetCastlingInvalidBlackQueenRookPosition() : void
   {
     $this->expectException(ParseException::class);
-    $fen = new FEN('rnbqkbrn/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBRN w KQkq - 0 1');
+    $this->expectExceptionMessage("Invalid castling string. Black queen's rook not in initial position.");
+    $fen = new FEN('nrbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w AHah - 0 1');
   }
 
-  public function testSetCastlingInvalid8() : void
+  public function testSetCastlingInvalidWhiteQueenRookPosition() : void
   {
     $this->expectException(ParseException::class);
-    $fen = new FEN('rnbqkbrn/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBRN w AHah - 0 1');
+    $this->expectExceptionMessage("Invalid castling string. White queen's rook not in initial position.");
+    $fen = new FEN('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/NRBQKBNR w AHah - 0 1');
   }
 
-  public function testSetCastlingInvalid9() : void
+  public function testSetCastlingInvalidInvalidBlackKingRookPosition() : void
   {
     $this->expectException(ParseException::class);
+    $this->expectExceptionMessage("Invalid castling string. Black king's rook not in initial position.");
+    $fen = new FEN('rnbqkbrn/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w AHah - 0 1');
+  }
+
+  public function testSetCastlingInvalidInvalidWhiteKingRookPosition() : void
+  {
+    $this->expectException(ParseException::class);
+    $this->expectExceptionMessage("Invalid castling string. White king's rook not in initial position.");
+    $fen = new FEN('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBRN w AHah - 0 1');
+  }
+
+  public function testSetCastlingInvalidBlackQueenRookPosition2() : void
+  {
+    $this->expectException(ParseException::class);
+    $this->expectExceptionMessage("Invalid castling string. Black queen's rook not in initial position.");
+    $fen = new FEN('nrbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1');
+  }
+
+  public function testSetCastlingInvalidWhiteQueenRookPosition2() : void
+  {
+    $this->expectException(ParseException::class);
+    $this->expectExceptionMessage("Invalid castling string. White queen's rook not in initial position.");
+    $fen = new FEN('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/NRBQKBNR w KQkq - 0 1');
+  }
+
+  public function testSetCastlingInvalidInvalidBlackKingRookPosition2() : void
+  {
+    $this->expectException(ParseException::class);
+    $this->expectExceptionMessage("Invalid castling string. Black king's rook not in initial position.");
+    $fen = new FEN('rnbqkbrn/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1');
+  }
+
+  public function testSetCastlingInvalidInvalidWhiteKingRookPosition2() : void
+  {
+    $this->expectException(ParseException::class);
+    $this->expectExceptionMessage("Invalid castling string. White king's rook not in initial position.");
+    $fen = new FEN('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBRN w KQkq - 0 1');
+  }
+
+  public function testSetCastlingInvalidWhiteKingPosition() : void
+  {
+    $this->expectException(ParseException::class);
+    $this->expectExceptionMessage("Invalid castling string. White king not in initial position.");
+    $fen = new FEN('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBKQBNR w KQkq - 0 1');
+  }
+
+  public function testSetCastlingInvalidBlackKingPosition() : void
+  {
+    $this->expectException(ParseException::class);
+    $this->expectExceptionMessage("Invalid castling string. Black king not in initial position.");
+    $fen = new FEN('rnbkqbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1');
+  }
+
+  public function testSetCastlingInvalidKingsNotBetweenRooks() : void
+  {
+    $this->expectException(ParseException::class);
+    $this->expectExceptionMessage("Multiple queen's rook castling rights in string 'ADad'.");
     $fen = new FEN('rnbrkbqn/pppppppp/8/8/8/8/PPPPPPPP/RNBRKBQN w ADad - 0 1');
   }
 
-  public function testSetCastlingInvalid10() : void
+  public function testSetCastlingInvalidKingsNotBetweenRooks2() : void
   {
     $this->expectException(ParseException::class);
-    $fen = new FEN('qnbnkbrr/pppppppp/8/8/8/8/PPPPPPPP/qNBNKBRR w GHgh - 0 1');
+    $this->expectExceptionMessage("Multiple king's rook castling rights in string 'GHgh'.");
+    $fen = new FEN('qnbnkbrr/pppppppp/8/8/8/8/PPPPPPPP/QNBNKBRR w GHgh - 0 1');
   }
 
   public function testFiftyMove() : void
@@ -710,6 +782,30 @@ final class FENTest extends TestCase
     $fen->set_castling('KQkq');
     $this->expectException(RulesException::class);
     $fen->move('O-O-O');
+  }
+
+  // Issue #7: Losing the castling for no apparent reason
+  public function testCastlingMoveOtherRookOnRookFile() : void
+  {
+    // queenside
+    $fen = new FEN('rnbqkbn1/ppppppp1/r7/7p/7P/R7/PPPPPPP1/RNBQKBN1 w Qq - 4 4');
+    $fen->move('Ra4');
+    $this->assertEquals('Qq', $fen->get_castling());
+    $fen->move('Ra5');
+    $this->assertEquals('Qq', $fen->get_castling());
+
+    // kingside
+    $fen = new FEN('1nbqkbnr/1ppppppp/7r/p7/P7/7R/1PPPPPPP/1NBQKBNR w Kk - 4 4');
+    $fen->move('Rh4');
+    $this->assertEquals('Kk', $fen->get_castling());
+    $fen->move('Rh5');
+    $this->assertEquals('Kk', $fen->get_castling());
+
+    // example from Github Issue
+    $fen = new FEN('2b1k2r/1nq1ppbp/2pp2p1/7r/2P5/1N2P2P/P1Q1BPP1/5RK1 b k - 1 19');
+    $fen->move('Rh6');
+    $this->assertEquals('2b1k2r/1nq1ppbp/2pp2pr/8/2P5/1N2P2P/P1Q1BPP1/5RK1', $fen->get_board());
+    $this->assertEquals('k', $fen->get_castling());
   }
 
   public function testPossibleMoves() : void
