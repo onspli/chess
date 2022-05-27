@@ -712,6 +712,30 @@ final class FENTest extends TestCase
     $fen->move('O-O-O');
   }
 
+  // Issue #7: Losing the castling for no apparent reason
+  public function testCastlingMoveOtherRookOnRookFile() : void
+  {
+    // queenside
+    $fen = new FEN('rnbqkbn1/ppppppp1/r7/7p/7P/R7/PPPPPPP1/RNBQKBN1 w Qq - 4 4');
+    $fen->move('Ra4');
+    $this->assertEquals('Qq', $fen->get_castling());
+    $fen->move('Ra5');
+    $this->assertEquals('Qq', $fen->get_castling());
+
+    // kingside
+    $fen = new FEN('1nbqkbnr/1ppppppp/7r/p7/P7/7R/1PPPPPPP/1NBQKBNR w Kk - 4 4');
+    $fen->move('Rh4');
+    $this->assertEquals('Kk', $fen->get_castling());
+    $fen->move('Rh5');
+    $this->assertEquals('Kk', $fen->get_castling());
+
+    // example from Github Issue
+    $fen = new FEN('2b1k2r/1nq1ppbp/2pp2p1/7r/2P5/1N2P2P/P1Q1BPP1/5RK1 b k - 1 19');
+    $fen->move('Rh6');
+    $this->assertEquals('2b1k2r/1nq1ppbp/2pp2pr/8/2P5/1N2P2P/P1Q1BPP1/5RK1', $fen->get_board());
+    $this->assertEquals('k', $fen->get_castling());
+  }
+
   public function testPossibleMoves() : void
   {
     $fen = new FEN;
